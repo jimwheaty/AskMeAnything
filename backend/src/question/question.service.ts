@@ -1,26 +1,44 @@
-import { Injectable } from '@nestjs/common';
-import { CreateQuestionDto } from './dto/create-question.dto';
-import { UpdateQuestionDto } from './dto/update-question.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
+import { Question } from './question.model';
 
 @Injectable()
 export class QuestionService {
-  create(createQuestionDto: CreateQuestionDto) {
-    return 'This action adds a new question';
+  constructor(
+    @InjectModel(Question) 
+    private questionModel: typeof Question,
+  ) {}
+
+
+
+  async findAll(): Promise<Question[]> {
+    return this.questionModel.findAll();
   }
 
-  findAll() {
-    return `This action returns all question`;
+  async findOne(id: string): Promise<Question> {
+    const question = await this.questionModel.findOne({
+      where: { id },
+    });
+    if (!question) {
+      throw new NotFoundException(`Question with id ${id} not found!`);
+    }
+    return question;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} question`;
+  create(question: Question): Promise<Question> {
+    return this.questionModel.create(question);
   }
 
-  update(id: number, updateQuestionDto: UpdateQuestionDto) {
-    return `This action updates a #${id} question`;
+  async update(id: string, questionUpdate: Question): Promise<Question> {
+    const question = await this.findOne(id);
+    question.title = questionUpdate.title? questionUpdate.title: question.title;
+    question.core  = questionUpdate.core?  questionUpdate.core: question.core;
+    await question.save()
+    return question
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} question`;
+  async remove(id: string): Promise<void> {
+    const question = await this.findOne(id);
+    await question.destroy();
   }
 }

@@ -16,7 +16,7 @@ export class QuestionController {
     return this.questionService.findAll();
   }
 
-  @Get(':id')
+  @Get(':id') 
   findOne(@Param('id') id: string) {
     return this.questionService.findOne(id);
   }
