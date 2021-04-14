@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Question } from './question/question.model';
 import { QuestionModule } from './question/question.module';
+import { AnswerModule } from './answer/answer.module';
 const db = require('../db.config.js');
 
 const sequelizeModule = SequelizeModule.forRoot({
@@ -18,6 +19,6 @@ const sequelizeModule = SequelizeModule.forRoot({
 })
 
 @Module({
-  imports: [sequelizeModule, QuestionModule],
+  imports: [sequelizeModule, QuestionModule, AnswerModule],
 })
 export class AppModule {}
