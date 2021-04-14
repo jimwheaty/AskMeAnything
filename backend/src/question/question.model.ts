@@ -1,4 +1,4 @@
-import { AllowNull, Column, Model, Table } from 'sequelize-typescript';
+import { AllowNull, Column, Default, Model, Table } from 'sequelize-typescript';
 
 @Table
 export class Question extends Model {
@@ -8,5 +8,15 @@ export class Question extends Model {
     
     @AllowNull(false)
     @Column
-    core: string
+    body: string
+
+    @AllowNull(false)
+    @Default(0)
+    @Column
+    views: number
+
+    @AllowNull(false)
+    @Default(0)
+    @Column
+    upVotes: number
 }
