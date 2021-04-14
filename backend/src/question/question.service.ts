@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Question } from './question.model';
 
@@ -26,13 +26,19 @@ export class QuestionService {
   }
 
   create(question: Question): Promise<Question> {
+    if (!question.title || !question.body) {
+      throw new BadRequestException('Missing title or body of the question');
+    }
     return this.questionModel.create(question);
   }
 
   async update(id: string, questionUpdate: Question): Promise<Question> {
     const question = await this.findOne(id);
     question.title = questionUpdate.title? questionUpdate.title: question.title;
-    question.core  = questionUpdate.core?  questionUpdate.core: question.core;
+    question.body  = questionUpdate.body?  questionUpdate.body: question.body;
+    question.views  = questionUpdate.views?  questionUpdate.views: question.views;
+    question.upVotes  = questionUpdate.upVotes?  questionUpdate.upVotes: question.upVotes;
+
     await question.save()
     return question
   }
