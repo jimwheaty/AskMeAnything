@@ -39,8 +39,8 @@ export class QuestionService {
     question.views  = questionUpdate.views?  questionUpdate.views: question.views;
     question.upVotes  = questionUpdate.upVotes?  questionUpdate.upVotes: question.upVotes;
 
-    await question.save()
-    return question
+    await question.save();
+    return question;
   }
 
   async remove(id: string): Promise<void> {

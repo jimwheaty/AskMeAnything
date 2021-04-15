@@ -22,8 +22,8 @@ export class QuestionController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() UpdateQuestion: Question) {
-    return this.questionService.update(id, UpdateQuestion);
+  update(@Param('id') id: string, @Body() updateQuestion: Question) {
+    return this.questionService.update(id, updateQuestion);
   }
 
   @Delete(':id')
