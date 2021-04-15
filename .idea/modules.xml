@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/askmeanything.iml" filepath="$PROJECT_DIR$/.idea/askmeanything.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../react_tutorial/.idea/react_tutorial.iml" filepath="$PROJECT_DIR$/../react_tutorial/.idea/react_tutorial.iml" />
     </modules>
   </component>
 </project>
