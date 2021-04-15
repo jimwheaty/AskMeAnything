@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { Answer } from './answer/answer.model';
+import { AnswerModule } from './answer/answer.module';
 import { Question } from './question/question.model';
 import { QuestionModule } from './question/question.module';
-import { AnswerModule } from './answer/answer.module';
 const db = require('../db.config.js');
 
 const sequelizeModule = SequelizeModule.forRoot({
@@ -12,13 +13,18 @@ const sequelizeModule = SequelizeModule.forRoot({
   database: db.DATABASE,
   dialect: 'mysql',
   autoLoadModels: true,
+  synchronize: true,
   sync: {force: false},
   dialectOptions: {connectTimeout: 10000},
   pool: { max: 5, min: 0, acquire: 30000, idle: 10000},
-  models: [Question]
+  models: [Question, Answer]
 })
 
 @Module({
-  imports: [sequelizeModule, QuestionModule, AnswerModule],
+  imports: [
+    sequelizeModule, 
+    QuestionModule, 
+    AnswerModule
+  ],
 })
 export class AppModule {}
