@@ -1,62 +1,55 @@
 import 'bootstrap/dist/css/bootstrap.min.css'; //npm install bootstrap
-import logo from './logo.svg';
-// import './App.css';
+import {Col, Container, Dropdown, FormControl, Jumbotron, Nav, Navbar, NavLink, Row} from "react-bootstrap";
 
 function App() {
   return (
-    <div className="App">
-      <div className="jumbotron text-center" style={{marginBottom:0}}>
-        <h1>Ask me Anything !</h1>
-        <p>Welcome to our app </p>
-      </div>
-      <nav className="navbar bg-dark navbar-dark">
-          <a className="navbar-brand" href="#">AskMeAnything</a>
-          <ul className="nav navbar-nav navbar-right">
-            <li className="nav-item">
-                <a className="nav-link" href="#">Sign Up!</a>
-            </li>
-          </ul>
-      </nav>
+    <Col>
+    <div className="jumbotron text-center" style={{marginBottom:0}}>
+        <h1>Ask me Anything</h1>
+        <p>All your question and answers in one place!!</p>
+    </div>
+      <Navbar bg="dark" expand="lg" variant="dark" className="justify-content-between">
+          <Navbar.Brand href="#home">AskMeAnything</Navbar.Brand>
+          <NavLink href="#signup">Sign Up!</NavLink>
+      </Navbar>
 
-      <div className="container" style={{marginTop:30}}>
-          <div className="row">
-              <div className="col-sm-3">
-                  <div className="jumbotron">
+      <Container style={{marginTop:30}}>
+          <Row>
+              <Col sm={3}>
+                  <Jumbotron>
                       <h2>Questions per keyword</h2>
-                      <div className="dropdown">
-                          <button className="btn btn-primary dropdown-toggle" type="button"
-                                  data-toggle="dropdown">Dropdown Example
-                              <span className="caret"></span></button>
-                          <ul className="dropdown-menu">
-                              <li><a href="#">HTML</a></li>
-                              <li><a href="#">CSS</a></li>
-                              <li><a href="#">JavaScript</a></li>
-                          </ul>
-                      </div>
-                  </div>
-              </div>
-              <div className="col-sm-3">
-                  <div className="jumbotron">
+                      <Dropdown>
+                          <Dropdown.Toggle variant="success" id="dropdown-basic">Dropdown Button</Dropdown.Toggle>
+                          <Dropdown.Menu>
+                              <FormControl type="text" placeholder="Search..." className="mr-sm-2" />
+                              <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
+                              <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
+                              <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+                          </Dropdown.Menu>
+                      </Dropdown>
+                  </Jumbotron>
+              </Col>
+              <Col sm={3}>
+                  <Jumbotron>
                       <h2>Questions per day/period</h2>
-                  </div>
-              </div>
-              <div className="col-sm-3">
-                  <div className="jumbotron">
+                  </Jumbotron>
+              </Col>
+              <Col sm={3}>
+                  <Jumbotron>
                       <h2>Ask a Question</h2>
-                  </div>
-              </div>
-              <div className="col-sm-3">
-                  <div className="jumbotron">
+                  </Jumbotron>
+              </Col>
+              <Col sm={3}>
+                  <Jumbotron>
                       <h2>Answer a Question</h2>
-                  </div>
-              </div>
-          </div>
-      </div>
-
+                  </Jumbotron>
+              </Col>
+          </Row>
+      </Container>
       <div className="jumbotron text-center" style={{marginBottom:0}}>
           <kbd>Powered by React and Bootstrap</kbd>
       </div>
-    </div>
+    </Col>
   );
 }
 
