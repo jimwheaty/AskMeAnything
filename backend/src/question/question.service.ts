@@ -22,6 +22,8 @@ export class QuestionService {
     if (!question) {
       throw new NotFoundException(`Question with id ${id} not found!`);
     }
+    question.views++;
+    await question.save();
     return question;
   }
 
