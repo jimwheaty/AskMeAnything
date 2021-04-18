@@ -35,7 +35,10 @@ export class QuestionService {
   }
 
   async update(id: string, questionUpdate: Question): Promise<Question> {
-    const question = await this.findOne(id);
+    const question = await this.questionModel.findByPk(id);
+    if (!question) {
+      throw new NotFoundException(`Question with id ${id} not found!`);
+    }
     question.title = questionUpdate.title? questionUpdate.title: question.title;
     question.body  = questionUpdate.body?  questionUpdate.body: question.body;
     question.views  = questionUpdate.views?  questionUpdate.views: question.views;
