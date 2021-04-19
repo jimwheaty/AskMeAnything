@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { QuestionService } from './question.service';
 import { Question } from './question.model';
 
@@ -14,6 +14,11 @@ export class QuestionController {
   @Get()
   findAll() {
     return this.questionService.findAll();
+  }
+
+  @Get('per-user')
+  findPerUser(@Query('userId') userId: number, @Query('limit') limit: string) {
+    return this.questionService.findPerUser(userId, limit);
   }
 
   @Get(':id') 

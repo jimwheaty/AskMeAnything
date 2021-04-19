@@ -15,6 +15,8 @@ export class QuestionService {
     return this.questionModel.findAll();
   }
 
+
+
   async findOne(id: string): Promise<Question> {
     const question = await this.questionModel.findOne({
       where: { id },
@@ -27,12 +29,31 @@ export class QuestionService {
     return question;
   }
 
+
+
+  async findPerUser(userId: number, limit: string): Promise<Question[]> {
+
+    const questions = await this.questionModel.findAll({
+      where: { userId },
+    })
+    if (!questions) throw new NotFoundException(`User ${userId} has no questions!`);
+
+    const sortedQuestions = [...questions].sort((a,b) => a.createdAt - b.createdAt);
+
+    if (limit === 'all') return sortedQuestions; 
+    else return sortedQuestions.slice(0,parseInt(limit));
+  }
+
+
+
   create(question: Question): Promise<Question> {
     if (!question.title || !question.body) {
       throw new BadRequestException('Missing title or body of the question');
     }
     return this.questionModel.create(question);
   }
+
+
 
   async update(id: string, questionUpdate: Question): Promise<Question> {
     const question = await this.questionModel.findByPk(id);
@@ -48,6 +69,8 @@ export class QuestionService {
     return question;
   }
 
+
+  
   async remove(id: string): Promise<void> {
     const question = await this.findOne(id);
     await question.destroy();
