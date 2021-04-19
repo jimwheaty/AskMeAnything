@@ -1,22 +1,34 @@
-import { AllowNull, Column, Default, Model, Table } from 'sequelize-typescript';
+import { AllowNull, BelongsTo, Column, Default, ForeignKey, HasMany, HasOne, Model, Table } from 'sequelize-typescript';
+import { Answer } from 'src/answer/answer.model';
+import { User } from 'src/users/users.model';
 
 @Table
 export class Question extends Model {
     @AllowNull(false)
     @Column
-    title: string
+    title: string;
     
     @AllowNull(false)
     @Column
-    body: string
+    body: string;
 
     @AllowNull(false)
     @Default(0)
     @Column
-    views: number
+    views: number;
 
     @AllowNull(false)
     @Default(0)
     @Column
-    upVotes: number
+    upVotes: number;
+
+    @ForeignKey(() => User)
+    @Column
+    userId: number;
+
+    @HasMany(() => Answer)
+    answers: Answer[];
+
+    @BelongsTo(() => User)
+    user: User;
 }

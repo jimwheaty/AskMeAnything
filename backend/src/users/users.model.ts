@@ -1,28 +1,31 @@
-import { DataTypes } from "sequelize";
-import { AllowNull, Column, Model, Table, Unique } from "sequelize-typescript";
+import { AllowNull, Column, HasMany, Model, Table, Unique } from "sequelize-typescript";
+import { Answer } from "src/answer/answer.model";
+import { Question } from "src/question/question.model";
 
 @Table
-export class Users extends Model {
+export class User extends Model {
     @AllowNull(false)
     @Unique(true)
     @Column
-    username: string
+    username: string;
 
     @AllowNull(false)
     @Unique(true)
     @Column
-    email: string
+    email: string;
 
     @AllowNull(false)
     @Column
-    password: string
+    password: string;
 
     @AllowNull(true)
     @Column
-    bio: string
+    bio: string;
 
-    @AllowNull(true)
-    @Column
-    avatar: DataTypes.BlobDataType
+    @HasMany(() => Answer)
+    answers: Answer[];
+
+    @HasMany(() => Question)
+    questions: Question[];
 
 }
