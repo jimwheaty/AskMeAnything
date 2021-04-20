@@ -36,7 +36,7 @@ export class QuestionService {
     const questions = await this.questionModel.findAll({
       where: { userId },
     })
-    if (!questions) throw new NotFoundException(`User ${userId} has no questions!`);
+    if (!questions) return [];
 
     const sortedQuestions = [...questions].sort((a,b) => a.createdAt - b.createdAt);
 
