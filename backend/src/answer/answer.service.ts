@@ -9,6 +9,8 @@ export class AnswerService {
     private answerModel: typeof Answer
   ) {}
 
+
+
   create(newAnswer: Answer): Promise<Answer> {
     if (!newAnswer.body) {
       throw new BadRequestException('Missing title of the answer');
@@ -16,9 +18,27 @@ export class AnswerService {
     return this.answerModel.create(newAnswer);
   }
 
+
+
   findAll() : Promise<Answer[]> {
     return this.answerModel.findAll();
   }
+
+
+
+  async findPerUser(userId: number, limit: string): Promise<Answer[]> {
+    
+    const answers = await this.answerModel.findAll({
+      where: {userId}
+    })
+    if (!answers) return [];
+
+    const sortedAnswers = [...answers].sort((a,b) => a.createdAt - b.createdAt); 
+
+    return (limit === 'all')? sortedAnswers: sortedAnswers.slice(0,parseInt(limit));
+  }
+
+
 
   async findOne(id: number): Promise<Answer> {
     const answer = await this.answerModel.findByPk(id);
@@ -28,6 +48,8 @@ export class AnswerService {
     return answer;
   }
 
+
+
   async update(id: number, answerUpdate: Answer): Promise<Answer> {
     const answer = await this.findOne(id);
     answer.body = answerUpdate.body? answerUpdate.body: answer.body;
@@ -36,6 +58,8 @@ export class AnswerService {
     await answer.save();
     return answer;
   }
+
+
 
   async remove(id: number): Promise<void> {
     const answer = await this.findOne(id);
