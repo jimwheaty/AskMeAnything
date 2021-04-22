@@ -3,12 +3,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {
     Alert,
-    Button, ButtonGroup,
+    Button, ButtonGroup, Card, CardGroup,
     Col,
     Container,
     Dropdown, Form,
     FormControl,
-    Jumbotron, Nav,
+    Jumbotron, ListGroup, Nav,
     Navbar,
     Row, ToggleButtonGroup
 } from "react-bootstrap";
@@ -24,6 +24,158 @@ function Home () {
                         <button>
                             <Jumbotron>
                                 <h2>Questions per keyword</h2>
+                            </Jumbotron>
+                        </button>
+                    </LinkContainer>
+                </Col>
+                <Col sm={3} style={{marginBottom:30}}>
+                    <LinkContainer to="/QuestionsPerTime" >
+                        <button>
+                            <Jumbotron>
+                                <h2>Questions per day/period</h2>
+                            </Jumbotron>
+                        </button>
+                    </LinkContainer>
+                </Col>
+                <Col sm={3} style={{marginBottom:30}}>
+                    <LinkContainer to="/CreateQuestion" >
+                        <button>
+                            <Jumbotron>
+                                <h2>Ask a Question</h2>
+                            </Jumbotron>
+                        </button>
+                    </LinkContainer>
+                </Col>
+                <Col sm={3}>
+                    <LinkContainer to="/AnswerQuestion" >
+                        <button>
+                            <Jumbotron>
+                                <h2>Answer a Question</h2>
+                            </Jumbotron>
+                        </button>
+                    </LinkContainer>
+                </Col>
+            </Row>
+        </Container>
+    );
+}
+
+function QuestionsPerTag() {
+    return(
+        <Container style={{marginTop:30, marginBottom:30}}>
+            <CardGroup>
+                <Card body style={{minWidth:200}}>
+                    <Button>#Tag1</Button>
+                    <small className="text-muted"> (10 questions)</small>
+                </Card>
+                <Card body style={{minWidth:200}}>
+                    <Button>#Tag1</Button>
+                    <small className="text-muted"> (10 questions)</small>
+                </Card>
+                <Card body style={{minWidth:200}}>
+                    <Button>#Tag1</Button>
+                    <small className="text-muted"> (10 questions)</small>
+                </Card>
+                <Card body style={{minWidth:200}}>
+                    <Button>#Tag1</Button>
+                    <small className="text-muted"> (10 questions)</small>
+                </Card>
+                <Card body style={{minWidth:200}}>
+                    <Button>#Tag1</Button>
+                    <small className="text-muted"> (10 questions)</small>
+                </Card>
+                <Card body style={{minWidth:200}}>
+                    <Button>#Tag1</Button>
+                    <small className="text-muted"> (10 questions)</small>
+                </Card>
+                <Card body style={{minWidth:200}}>
+                    <Button>#Tag1</Button>
+                    <small className="text-muted"> (10 questions)</small>
+                </Card>
+                <Card body style={{minWidth:200}}>
+                    <Button>#Tag1</Button>
+                    <small className="text-muted"> (10 questions)</small>
+                </Card>
+                <Card body style={{minWidth:200}}>
+                    <Button>#Tag1</Button>
+                    <small className="text-muted"> (10 questions)</small>
+                </Card>
+                <Card body style={{minWidth:200}}>
+                    <Button>#Tag1</Button>
+                    <small className="text-muted"> (10 questions)</small>
+                </Card>
+                <Card body style={{minWidth:200}}>
+                    <Button>#Tag1</Button>
+                    <small className="text-muted"> (10 questions)</small>
+                </Card>
+            </CardGroup>
+        </Container>
+    );
+};
+
+function QuestionsPerTime() {
+    return(
+        <Container style={{marginTop:30, marginBottom:30}}>
+            <Card>
+                <Card.Body>
+                    <Card.Title>Card Title</Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">Card Subtitle</Card.Subtitle>
+                    <Card.Text>
+                        Some quick example text to build on the card title and make up the bulk of
+                        the card's content.
+                    </Card.Text>
+                    <Card.Link href="#">Card Link</Card.Link>
+                    <Card.Link href="#">Another Link</Card.Link>
+                </Card.Body>
+                <Card.Footer>
+                    <small className="text-muted">Last updated 3 mins ago</small>
+                </Card.Footer>
+            </Card>
+            <Card>
+                <Card.Body>
+                    <Card.Title>Card Title</Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">Card Subtitle</Card.Subtitle>
+                    <Card.Text>
+                        Some quick example text to build on the card title and make up the bulk of
+                        the card's content.
+                    </Card.Text>
+                    <Card.Link href="#">Card Link</Card.Link>
+                    <Card.Link href="#">Another Link</Card.Link>
+                </Card.Body>
+                <Card.Footer>
+                    <small className="text-muted">Last updated 5 mins ago</small>
+                </Card.Footer>
+            </Card>
+            <Card>
+                <Card.Body>
+                    <Card.Title>Card Title</Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">Card Subtitle</Card.Subtitle>
+                    <Card.Text>
+                        Some quick example text to build on the card title and make up the bulk of
+                        the card's content.
+                    </Card.Text>
+                    <Card.Link href="#">Card Link</Card.Link>
+                    <Card.Link href="#">Another Link</Card.Link>
+                </Card.Body>
+                <Card.Footer>
+                    <small className="text-muted">Last updated 10 mins ago</small>
+                </Card.Footer>
+            </Card>
+        </Container>
+    );
+};
+
+function MyHome () {
+    return(
+        <Container style={{marginTop:30, marginBottom:30}}>
+            <Row>
+                <Col sm={3} style={{marginBottom:30}}>
+                    <LinkContainer to="/ContributionsPerTag" >
+                        <button>
+                            <Jumbotron>
+                                <h2>My Questions</h2>
+                                <br/>
+                                <h2>My Answers</h2>
                                 <Dropdown>
                                     <Dropdown.Toggle variant="success" id="dropdown-basic">Dropdown Button</Dropdown.Toggle>
                                     <Dropdown.Menu>
@@ -38,10 +190,10 @@ function Home () {
                     </LinkContainer>
                 </Col>
                 <Col sm={3} style={{marginBottom:30}}>
-                    <LinkContainer to="/QuestionsPerTime" >
+                    <LinkContainer to="/ContributionsPerTime" >
                         <button>
                             <Jumbotron>
-                                <h2>Questions per day/period</h2>
+                                <h2>My contributions per day/period</h2>
                             </Jumbotron>
                         </button>
                     </LinkContainer>
@@ -99,7 +251,7 @@ function CreateQuestion () {
                     <Form.Group>
                         <ButtonGroup>
                             <Button variant="primary" type="button">Submit</Button>
-                            <Button variant="secondary" type="button">Cancel</Button>
+                            <Button variant="secondary" type="submit">Cancel</Button>
                         </ButtonGroup>
                     </Form.Group>
                 </Form>
@@ -141,7 +293,7 @@ function AnswerQuestion () {
                     <Form.Group>
                         <ButtonGroup>
                             <Button variant="primary" type="button">Submit</Button>
-                            <Button variant="secondary" type="button">Cancel</Button>
+                            <Button variant="secondary" type="submit">Cancel</Button>
                         </ButtonGroup>
                     </Form.Group>
                 </Form>
@@ -177,7 +329,7 @@ function Signup (props) {
 
                     <ButtonGroup>
                         <Button variant="primary" type="button" name="isSigned" onClick={ (e) => props.onClick(e)}>Sign Up</Button>
-                        <Button variant="secondary" type="button">Cancel</Button>
+                        <Button variant="secondary" type="submit">Cancel</Button>
                     </ButtonGroup>
                 </Form>
             </Col>
@@ -207,7 +359,7 @@ function Signin (props) {
                         <Button variant="primary" type="button" name="isSigned" onClick={ (e) => props.onClick(e)}>
                             Log In
                         </Button>
-                        <Button variant="secondary" type="button">
+                        <Button variant="secondary" type="submit">
                             Cancel
                         </Button>
                     </ButtonGroup>
@@ -229,18 +381,10 @@ class App extends React.Component{
 
     handleChange = (event) => {
         const target = event.target;
+        const value = (target.type == 'button') ? true : target.value;
         this.setState({
-            [target.name]: target.value
+            [target.name]: value
         });
-    };
-
-    handleClick = (event) => {
-        alert(this.state.isSigned)
-        const target = event.target;
-        this.setState({
-            [target.name]: true
-        });
-        alert(this.state.isSigned)
     };
 
     CustomNavbar = () => {
@@ -261,7 +405,7 @@ class App extends React.Component{
                 <Navbar bg="dark" expand="lg" variant="dark" className="justify-content-between">
                     <LinkContainer to="/" ><Button variant="outline-secondary">Home</Button></LinkContainer>
                     <Nav>
-                        <Navbar.Text>Signed in as: <Link href="#login">{this.state.email}</Link></Navbar.Text>
+                        <Navbar.Text>Signed in as: <LinkContainer to="/myHome" ><Link>{this.state.email}</Link></LinkContainer></Navbar.Text>
                         <LinkContainer id="sign_out_btn" to="/">
                             <Button variant="outline-secondary" name="isSigned" onClick={() => this.handleChange()}>Sign out</Button>
                         </LinkContainer>
@@ -280,6 +424,15 @@ class App extends React.Component{
                     </div>
                     <this.CustomNavbar></this.CustomNavbar>
                     <Switch>
+                        <Route path="/myHome">
+                            <MyHome />
+                        </Route>
+                        <Route path="/QuestionsPerTag">
+                            <QuestionsPerTag />
+                        </Route>
+                        <Route path="/QuestionsPerTime">
+                            <QuestionsPerTime />
+                        </Route>
                         <Route path="/CreateQuestion">
                             <CreateQuestion />
                         </Route>
@@ -289,13 +442,13 @@ class App extends React.Component{
                         <Route path="/sign_up">
                             <Signup
                                 onChange={(event) => this.handleChange(event)}
-                                onClick={(event) => this.handleClick(event)}
+                                onClick={(event) => this.handleChange(event)}
                             />
                         </Route>
                         <Route path="/sign_in">
                             <Signin
                                 onChange={(event) => this.handleChange(event)}
-                                onClick={(event) => this.handleClick(event)}
+                                onClick={(event) => this.handleChange(event)}
                             />
                         </Route>
                         <Route path="/">
