@@ -1,5 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import {
+    Alert,
     Button, ButtonGroup,
     Col,
     Container,
@@ -7,9 +10,8 @@ import {
     FormControl,
     Jumbotron, Nav,
     Navbar,
-    Row
+    Row, ToggleButtonGroup
 } from "react-bootstrap";
-
 import { MemoryRouter, Switch, Route } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -140,7 +142,7 @@ function AnswerQuestion () {
     );
 }
 
-function Signup () {
+function Signup (props) {
     return(
         <Row className="justify-content-md-center" style={{marginBottom:30, marginTop:30}}>
             <Col xs={4}>
@@ -149,7 +151,7 @@ function Signup () {
                 <Form>
                     <Form.Group controlId="formBasicEmail">
                         <Form.Label>Email address</Form.Label>
-                        <Form.Control type="email" placeholder="Enter email" />
+                        <Form.Control type="email" placeholder="Enter email" name="email" onChange={(e) => props.onChange(e)}/>
                         <Form.Text className="text-muted">
                             We'll never share your email with anyone else.
                         </Form.Text>
@@ -157,7 +159,7 @@ function Signup () {
 
                     <Form.Group controlId="formBasicPassword">
                         <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" placeholder="Password" />
+                        <Form.Control type="password" placeholder="Password" name="password" onChange={(e) => props.onChange(e)}/>
                     </Form.Group>
 
                     <Form.Group controlId="formBasicPassword">
@@ -166,7 +168,7 @@ function Signup () {
                     </Form.Group>
 
                     <ButtonGroup>
-                        <Button variant="primary" type="submit">Sign Up</Button>
+                        <Button variant="primary" type="submit" name="isSigned" onClick={ (e) => props.onClick(e)}>Sign Up</Button>
                         <Button variant="secondary" type="submit">Cancel</Button>
                     </ButtonGroup>
                 </Form>
@@ -174,70 +176,121 @@ function Signup () {
         </Row>
     );
 }
-function Signin () {
+function Signin (props) {
     return(
         <Row className="justify-content-md-center" style={{marginBottom:30, marginTop:30}}>
             <Col xs={4}>
                 <h2>Log In</h2>
                 <br />
                 <Form>
-                    <Form.Group controlId="formBasicEmail">
+                    <Form.Group controlId="formBasicEmail" >
                         <Form.Label>Email address</Form.Label>
-                        <Form.Control type="email" placeholder="Enter email" />
+                        <Form.Control type="email" placeholder="Enter email" name="email" onChange={(e) => props.onChange(e)}/>
                         <Form.Text className="text-muted">
                             We'll never share your email with anyone else.
                         </Form.Text>
                     </Form.Group>
 
-                    <Form.Group controlId="formBasicPassword">
+                    <Form.Group controlId="formBasicPassword" >
                         <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" placeholder="Password" />
+                        <Form.Control type="password" placeholder="Password" name="password" onChange={(e) => props.onChange(e)}/>
                     </Form.Group>
-                    <Button variant="primary" type="submit">Log In</Button>
+                    <ButtonGroup >
+                        <Button variant="primary" type="submit" name="isSigned" onClick={ (e) => props.onClick(e)}>
+                            Log In
+                        </Button>
+                        <Button variant="secondary" type="submit">
+                            Cancel
+                        </Button>
+                    </ButtonGroup>
                 </Form>
             </Col>
         </Row>
     );
 }
 
-function App() {
-  return (
-      <MemoryRouter>
-          <Col>
-              <div className="jumbotron text-center" style={{marginBottom:0}}>
-                  <h1>Ask me Anything</h1>
-                  <p>All your question and answers in one place!!</p>
-              </div>
-              <Navbar bg="dark" expand="lg" variant="dark" className="justify-content-between">
-                  <LinkContainer to="/" ><Button variant="outline-secondary">Home</Button></LinkContainer>
-                  <Nav>
-                      <LinkContainer to="/sign_up"><Button variant="outline-secondary">Signup !</Button></LinkContainer>
-                      <LinkContainer to="/sign_in"><Button variant="outline-secondary">Signin !</Button></LinkContainer>
-                  </Nav>
-              </Navbar>
-              <Switch>
-                  <Route path="/CreateQuestion">
-                      <CreateQuestion />
-                  </Route>
-                  <Route path="/AnswerQuestion">
-                      <AnswerQuestion />
-                  </Route>
-                  <Route path="/sign_up">
-                      <Signup />
-                  </Route>
-                  <Route path="/sign_in">
-                      <Signin />
-                  </Route>
-                  <Route path="/">
-                      <Home />
-                  </Route>
-              </Switch>
-              <div className="jumbotron text-center" style={{marginBottom:0}}>
-                  <kbd>Powered by React and Bootstrap</kbd>
-              </div>
-          </Col>
-      </MemoryRouter>
-  );
+class App extends React.Component{
+    constructor(props) {
+        super(props);
+        this.state = {
+            isSigned: false,
+            email: "jimmy@gmail.com",
+            password: "pass",
+        };
+    }
+
+    handleChange = (event) => {
+        const target = event.target;
+        this.setState({
+            [target.name]: target.value
+        });
+    };
+
+    handleClick = (event) => {
+        const target = event.target;
+        this.setState({
+            [target.name]: true
+        });
+    };
+
+    CustomNav = () => {
+        return (
+            (this.state.isSigned === false) ?
+                <Nav>
+                    <LinkContainer id="sign_up_btn" to="/sign_up">
+                        <Button variant="outline-secondary">Signup !</Button>
+                    </LinkContainer>
+                    <LinkContainer id="sign_in_btn" to="/sign_in">
+                        <Button variant="outline-secondary">Signin !</Button>
+                    </LinkContainer>
+                </Nav>
+                :
+                <Navbar.Text>Signed in as: <a href="#login">{this.state.email}</a></Navbar.Text>
+        );
+    }
+
+    render(){
+        return (
+            <MemoryRouter>
+                <Col>
+                    <div className="jumbotron text-center" style={{marginBottom:0}}>
+                        <h1>Ask me Anything</h1>
+                        <p>All your question and answers in one place!!</p>
+                    </div>
+                    <Navbar bg="dark" expand="lg" variant="dark" className="justify-content-between">
+                        <LinkContainer to="/" ><Button variant="outline-secondary">Home</Button></LinkContainer>
+                        <this.CustomNav></this.CustomNav>
+                    </Navbar>
+                    <Switch>
+                        <Route path="/CreateQuestion">
+                            <CreateQuestion />
+                        </Route>
+                        <Route path="/AnswerQuestion">
+                            <AnswerQuestion />
+                        </Route>
+                        <Route path="/sign_up">
+                            <Signup
+                                onChange={(event) => this.handleChange(event)}
+                                onClick={(event) => this.handleClick(event)}
+                            />
+                        </Route>
+                        <Route path="/sign_in">
+                            <Signin
+                                onChange={(event) => this.handleChange(event)}
+                                onClick={(event) => this.handleClick(event)}
+                            />
+                        </Route>
+                        <Route path="/">
+                            <Home />
+                        </Route>
+                    </Switch>
+                    <div className="jumbotron text-center" style={{marginBottom:0}}>
+                        <kbd>Powered by React and Bootstrap</kbd>
+                    </div>
+                </Col>
+            </MemoryRouter>
+        );
+    }
 }
 
 export default App;
