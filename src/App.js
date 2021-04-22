@@ -12,33 +12,41 @@ import {
     Navbar,
     Row, ToggleButtonGroup
 } from "react-bootstrap";
-import { MemoryRouter, Switch, Route } from 'react-router-dom';
+import {MemoryRouter, Switch, Route, Link} from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 
 function Home () {
     return(
         <Container style={{marginTop:30, marginBottom:30}}>
             <Row>
-                <Col sm={3}>
-                    <Jumbotron>
-                        <h2>Questions per keyword</h2>
-                        <Dropdown>
-                            <Dropdown.Toggle variant="success" id="dropdown-basic">Dropdown Button</Dropdown.Toggle>
-                            <Dropdown.Menu>
-                                <FormControl type="text" placeholder="Search..." className="mr-sm-2" />
-                                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
-                    </Jumbotron>
+                <Col sm={3} style={{marginBottom:30}}>
+                    <LinkContainer to="/QuestionsPerTag" >
+                        <button>
+                            <Jumbotron>
+                                <h2>Questions per keyword</h2>
+                                <Dropdown>
+                                    <Dropdown.Toggle variant="success" id="dropdown-basic">Dropdown Button</Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        <FormControl type="text" placeholder="Search..." className="mr-sm-2" />
+                                        <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
+                                        <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
+                                        <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </Jumbotron>
+                        </button>
+                    </LinkContainer>
                 </Col>
-                <Col sm={3}>
-                    <Jumbotron>
-                        <h2>Questions per day/period</h2>
-                    </Jumbotron>
+                <Col sm={3} style={{marginBottom:30}}>
+                    <LinkContainer to="/QuestionsPerTime" >
+                        <button>
+                            <Jumbotron>
+                                <h2>Questions per day/period</h2>
+                            </Jumbotron>
+                        </button>
+                    </LinkContainer>
                 </Col>
-                <Col sm={3}>
+                <Col sm={3} style={{marginBottom:30}}>
                     <LinkContainer to="/CreateQuestion" >
                         <button>
                             <Jumbotron>
@@ -90,8 +98,8 @@ function CreateQuestion () {
 
                     <Form.Group>
                         <ButtonGroup>
-                            <Button variant="primary" type="submit">Submit</Button>
-                            <Button variant="secondary" type="submit">Cancel</Button>
+                            <Button variant="primary" type="button">Submit</Button>
+                            <Button variant="secondary" type="button">Cancel</Button>
                         </ButtonGroup>
                     </Form.Group>
                 </Form>
@@ -132,8 +140,8 @@ function AnswerQuestion () {
 
                     <Form.Group>
                         <ButtonGroup>
-                            <Button variant="primary" type="submit">Submit</Button>
-                            <Button variant="secondary" type="submit">Cancel</Button>
+                            <Button variant="primary" type="button">Submit</Button>
+                            <Button variant="secondary" type="button">Cancel</Button>
                         </ButtonGroup>
                     </Form.Group>
                 </Form>
@@ -168,8 +176,8 @@ function Signup (props) {
                     </Form.Group>
 
                     <ButtonGroup>
-                        <Button variant="primary" type="submit" name="isSigned" onClick={ (e) => props.onClick(e)}>Sign Up</Button>
-                        <Button variant="secondary" type="submit">Cancel</Button>
+                        <Button variant="primary" type="button" name="isSigned" onClick={ (e) => props.onClick(e)}>Sign Up</Button>
+                        <Button variant="secondary" type="button">Cancel</Button>
                     </ButtonGroup>
                 </Form>
             </Col>
@@ -196,10 +204,10 @@ function Signin (props) {
                         <Form.Control type="password" placeholder="Password" name="password" onChange={(e) => props.onChange(e)}/>
                     </Form.Group>
                     <ButtonGroup >
-                        <Button variant="primary" type="submit" name="isSigned" onClick={ (e) => props.onClick(e)}>
+                        <Button variant="primary" type="button" name="isSigned" onClick={ (e) => props.onClick(e)}>
                             Log In
                         </Button>
-                        <Button variant="secondary" type="submit">
+                        <Button variant="secondary" type="button">
                             Cancel
                         </Button>
                     </ButtonGroup>
@@ -227,25 +235,38 @@ class App extends React.Component{
     };
 
     handleClick = (event) => {
+        alert(this.state.isSigned)
         const target = event.target;
         this.setState({
             [target.name]: true
         });
+        alert(this.state.isSigned)
     };
 
-    CustomNav = () => {
+    CustomNavbar = () => {
         return (
             (this.state.isSigned === false) ?
-                <Nav>
-                    <LinkContainer id="sign_up_btn" to="/sign_up">
-                        <Button variant="outline-secondary">Signup !</Button>
-                    </LinkContainer>
-                    <LinkContainer id="sign_in_btn" to="/sign_in">
-                        <Button variant="outline-secondary">Signin !</Button>
-                    </LinkContainer>
-                </Nav>
+                <Navbar bg="dark" expand="lg" variant="dark" className="justify-content-between">
+                    <LinkContainer to="/" ><Button variant="outline-secondary">Home</Button></LinkContainer>
+                    <Nav>
+                        <LinkContainer id="sign_up_btn" to="/sign_up">
+                            <Button variant="outline-secondary">Signup !</Button>
+                        </LinkContainer>
+                        <LinkContainer id="sign_in_btn" to="/sign_in">
+                            <Button variant="outline-secondary">Signin !</Button>
+                        </LinkContainer>
+                    </Nav>
+                </Navbar>
                 :
-                <Navbar.Text>Signed in as: <a href="#login">{this.state.email}</a></Navbar.Text>
+                <Navbar bg="dark" expand="lg" variant="dark" className="justify-content-between">
+                    <LinkContainer to="/" ><Button variant="outline-secondary">Home</Button></LinkContainer>
+                    <Nav>
+                        <Navbar.Text>Signed in as: <Link href="#login">{this.state.email}</Link></Navbar.Text>
+                        <LinkContainer id="sign_out_btn" to="/">
+                            <Button variant="outline-secondary" name="isSigned" onClick={() => this.handleChange()}>Sign out</Button>
+                        </LinkContainer>
+                    </Nav>
+                </Navbar>
         );
     }
 
@@ -257,10 +278,7 @@ class App extends React.Component{
                         <h1>Ask me Anything</h1>
                         <p>All your question and answers in one place!!</p>
                     </div>
-                    <Navbar bg="dark" expand="lg" variant="dark" className="justify-content-between">
-                        <LinkContainer to="/" ><Button variant="outline-secondary">Home</Button></LinkContainer>
-                        <this.CustomNav></this.CustomNav>
-                    </Navbar>
+                    <this.CustomNavbar></this.CustomNavbar>
                     <Switch>
                         <Route path="/CreateQuestion">
                             <CreateQuestion />
