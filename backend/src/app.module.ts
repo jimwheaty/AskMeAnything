@@ -6,6 +6,8 @@ import { Question } from './question/question.model';
 import { QuestionModule } from './question/question.module';
 import { User } from './users/users.model';
 import { UsersModule } from './users/users.module';
+import { TagsModule } from './tags/tags.module';
+import { Tag } from './tags/tags.model';
 const db = require('../db.config.js');
 
 const sequelizeModule = SequelizeModule.forRoot({
@@ -19,7 +21,6 @@ const sequelizeModule = SequelizeModule.forRoot({
   sync: {force: false},
   dialectOptions: {connectTimeout: 10000},
   pool: { max: 5, min: 0, acquire: 30000, idle: 10000},
-  models: [Question, Answer, User]
 })
 
 @Module({
@@ -27,7 +28,8 @@ const sequelizeModule = SequelizeModule.forRoot({
     sequelizeModule, 
     QuestionModule, 
     AnswerModule, 
-    UsersModule
+    UsersModule, 
+    TagsModule
   ],
 })
 export class AppModule {}

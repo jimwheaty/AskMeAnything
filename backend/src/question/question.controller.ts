@@ -21,6 +21,11 @@ export class QuestionController {
     return this.questionService.findPerUser(userId, limit);
   }
 
+  @Get('per-tag')
+  findPerTag(@Query('tag') tag: string, @Query('limit') limit: string) {
+    return this.questionService.findPerTag(tag, limit);
+  }
+
   @Get(':id') 
   findOne(@Param('id') id: string) {
     return this.questionService.findOne(id);

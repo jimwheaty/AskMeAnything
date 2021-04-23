@@ -1,5 +1,6 @@
-import { AllowNull, BelongsTo, Column, Default, ForeignKey, HasMany, HasOne, Model, Table } from 'sequelize-typescript';
+import { AllowNull, BelongsTo, Column, Default, ForeignKey, HasMany, Model, Table } from 'sequelize-typescript';
 import { Answer } from 'src/answer/answer.model';
+import { Tag } from 'src/tags/tags.model';
 import { User } from 'src/users/users.model';
 
 @Table
@@ -31,4 +32,7 @@ export class Question extends Model {
 
     @BelongsTo(() => User)
     user: User;
+
+    @HasMany(() => Tag)
+    tags: Tag[]
 }

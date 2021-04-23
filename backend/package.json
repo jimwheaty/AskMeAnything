@@ -27,6 +27,7 @@
     "@nestjs/platform-express": "^7.6.15",
     "@nestjs/sequelize": "^0.2.0",
     "mysql2": "^2.2.5",
+    "natural": "^5.0.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.6",

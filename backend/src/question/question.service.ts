@@ -1,15 +1,18 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Tag } from 'src/tags/tags.model';
 import { Question } from './question.model';
+const natural = require('natural');
 
 @Injectable()
 export class QuestionService {
   constructor(
     @InjectModel(Question) 
-    private questionModel: typeof Question,
+    private readonly questionModel: typeof Question,
+
+    @InjectModel(Tag)
+    private readonly tagModel: typeof Tag,
   ) {}
-
-
 
   async findAll(): Promise<Question[]> {
     return this.questionModel.findAll();
@@ -44,6 +47,25 @@ export class QuestionService {
     else return sortedQuestions.slice(0,parseInt(limit));
   }
 
+
+
+  async findPerTag(tag: string, limit: string) {
+
+    const questionsPerTag = await this.questionModel.findAll({
+      include: {
+        model: this.tagModel,
+        as: 'tags',
+        where: {
+          stemmed: natural.LancasterStemmer.stem(tag)
+        }
+      }
+    });
+
+    if (!questionsPerTag) return [];
+
+    const sortedQuestions = [...questionsPerTag].sort((a,b) => a.createdAt - b.createdAt);
+    return (limit === 'all')? sortedQuestions: sortedQuestions.slice(0,parseInt(limit));
+  }
 
 
   create(question: Question): Promise<Question> {
