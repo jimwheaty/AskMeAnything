@@ -1,36 +1,35 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
-import ReactDOM from 'react-dom';
 import {
-    Alert,
-    Button, ButtonGroup, Card, CardGroup,
+    Breadcrumb,
+    Button, ButtonGroup, Card, CardDeck,
     Col,
     Container,
     Dropdown, Form,
     FormControl,
-    Jumbotron, ListGroup, Nav,
+    Jumbotron, Nav,
     Navbar,
-    Row, ToggleButtonGroup
+    Row
 } from "react-bootstrap";
 import {MemoryRouter, Switch, Route, Link} from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 
-function Home () {
+function Home (props) {
     return(
         <Container style={{marginTop:30, marginBottom:30}}>
             <Row>
                 <Col sm={3} style={{marginBottom:30}}>
-                    <LinkContainer to="/QuestionsPerTag" >
+                    <LinkContainer to="/Tags" >
                         <button>
                             <Jumbotron>
-                                <h2>Questions per keyword</h2>
+                                <h2>Questions per #tag</h2>
                             </Jumbotron>
                         </button>
                     </LinkContainer>
                 </Col>
                 <Col sm={3} style={{marginBottom:30}}>
                     <LinkContainer to="/QuestionsPerTime" >
-                        <button>
+                        <button onClick={() => props.onClick()}>
                             <Jumbotron>
                                 <h2>Questions per day/period</h2>
                             </Jumbotron>
@@ -60,12 +59,15 @@ function Home () {
     );
 }
 
-function QuestionsPerTag() {
+function Tags(props) {
     return(
         <Container style={{marginTop:30, marginBottom:30}}>
-            <CardGroup>
+            <h2>Most popular Tags</h2><br />
+            <CardDeck>
                 <Card body style={{minWidth:200}}>
-                    <Button>#Tag1</Button>
+                    <LinkContainer to="/QuestionsPerTime" >
+                        <Button onClick={(e) => props.onClick(e)} name="tag1">#Tag1</Button>
+                    </LinkContainer>
                     <small className="text-muted"> (10 questions)</small>
                 </Card>
                 <Card body style={{minWidth:200}}>
@@ -108,62 +110,82 @@ function QuestionsPerTag() {
                     <Button>#Tag1</Button>
                     <small className="text-muted"> (10 questions)</small>
                 </Card>
-            </CardGroup>
+            </CardDeck>
         </Container>
     );
-};
+}
 
-function QuestionsPerTime() {
+function QuestionsPerTime(props) {
     return(
-        <Container style={{marginTop:30, marginBottom:30}}>
+        <Container>
             <Card>
                 <Card.Body>
-                    <Card.Title>Card Title</Card.Title>
-                    <Card.Subtitle className="mb-2 text-muted">Card Subtitle</Card.Subtitle>
-                    <Card.Text>
-                        Some quick example text to build on the card title and make up the bulk of
-                        the card's content.
-                    </Card.Text>
-                    <Card.Link href="#">Card Link</Card.Link>
-                    <Card.Link href="#">Another Link</Card.Link>
+                    <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">asked 1 hour ago by jimmy</Card.Subtitle>
+                    <Card.Link name='tag1' onClick={(e) => props.onClickTag(e)}>#tag1</Card.Link>
                 </Card.Body>
                 <Card.Footer>
-                    <small className="text-muted">Last updated 3 mins ago</small>
+                    <small className="text-muted">Last updated 3 minutes ago</small>
                 </Card.Footer>
             </Card>
             <Card>
                 <Card.Body>
-                    <Card.Title>Card Title</Card.Title>
-                    <Card.Subtitle className="mb-2 text-muted">Card Subtitle</Card.Subtitle>
-                    <Card.Text>
-                        Some quick example text to build on the card title and make up the bulk of
-                        the card's content.
-                    </Card.Text>
-                    <Card.Link href="#">Card Link</Card.Link>
-                    <Card.Link href="#">Another Link</Card.Link>
+                    <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">asked 1 hour ago by jimmy</Card.Subtitle>
+                    <Card.Link name='tag1' onClick={(e) => props.onClickTag(e)}>#tag1</Card.Link>
                 </Card.Body>
                 <Card.Footer>
-                    <small className="text-muted">Last updated 5 mins ago</small>
+                    <small className="text-muted">Last updated 3 minutes ago</small>
                 </Card.Footer>
             </Card>
             <Card>
                 <Card.Body>
-                    <Card.Title>Card Title</Card.Title>
-                    <Card.Subtitle className="mb-2 text-muted">Card Subtitle</Card.Subtitle>
-                    <Card.Text>
-                        Some quick example text to build on the card title and make up the bulk of
-                        the card's content.
-                    </Card.Text>
-                    <Card.Link href="#">Card Link</Card.Link>
-                    <Card.Link href="#">Another Link</Card.Link>
+                    <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">asked 1 hour ago by jimmy</Card.Subtitle>
+                    <Card.Link name='tag1' onClick={(e) => props.onClickTag(e)}>#tag1</Card.Link>
                 </Card.Body>
                 <Card.Footer>
-                    <small className="text-muted">Last updated 10 mins ago</small>
+                    <small className="text-muted">Last updated 3 minutes ago</small>
                 </Card.Footer>
             </Card>
         </Container>
     );
-};
+}
+
+function Question (props) {
+    return(
+        <Container style={{marginTop:30, marginBottom:30}}>
+            <Card>
+                <Card.Body>
+                    <Card.Title>Η πρώτη μου ερώτηση</Card.Title>
+                    <LinkContainer to="/QuestionsPerTime" >
+                        <Card.Link name='tag1' onClick={(e) => props.onClickTag(e)}>#tag1</Card.Link>
+                    </LinkContainer>
+                </Card.Body>
+                <Card.Footer>
+                    <small className="text-muted">asked 1 hour ago by jimmy</small>
+                </Card.Footer>
+            </Card>
+            <br /><h4>2 Answers</h4><br/>
+            <Card>
+                <Card.Body>
+                    <Card.Title>Η πρώτη μου απάντηση!</Card.Title>
+                </Card.Body>
+                <Card.Footer>
+                    <small className="text-muted">answered 30 minutes ago by jimmy</small>
+                </Card.Footer>
+            </Card>
+            <Card>
+                <Card.Body>
+                    <Card.Title>Η δεύτερη μου απάντηση!</Card.Title>
+                </Card.Body>
+                <Card.Footer>
+                    <small className="text-muted">answered 20 minutes ago by jimmy</small>
+                </Card.Footer>
+            </Card>
+        </Container>
+    )
+}
 
 function MyHome () {
     return(
@@ -278,7 +300,7 @@ function AnswerQuestion () {
                     </Form.Group>
 
                     <h4>
-                        /*TODO*/
+                        *TODO*
                         <br/>
                         Keywords - read only
                         <br />
@@ -336,6 +358,7 @@ function Signup (props) {
         </Row>
     );
 }
+
 function Signin (props) {
     return(
         <Row className="justify-content-md-center" style={{marginBottom:30, marginTop:30}}>
@@ -376,16 +399,54 @@ class App extends React.Component{
             isSigned: false,
             email: "jimmy@gmail.com",
             password: "pass",
+            tag: undefined,
+            questionActive: undefined,
         };
     }
 
     handleChange = (event) => {
         const target = event.target;
-        const value = (target.type == 'button') ? true : target.value;
+        const value = (target.type === 'button') ? true : target.value;
         this.setState({
             [target.name]: value
         });
     };
+
+    handleTagButton = (event) => this.setState({tag: event.target.name});
+
+    handleQuestionsPerDayButton = () => this.setState({tag: undefined});
+
+    handleQuestionLink = (event) => this.setState({questionActive: event.target.id});
+
+    QuestionHeader = () => {
+        return(
+            <Container  style={{marginTop:30, marginBottom:30}}>
+                <h2>Question {this.state.questionActive}</h2><br />
+                <Question />
+            </Container>
+        )
+    }
+
+    QuestionsPerTimeHeader = () => {
+        return(
+            (this.state.tag) ?
+                <Container  style={{marginTop:30, marginBottom:30}}>
+                    <h2>Questions with #{this.state.tag}</h2><br />
+                    <QuestionsPerTime
+                        onClickQuestion={(event) => this.handleQuestionLink(event)}
+                        onClickTag={(event) => this.handleTagButton(event)}
+                    />
+                </Container>
+                :
+                <Container  style={{marginTop:30, marginBottom:30}}>
+                    <h2>Recent questions</h2><br />
+                    <QuestionsPerTime
+                        onClickQuestion={(event) => this.handleQuestionLink(event)}
+                        onClickTag={(event) => this.handleTagButton(event)}
+                    />
+                </Container>
+        )
+    }
 
     CustomNavbar = () => {
         return (
@@ -414,6 +475,18 @@ class App extends React.Component{
         );
     }
 
+    CustomBreadcrump = () => {
+        return (
+            <Breadcrumb>
+                <Breadcrumb.Item active href="/">Home</Breadcrumb.Item>
+                <Breadcrumb.Item href="https://getbootstrap.com/docs/4.0/components/breadcrumb/">
+                    Library
+                </Breadcrumb.Item>
+                <Breadcrumb.Item active>Data</Breadcrumb.Item>
+            </Breadcrumb>
+        )
+    }
+
     render(){
         return (
             <MemoryRouter>
@@ -422,16 +495,24 @@ class App extends React.Component{
                         <h1>Ask me Anything</h1>
                         <p>All your question and answers in one place!!</p>
                     </div>
-                    <this.CustomNavbar></this.CustomNavbar>
+                    <this.CustomNavbar />
+                    <this.CustomBreadcrump />
                     <Switch>
                         <Route path="/myHome">
                             <MyHome />
                         </Route>
-                        <Route path="/QuestionsPerTag">
-                            <QuestionsPerTag />
+                        <Route path="/Tags">
+                            <Tags
+                                onClick={(event) => this.handleTagButton(event)}
+                            />
                         </Route>
                         <Route path="/QuestionsPerTime">
-                            <QuestionsPerTime />
+                            <this.QuestionsPerTimeHeader />
+                        </Route>
+                        <Route path="/Question">
+                            <Question
+                                onClickTag={(event) => this.handleTagButton(event)}
+                            />
                         </Route>
                         <Route path="/CreateQuestion">
                             <CreateQuestion />
@@ -452,7 +533,9 @@ class App extends React.Component{
                             />
                         </Route>
                         <Route path="/">
-                            <Home />
+                            <Home
+                                onClick={() => this.handleQuestionsPerDayButton()}
+                            />
                         </Route>
                     </Switch>
                     <div className="jumbotron text-center" style={{marginBottom:0}}>
