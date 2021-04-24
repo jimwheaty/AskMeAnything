@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import {
-    Breadcrumb,
+    Breadcrumb, BreadcrumbItem,
     Button, ButtonGroup, Card, CardDeck,
     Col,
     Container,
@@ -20,7 +20,7 @@ function Home (props) {
             <Row>
                 <Col sm={3} style={{marginBottom:30}}>
                     <LinkContainer to="/Tags" >
-                        <button>
+                        <button onClick={() => props.onClickTags()}>
                             <Jumbotron style={{margin:0}}>
                                 <h2>Questions per #tag</h2>
                             </Jumbotron>
@@ -28,10 +28,10 @@ function Home (props) {
                     </LinkContainer>
                 </Col>
                 <Col sm={3} style={{marginBottom:30}}>
-                    <LinkContainer to="/QuestionsPerTime" >
-                        <button onClick={() => props.onClick()}>
+                    <LinkContainer to="/QuestionsPerDay" >
+                        <button onClick={() => props.onClickQuestionsPerDay()}>
                             <Jumbotron style={{margin:0}}>
-                                <h2>Questions per day</h2>
+                                <h2>Recent Questions</h2>
                             </Jumbotron>
                         </button>
                     </LinkContainer>
@@ -65,8 +65,8 @@ function Tags(props) {
             <h2>Most popular Tags</h2><br />
             <CardDeck>
                 <Card body style={{minWidth:200}}>
-                    <LinkContainer to="/QuestionsPerTime" >
-                        <Button onClick={(e) => props.onClick(e)} name="tag1">#Tag1</Button>
+                    <LinkContainer to="/QuestionsPerDay" >
+                        <Button onClick={(e) => props.onClick(e)} name="#tag1">#Tag1</Button>
                     </LinkContainer>
                     <small className="text-muted"> (10 questions)</small>
                 </Card>
@@ -115,14 +115,14 @@ function Tags(props) {
     );
 }
 
-function QuestionsPerTime(props) {
+function QuestionsPerDay(props) {
     return(
         <Container>
             <Card>
                 <Card.Body>
                     <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
                     <Card.Subtitle className="mb-2 text-muted">asked 1 hour ago by jimmy</Card.Subtitle>
-                    <Card.Link name='tag1' onClick={(e) => props.onClickTag(e)}>#tag1</Card.Link>
+                    <Card.Link><Link name='#tag1' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
                 </Card.Body>
                 <Card.Footer>
                     <small className="text-muted">Last updated 3 minutes ago</small>
@@ -132,7 +132,7 @@ function QuestionsPerTime(props) {
                 <Card.Body>
                     <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
                     <Card.Subtitle className="mb-2 text-muted">asked 1 hour ago by jimmy</Card.Subtitle>
-                    <Card.Link name='tag1' onClick={(e) => props.onClickTag(e)}>#tag1</Card.Link>
+                    <Card.Link><Link name='#tag1' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
                 </Card.Body>
                 <Card.Footer>
                     <small className="text-muted">Last updated 3 minutes ago</small>
@@ -142,7 +142,7 @@ function QuestionsPerTime(props) {
                 <Card.Body>
                     <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
                     <Card.Subtitle className="mb-2 text-muted">asked 1 hour ago by jimmy</Card.Subtitle>
-                    <Card.Link name='tag1' onClick={(e) => props.onClickTag(e)}>#tag1</Card.Link>
+                    <Card.Link><Link name='#tag1' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
                 </Card.Body>
                 <Card.Footer>
                     <small className="text-muted">Last updated 3 minutes ago</small>
@@ -158,8 +158,8 @@ function Question (props) {
             <Card>
                 <Card.Body>
                     <Card.Title>Η πρώτη μου ερώτηση</Card.Title>
-                    <LinkContainer to="/QuestionsPerTime" >
-                        <Card.Link name='tag1' onClick={(e) => props.onClickTag(e)}>#tag1</Card.Link>
+                    <LinkContainer to="/QuestionsPerDay" >
+                        <Card.Link><Link to='/QuestionsPerDay' name='#tag1' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
                     </LinkContainer>
                 </Card.Body>
                 <Card.Footer>
@@ -192,29 +192,20 @@ function MyHome () {
         <Container style={{marginTop:30, marginBottom:30}}>
             <Row>
                 <Col sm={3} style={{marginBottom:30}}>
-                    <LinkContainer to="/ContributionsPerTag" >
+                    <LinkContainer to="/ContributionsList" >
                         <button>
-                            <Jumbotron>
+                            <Jumbotron style={{margin:0}}>
                                 <h2>My Questions</h2>
                                 <br/>
                                 <h2>My Answers</h2>
-                                <Dropdown>
-                                    <Dropdown.Toggle variant="success" id="dropdown-basic">Dropdown Button</Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                        <FormControl type="text" placeholder="Search..." className="mr-sm-2" />
-                                        <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                                        <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                                        <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-                                    </Dropdown.Menu>
-                                </Dropdown>
                             </Jumbotron>
                         </button>
                     </LinkContainer>
                 </Col>
                 <Col sm={3} style={{marginBottom:30}}>
-                    <LinkContainer to="/ContributionsPerTime" >
+                    <LinkContainer to="/ContributionsStatistics" >
                         <button>
-                            <Jumbotron>
+                            <Jumbotron style={{margin:0}}>
                                 <h2>My contributions per day/period</h2>
                             </Jumbotron>
                         </button>
@@ -223,7 +214,7 @@ function MyHome () {
                 <Col sm={3} style={{marginBottom:30}}>
                     <LinkContainer to="/CreateQuestion" >
                         <button>
-                            <Jumbotron>
+                            <Jumbotron style={{margin:0}}>
                                 <h2>Ask a Question</h2>
                             </Jumbotron>
                         </button>
@@ -232,7 +223,7 @@ function MyHome () {
                 <Col sm={3}>
                     <LinkContainer to="/AnswerQuestion" >
                         <button>
-                            <Jumbotron>
+                            <Jumbotron style={{margin:0}}>
                                 <h2>Answer a Question</h2>
                             </Jumbotron>
                         </button>
@@ -243,10 +234,27 @@ function MyHome () {
     );
 }
 
+function ContributionsPerTag (props) {
+    return(
+        <Container>
+            <Card>
+                <Card.Body>
+                    <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">asked 1 hour ago by jimmy</Card.Subtitle>
+                    <Card.Link><Link name='#tag1' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
+                </Card.Body>
+                <Card.Footer>
+                    <small className="text-muted">Last updated 3 minutes ago</small>
+                </Card.Footer>
+            </Card>
+        </Container>
+    )
+}
+
 function CreateQuestion () {
     return (
         <Row className="justify-content-md-center" style={{marginBottom:30, marginTop:30}}>
-            <Col xs={8}>
+            <Col sm={8}>
                 <h2>Ask a Question</h2>
                 <br />
                 <Form>
@@ -285,7 +293,7 @@ function CreateQuestion () {
 function AnswerQuestion () {
     return (
         <Row className="justify-content-md-center" style={{marginBottom:30, marginTop:30}}>
-            <Col xs={8}>
+            <Col sm={8}>
                 <h2>Answer a Question</h2>
                 <br />
                 <Form>
@@ -350,8 +358,16 @@ function Signup (props) {
                     </Form.Group>
 
                     <ButtonGroup>
-                        <Button variant="primary" type="button" name="isSigned" onClick={ (e) => props.onClick(e)}>Sign Up</Button>
-                        <Button variant="secondary" type="submit">Cancel</Button>
+                        <LinkContainer to="/">
+                            <Button variant="primary" type="button" name="isSigned" onClick={ (e) => props.onClick(e)}>
+                                Sign Up
+                            </Button>
+                        </LinkContainer>
+                        <LinkContainer to="/">
+                            <Button variant="secondary" type="submit">
+                                Cancel
+                            </Button>
+                        </LinkContainer>
                     </ButtonGroup>
                 </Form>
             </Col>
@@ -379,12 +395,16 @@ function Signin (props) {
                         <Form.Control type="password" placeholder="Password" name="password" onChange={(e) => props.onChange(e)}/>
                     </Form.Group>
                     <ButtonGroup >
-                        <Button variant="primary" type="button" name="isSigned" onClick={ (e) => props.onClick(e)}>
-                            Log In
-                        </Button>
-                        <Button variant="secondary" type="submit">
-                            Cancel
-                        </Button>
+                        <LinkContainer to="/">
+                            <Button variant="primary" type="button" name="isSigned" onClick={ (e) => props.onClick(e)}>
+                                Log In
+                            </Button>
+                        </LinkContainer>
+                        <LinkContainer to="/">
+                            <Button variant="secondary" type="submit">
+                                Cancel
+                            </Button>
+                        </LinkContainer>
                     </ButtonGroup>
                 </Form>
             </Col>
@@ -401,7 +421,7 @@ class App extends React.Component{
             password: "pass",
             tag: undefined,
             questionActive: undefined,
-            history: Array(4).fill(null),
+            history: [],
         };
     }
 
@@ -413,27 +433,52 @@ class App extends React.Component{
         });
     };
 
-    handleTagButton = (event) => this.setState({tag: event.target.name});
+    handleHomeButton = () => this.setState({history:[]});
 
-    handleQuestionsPerDayButton = () => this.setState({tag: undefined});
+    handleMyHomeLink = () => this.setState({history:["myHome"]});
 
-    handleQuestionLink = (event) => this.setState({questionActive: event.target.id});
+    handleTagsButton = () => this.setState({history:["Tags"]})
+
+    handleTagButton = (event) => {
+        const name = event.target.name;
+        return(
+            (name == "") ?
+                this.setState({history:["Tags",this.state.tag]})
+            :
+                this.setState({tag: name, history:["Tags",name]})
+        )
+    }
+
+    handleQuestionsPerDayButton = () => this.setState({tag: undefined, history:["Questions"]});
+
+    handleQuestionLink = (event) => {
+        const history = this.state.history.slice();
+        const targetId = event.target.id;
+        if (history[0] === "Tags") {
+            history.push("Question"+targetId)
+            this.setState({questionActive: targetId, history});
+        }
+        else
+            this.setState({questionActive: targetId, history: ["Questions","Question"+targetId]});
+    }
 
     QuestionHeader = () => {
         return(
             <Container  style={{marginTop:30, marginBottom:30}}>
                 <h2>Question {this.state.questionActive}</h2><br />
-                <Question />
+                <Question
+                    onClickTag={(event) => this.handleTagButton(event)}
+                />
             </Container>
         )
     }
 
-    QuestionsPerTimeHeader = () => {
+    QuestionsPerDayHeader = () => {
         return(
             (this.state.tag) ?
                 <Container  style={{marginTop:30, marginBottom:30}}>
-                    <h2>Questions with #{this.state.tag}</h2><br />
-                    <QuestionsPerTime
+                    <h2>Questions with {this.state.tag}</h2><br />
+                    <QuestionsPerDay
                         onClickQuestion={(event) => this.handleQuestionLink(event)}
                         onClickTag={(event) => this.handleTagButton(event)}
                     />
@@ -441,7 +486,7 @@ class App extends React.Component{
                 :
                 <Container  style={{marginTop:30, marginBottom:30}}>
                     <h2>Recent questions</h2><br />
-                    <QuestionsPerTime
+                    <QuestionsPerDay
                         onClickQuestion={(event) => this.handleQuestionLink(event)}
                         onClickTag={(event) => this.handleTagButton(event)}
                     />
@@ -453,7 +498,7 @@ class App extends React.Component{
         return (
             (this.state.isSigned === false) ?
                 <Navbar bg="dark" variant="dark" className="justify-content-between">
-                    <LinkContainer to="/" ><Button variant="outline-secondary">Home</Button></LinkContainer>
+                    <LinkContainer to="/" ><Button onClick={()=> this.handleHomeButton()} variant="outline-secondary">Home</Button></LinkContainer>
                     <Nav>
                         <LinkContainer id="sign_up_btn" to="/sign_up">
                             <Button variant="outline-secondary">Signup !</Button>
@@ -465,9 +510,9 @@ class App extends React.Component{
                 </Navbar>
                 :
                 <Navbar bg="dark" expand="lg" variant="dark" className="justify-content-between">
-                    <LinkContainer to="/" ><Button variant="outline-secondary">Home</Button></LinkContainer>
+                    <LinkContainer to="/" ><Button onClick={()=> this.handleHomeButton()} variant="outline-secondary" >Home</Button></LinkContainer>
                     <Nav>
-                        <Navbar.Text>Signed in as: <LinkContainer to="/myHome" ><Link>{this.state.email}</Link></LinkContainer></Navbar.Text>
+                        <Navbar.Text>Signed in as: <LinkContainer to="/myHome" onClick={()=> this.handleMyHomeLink()}><Link>{this.state.email}</Link></LinkContainer></Navbar.Text>
                         <LinkContainer id="sign_out_btn" to="/">
                             <Button variant="outline-secondary" name="isSigned" onClick={() => this.handleChange()}>Sign out</Button>
                         </LinkContainer>
@@ -477,11 +522,73 @@ class App extends React.Component{
     }
 
     CustomBreadcrump = () => {
-        return (
-            <Breadcrumb>
-                <Breadcrumb.Item></Breadcrumb.Item>
-            </Breadcrumb>
-        )
+        const history = this.state.history.slice();
+        if (history == ""){
+            return(
+                <Breadcrumb>
+                    <Breadcrumb.Item></Breadcrumb.Item>
+                </Breadcrumb>
+            )
+        }
+        else if (history == "Questions") {
+            return(
+                <Breadcrumb>
+                    <Breadcrumb.Item></Breadcrumb.Item>
+                    <Breadcrumb.Item active>Questions</Breadcrumb.Item>
+                </Breadcrumb>
+            )
+        }
+        else if (history[0] == "Questions" && history.length == 2) {
+            return(
+                <Breadcrumb>
+                    <Breadcrumb.Item></Breadcrumb.Item>
+                    <LinkContainer to="/QuestionsPerDay" onClick={() => this.handleQuestionsPerDayButton()}><Breadcrumb.Item>Questions</Breadcrumb.Item></LinkContainer>
+                    <BreadcrumbItem active>{history[1]}</BreadcrumbItem>
+                </Breadcrumb>
+            )
+        }
+        else if (history == "Tags") {
+            return(
+                <Breadcrumb>
+                    <Breadcrumb.Item></Breadcrumb.Item>
+                    <Breadcrumb.Item active>Tags</Breadcrumb.Item>
+                </Breadcrumb>
+            )
+        }
+        else if (history[0] == "Tags" && history.length == 2) {
+            return(
+                <Breadcrumb>
+                    <Breadcrumb.Item></Breadcrumb.Item>
+                    <LinkContainer to="/Tags" onClick={() => this.handleTagsButton()}><Breadcrumb.Item>Tags</Breadcrumb.Item></LinkContainer>
+                    <BreadcrumbItem active>{history[1]}</BreadcrumbItem>
+                </Breadcrumb>
+            )
+        }
+        else if (history[0] == "Tags" && history.length == 3) {
+            return(
+                <Breadcrumb>
+                    <Breadcrumb.Item></Breadcrumb.Item>
+                    <LinkContainer to="/Tags" onClick={() => this.handleTagsButton()}><Breadcrumb.Item>Tags</Breadcrumb.Item></LinkContainer>
+                    <LinkContainer to="/QuestionsPerDay" onClick={(e) => this.handleTagButton(e)}><BreadcrumbItem>{history[1]}</BreadcrumbItem></LinkContainer>
+                    <BreadcrumbItem active>{history[2]}</BreadcrumbItem>
+                </Breadcrumb>
+            )
+        }
+        else if (history == "myHome") {
+            return(
+                <Breadcrumb>
+                    <Breadcrumb.Item active>My Home</Breadcrumb.Item>
+                </Breadcrumb>
+            )
+        }
+        else {
+            alert("this.state.history="+history)
+            return(
+                <Breadcrumb>
+                    <Breadcrumb.Item>Fail</Breadcrumb.Item>
+                </Breadcrumb>
+            )
+        }
     }
 
     render(){
@@ -498,18 +605,19 @@ class App extends React.Component{
                         <Route path="/myHome">
                             <MyHome />
                         </Route>
+                        <Route path="/Contributions">
+                            <MyHome />
+                        </Route>
                         <Route path="/Tags">
                             <Tags
                                 onClick={(event) => this.handleTagButton(event)}
                             />
                         </Route>
-                        <Route path="/QuestionsPerTime">
-                            <this.QuestionsPerTimeHeader />
+                        <Route path="/QuestionsPerDay">
+                            <this.QuestionsPerDayHeader />
                         </Route>
                         <Route path="/Question">
-                            <this.QuestionHeader
-                                onClickTag={(event) => this.handleTagButton(event)}
-                            />
+                            <this.QuestionHeader />
                         </Route>
                         <Route path="/CreateQuestion">
                             <CreateQuestion />
@@ -531,7 +639,8 @@ class App extends React.Component{
                         </Route>
                         <Route path="/">
                             <Home
-                                onClick={() => this.handleQuestionsPerDayButton()}
+                                onClickQuestionsPerDay={() => this.handleQuestionsPerDayButton()}
+                                onClickTags={() => this.handleTagsButton()}
                             />
                         </Route>
                     </Switch>
