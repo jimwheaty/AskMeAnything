@@ -21,7 +21,7 @@ function Home (props) {
                 <Col sm={3} style={{marginBottom:30}}>
                     <LinkContainer to="/Tags" >
                         <button>
-                            <Jumbotron>
+                            <Jumbotron style={{margin:0}}>
                                 <h2>Questions per #tag</h2>
                             </Jumbotron>
                         </button>
@@ -30,8 +30,8 @@ function Home (props) {
                 <Col sm={3} style={{marginBottom:30}}>
                     <LinkContainer to="/QuestionsPerTime" >
                         <button onClick={() => props.onClick()}>
-                            <Jumbotron>
-                                <h2>Questions per day/period</h2>
+                            <Jumbotron style={{margin:0}}>
+                                <h2>Questions per day</h2>
                             </Jumbotron>
                         </button>
                     </LinkContainer>
@@ -39,7 +39,7 @@ function Home (props) {
                 <Col sm={3} style={{marginBottom:30}}>
                     <LinkContainer to="/CreateQuestion" >
                         <button>
-                            <Jumbotron>
+                            <Jumbotron style={{margin:0}}>
                                 <h2>Ask a Question</h2>
                             </Jumbotron>
                         </button>
@@ -48,7 +48,7 @@ function Home (props) {
                 <Col sm={3}>
                     <LinkContainer to="/AnswerQuestion" >
                         <button>
-                            <Jumbotron>
+                            <Jumbotron style={{margin:0}}>
                                 <h2>Answer a Question</h2>
                             </Jumbotron>
                         </button>
@@ -401,6 +401,7 @@ class App extends React.Component{
             password: "pass",
             tag: undefined,
             questionActive: undefined,
+            history: Array(4).fill(null),
         };
     }
 
@@ -451,15 +452,8 @@ class App extends React.Component{
     CustomNavbar = () => {
         return (
             (this.state.isSigned === false) ?
-                <Navbar bg="dark" expand="lg" variant="dark" className="justify-content-between">
+                <Navbar bg="dark" variant="dark" className="justify-content-between">
                     <LinkContainer to="/" ><Button variant="outline-secondary">Home</Button></LinkContainer>
-                    <Breadcrumb>
-                        <Breadcrumb.Item active>Home</Breadcrumb.Item>
-                        <Breadcrumb.Item href="https://getbootstrap.com/docs/4.0/components/breadcrumb/">
-                            Library
-                        </Breadcrumb.Item>
-                        <Breadcrumb.Item active>Data</Breadcrumb.Item>
-                    </Breadcrumb>
                     <Nav>
                         <LinkContainer id="sign_up_btn" to="/sign_up">
                             <Button variant="outline-secondary">Signup !</Button>
@@ -485,11 +479,7 @@ class App extends React.Component{
     CustomBreadcrump = () => {
         return (
             <Breadcrumb>
-                <Breadcrumb.Item active href="/">Home</Breadcrumb.Item>
-                <Breadcrumb.Item href="https://getbootstrap.com/docs/4.0/components/breadcrumb/">
-                    Library
-                </Breadcrumb.Item>
-                <Breadcrumb.Item active>Data</Breadcrumb.Item>
+                <Breadcrumb.Item></Breadcrumb.Item>
             </Breadcrumb>
         )
     }
