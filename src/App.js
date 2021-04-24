@@ -154,7 +154,7 @@ function QuestionsPerTime(props) {
 
 function Question (props) {
     return(
-        <Container style={{marginTop:30, marginBottom:30}}>
+        <Container>
             <Card>
                 <Card.Body>
                     <Card.Title>Η πρώτη μου ερώτηση</Card.Title>
@@ -327,7 +327,7 @@ function AnswerQuestion () {
 function Signup (props) {
     return(
         <Row className="justify-content-md-center" style={{marginBottom:30, marginTop:30}}>
-            <Col xs={4}>
+            <Col sm={4}>
                 <h2>Sign Up</h2>
                 <br />
                 <Form>
@@ -362,7 +362,7 @@ function Signup (props) {
 function Signin (props) {
     return(
         <Row className="justify-content-md-center" style={{marginBottom:30, marginTop:30}}>
-            <Col xs={4}>
+            <Col sm={3}>
                 <h2>Log In</h2>
                 <br />
                 <Form>
@@ -453,6 +453,13 @@ class App extends React.Component{
             (this.state.isSigned === false) ?
                 <Navbar bg="dark" expand="lg" variant="dark" className="justify-content-between">
                     <LinkContainer to="/" ><Button variant="outline-secondary">Home</Button></LinkContainer>
+                    <Breadcrumb>
+                        <Breadcrumb.Item active>Home</Breadcrumb.Item>
+                        <Breadcrumb.Item href="https://getbootstrap.com/docs/4.0/components/breadcrumb/">
+                            Library
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item active>Data</Breadcrumb.Item>
+                    </Breadcrumb>
                     <Nav>
                         <LinkContainer id="sign_up_btn" to="/sign_up">
                             <Button variant="outline-secondary">Signup !</Button>
@@ -510,7 +517,7 @@ class App extends React.Component{
                             <this.QuestionsPerTimeHeader />
                         </Route>
                         <Route path="/Question">
-                            <Question
+                            <this.QuestionHeader
                                 onClickTag={(event) => this.handleTagButton(event)}
                             />
                         </Route>
