@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React from 'react';
+import React, {PureComponent} from 'react';
 import {
     Breadcrumb, BreadcrumbItem,
     Button, ButtonGroup, Card, CardDeck,
@@ -9,10 +9,14 @@ import {
     FormControl,
     Jumbotron, Nav,
     Navbar,
-    Row
+    Row,
+    Accordion,
+    DropdownButton
 } from "react-bootstrap";
 import {MemoryRouter, Switch, Route, Link} from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
+import { VictoryChart, VictoryAxis, VictoryTheme, VictoryPie, VictoryLine } from 'victory'
+
 
 function Home (props) {
     return(
@@ -31,7 +35,7 @@ function Home (props) {
                     <LinkContainer to="/QuestionsPerDay" >
                         <button onClick={() => props.onClickQuestionsPerDay()}>
                             <Jumbotron style={{margin:0}}>
-                                <h2>Recent Questions</h2>
+                                <h2>Questions per day/period</h2>
                             </Jumbotron>
                         </button>
                     </LinkContainer>
@@ -60,9 +64,40 @@ function Home (props) {
 }
 
 function Tags(props) {
+
     return(
         <Container style={{marginTop:30, marginBottom:30}}>
             <h2>Most popular Tags</h2><br />
+            <Container>
+                <Accordion>
+                    <Card style={{width:400}}>
+                        <Card.Header>
+                            <Accordion.Toggle as={Button} variant="link" eventKey="0">
+                                Graph !
+                            </Accordion.Toggle>
+                        </Card.Header>
+                        <Accordion.Collapse eventKey="0">
+                            <Card.Body>
+                                <VictoryPie
+                                    data={[
+                                        { x: "Tag1", y: 35 },
+                                        { x: "Tag2", y: 40 },
+                                        { x: "Tag3", y: 55 },
+                                        { x: "Tag4", y: 25 },
+                                        { x: "Tag5", y: 15 }
+                                    ]}
+                                    labels={({ datum }) => `${datum.x}: ${datum.y}`}
+                                    labelPlacement={({ index }) => index
+                                        ? "parallel"
+                                        : "vertical"
+                                    }
+                                    padding={100}
+                                />
+                            </Card.Body>
+                        </Accordion.Collapse>
+                    </Card>
+                </Accordion>
+            </Container> <br/>
             <CardDeck>
                 <Card body style={{minWidth:200}}>
                     <LinkContainer to="/QuestionsPerDay" >
@@ -118,6 +153,121 @@ function Tags(props) {
 function QuestionsPerDay(props) {
     return(
         <Container>
+            <Accordion>
+                <Card style={{width:400}}>
+                    <Card.Header>
+                        <Accordion.Toggle as={Button} variant="link" eventKey="0">
+                            Questions per day Graph !
+                        </Accordion.Toggle>
+                    </Card.Header>
+                    <Accordion.Collapse eventKey="0">
+                        <Card.Body>
+                            <Form>
+                                <Form.Group controlId="exampleForm.SelectCustom">
+                                    <Form.Label>Select a month !</Form.Label>
+                                    <Form.Control as="select" custom>
+                                        <option>Ιανουάριος</option>
+                                        <option>Φεβρουάριος</option>
+                                        <option>Μάρτιος</option>
+                                        <option>Απρίλιος</option>
+                                        <option>Μάιος</option>
+                                        <option>Ιούνιος</option>
+                                        <option>Ιούλιος</option>
+                                        <option>Αύγουστος</option>
+                                        <option>Σεπτέμβριος</option>
+                                        <option>Οκτώμβριος</option>
+                                        <option>Νοέμβριος</option>
+                                        <option>Δεκέμβριος</option>
+                                    </Form.Control>
+                                </Form.Group>
+                            </Form>
+                            <VictoryChart
+                                theme={VictoryTheme.material}
+                                >
+                                <VictoryAxis crossAxis
+                                             width={400}
+                                             height={400}
+                                             domain={[0, 31]}
+                                             label="day of the month"
+                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                />
+                                <VictoryAxis dependentAxis crossAxis
+                                             width={400}
+                                             height={400}
+                                             domain={[0, 10]}
+                                             label="Number of Questions"
+                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                />
+                                <VictoryLine
+                                    style={{
+                                        data: { stroke: "#c43a31" },
+                                        parent: { border: "1px solid #ccc"}
+                                    }}
+                                    data={[
+                                        { x: 1, y: 2 },
+                                        { x: 2, y: 3 },
+                                        { x: 3, y: 5 },
+                                        { x: 4, y: 4 },
+                                        { x: 5, y: 7 }
+                                    ]}
+                                />
+                            </VictoryChart>
+                        </Card.Body>
+                    </Accordion.Collapse>
+                </Card>
+                <Card style={{width:400}}>
+                    <Card.Header>
+                        <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                            Questions per month Graph !
+                        </Accordion.Toggle>
+                    </Card.Header>
+                    <Accordion.Collapse eventKey="1">
+                        <Card.Body>
+                            <Form>
+                                <Form.Group controlId="exampleForm.SelectCustom">
+                                    <Form.Label>Select a year</Form.Label>
+                                    <Form.Control as="select" custom>
+                                        <option>2021</option>
+                                        <option>2020</option>
+                                        <option>2019</option>
+                                    </Form.Control>
+                                </Form.Group>
+                            </Form>
+                            <VictoryChart
+                                theme={VictoryTheme.material}
+                            >
+                                <VictoryAxis crossAxis
+                                             width={400}
+                                             height={400}
+                                             domain={[0, 12]}
+                                             label="month of the year"
+                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                />
+                                <VictoryAxis dependentAxis crossAxis
+                                             width={400}
+                                             height={400}
+                                             domain={[0, 10]}
+                                             label="Number of Questions"
+                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                />
+                                <VictoryLine
+                                    style={{
+                                        data: { stroke: "#c43a31" },
+                                        parent: { border: "1px solid #ccc"}
+                                    }}
+                                    data={[
+                                        { x: 1, y: 2 },
+                                        { x: 2, y: 3 },
+                                        { x: 3, y: 5 },
+                                        { x: 4, y: 4 },
+                                        { x: 5, y: 7 }
+                                    ]}
+                                />
+                            </VictoryChart>
+                        </Card.Body>
+                    </Accordion.Collapse>
+                </Card>
+            </Accordion> <br/>
             <Card>
                 <Card.Body>
                     <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
