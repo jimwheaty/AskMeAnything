@@ -1,13 +1,9 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Answer } from './answer/answer.model';
 import { AnswerModule } from './answer/answer.module';
-import { Question } from './question/question.model';
 import { QuestionModule } from './question/question.module';
-import { User } from './users/users.model';
 import { UsersModule } from './users/users.module';
 import { TagsModule } from './tags/tags.module';
-import { Tag } from './tags/tags.model';
 const db = require('../db.config.js');
 
 const sequelizeModule = SequelizeModule.forRoot({
