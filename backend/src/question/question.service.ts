@@ -36,6 +36,9 @@ export class QuestionService {
 
   async findPerUser(userId: number, limit: string): Promise<Question[]> {
 
+    if (!userId) throw new BadRequestException('Missing userId');
+    if (!limit) limit = 'all';
+
     const questions = await this.questionModel.findAll({
       where: { userId },
     })
@@ -49,7 +52,10 @@ export class QuestionService {
 
 
 
-  async findPerTag(tag: string, limit: string) {
+  async findPerTag(tag: string, limit: string): Promise<Question[]> {
+
+    if (!tag) throw new BadRequestException('Missing tag');
+    if (!limit) limit = 'all';
 
     const questionsPerTag = await this.questionModel.findAll({
       include: {
