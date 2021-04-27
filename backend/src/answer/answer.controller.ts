@@ -22,6 +22,11 @@ export class AnswerController {
     return this.answerService.findPerUser(userId, limit);
   }
 
+  @Get('per-question')
+  findPerQuestion(@Query('questionId') questionId: number) {
+    return this.answerService.findPerQuestion(questionId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: number) {
     return this.answerService.findOne(id);
