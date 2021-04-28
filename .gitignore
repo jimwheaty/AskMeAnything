@@ -1,3 +1,4 @@
 backend/node_modules/
 backend/db.config.js
 backend/dist/
+backend/src/auth/constants.ts
