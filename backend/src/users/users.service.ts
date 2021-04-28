@@ -4,6 +4,7 @@ import { User } from './users.model';
 
 @Injectable()
 export class UsersService {
+
     constructor(
         @InjectModel(User)
         private userModel: typeof User
@@ -20,6 +21,17 @@ export class UsersService {
         const user = await this.userModel.findByPk(id);
         if (!user) {
             throw new NotFoundException(`User with id ${id} not found!`);
+        }
+        return user;
+    }
+
+    async findByUsername(username: string): Promise<User> {
+        const user = await this.userModel.findOne({
+            where: { username },
+            raw: true
+        });
+        if (!user) {
+            throw new NotFoundException(`User with username ${username} not found!`);
         }
         return user;
     }
