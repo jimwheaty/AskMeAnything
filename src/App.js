@@ -11,7 +11,8 @@ import {
     Navbar,
     Row,
     Accordion,
-    DropdownButton
+    DropdownButton,
+    InputGroup
 } from "react-bootstrap";
 import {MemoryRouter, Switch, Route, Link} from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -316,7 +317,7 @@ function Question (props) {
                     <small className="text-muted">asked 1 hour ago by jimmy</small>
                 </Card.Footer>
             </Card>
-            <br /><h4>2 Answers</h4><br/>
+            <br /><h4>2 Answers:</h4>
             <Card>
                 <Card.Body>
                     <Card.Title>Η πρώτη μου απάντηση!</Card.Title>
@@ -401,46 +402,7 @@ function ContributionsPerTag (props) {
     )
 }
 
-function CreateQuestion () {
-    return (
-        <Row className="justify-content-md-center" style={{marginBottom:30, marginTop:30}}>
-            <Col sm={8}>
-                <h2>Ask a Question</h2>
-                <br />
-                <Form>
-                    <Form.Group>
-                        <Form.Label>Question Title</Form.Label>
-                        <Form.Control type="text"/>
-                    </Form.Group>
-
-                    <Form.Group controlId="exampleForm.ControlTextarea1">
-                        <Form.Label>Question Text</Form.Label>
-                        <Form.Control as="textarea" rows={3} />
-                    </Form.Group>
-
-                    <Form.Group>
-                        <Form.Label>Tag</Form.Label>
-                        <Form.Control as="select">
-                            <option value="0">Choose...</option>
-                            <option value="1">#One</option>
-                            <option value="2">#Two</option>
-                            <option value="3">#Three</option>
-                        </Form.Control>
-                    </Form.Group>
-
-                    <Form.Group>
-                        <ButtonGroup>
-                            <Button variant="primary" type="button">Submit</Button>
-                            <Button variant="secondary" type="submit">Cancel</Button>
-                        </ButtonGroup>
-                    </Form.Group>
-                </Form>
-            </Col>
-        </Row>
-    );
-}
-
-function AnswerQuestion () {
+function AnswerQuestion (props) {
     return (
         <Row className="justify-content-md-center" style={{marginBottom:30, marginTop:30}}>
             <Col sm={8}>
@@ -448,29 +410,19 @@ function AnswerQuestion () {
                 <br />
                 <Form>
                     <Form.Group>
-                        <Form.Label>Question Title</Form.Label>
-                        <Form.Control as="select">
+                        <Form.Label>Choose Question Title</Form.Label>
+                        <Form.Control as="select" onChange={(e) => props.onChangeQuestionTitle(e)}>
                             <option value="0">Choose...</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                            <option value="1">Η πρώτη μου ερώτηση</option>
+                            <option value="2">Η πρώτη μου ερώτηση</option>
+                            <option value="3">Η πρώτη μου ερώτηση</option>
                         </Form.Control>
-                    </Form.Group>
-
-                    <h4>
-                        *TODO*
                         <br/>
-                        Keywords - read only
+                        <Question />
                         <br />
-                        Other answer can be shown here
-                    </h4>
-
-                    <Form.Group controlId="exampleForm.ControlTextarea1">
                         <Form.Label>Your Answer</Form.Label>
                         <Form.Control as="textarea" rows={3} />
-                    </Form.Group>
-
-                    <Form.Group>
+                        <br/>
                         <ButtonGroup>
                             <Button variant="primary" type="button">Submit</Button>
                             <Button variant="secondary" type="submit">Cancel</Button>
@@ -572,8 +524,11 @@ class App extends React.Component{
             tag: undefined,
             questionActive: undefined,
             history: [],
+            createTag: false,
         };
     }
+
+    MySelect = () => <span>Test</span>
 
     handleChange = (event) => {
         const target = event.target;
@@ -603,14 +558,17 @@ class App extends React.Component{
 
     handleQuestionLink = (event) => {
         const history = this.state.history.slice();
-        const targetId = event.target.id;
+        const target = event.target;
+        let id = (target.id) ? target.id : target.value;
         if (history[0] === "Tags") {
-            history.push("Question"+targetId)
-            this.setState({questionActive: targetId, history});
+            history.push("Question"+id)
+            this.setState({questionActive: id, history});
         }
         else
-            this.setState({questionActive: targetId, history: ["Questions","Question"+targetId]});
+            this.setState({questionActive: id, history: ["Questions","Question"+id]});
     }
+
+    handleCreateTagRadio = () => this.setState({createTag: !this.state.createTag});
 
     QuestionHeader = () => {
         return(
@@ -619,6 +577,8 @@ class App extends React.Component{
                 <Question
                     onClickTag={(event) => this.handleTagButton(event)}
                 />
+                <br />
+                <LinkContainer to="/AnswerQuestion"><Button>Answer!</Button></LinkContainer>
             </Container>
         )
     }
@@ -741,6 +701,87 @@ class App extends React.Component{
         }
     }
 
+    CreateQuestion = () => {
+        return (
+            (this.state.createTag) ?
+                <Row className="justify-content-md-center"><Col sm={8}>
+                    <h2>Ask a Question</h2>
+                    <br />
+                    <Form>
+                        <Form.Group>
+                            <Form.Label>Question Title</Form.Label>
+                            <Form.Control type="text"/>
+                            <br />
+                            <Form.Label>Question Text</Form.Label>
+                            <Form.Control as="textarea" rows={3} />
+                            <br />
+                            <Form.Label>Tag</Form.Label>
+                            <Form.Control as="select" disabled>
+                                <option value="0">Choose...</option>
+                                <option value="1">#One</option>
+                                <option value="2">#Two</option>
+                                <option value="3">#Three</option>
+                            </Form.Control>
+                        </Form.Group>
+                        <Form.Group controlId="formHorizontalCheck">
+                            <Form.Check onClick={() => this.handleCreateTagRadio()} label="or create your own #tag !" />
+                        </Form.Group>
+                        <Form.Group>
+                            <InputGroup>
+                                <InputGroup.Prepend>
+                                    <InputGroup.Text>#</InputGroup.Text>
+                                </InputGroup.Prepend>
+                                <FormControl />
+                            </InputGroup>
+                            <br />
+                            <ButtonGroup>
+                                <Button variant="primary" type="button">Submit</Button>
+                                <Button variant="secondary" type="submit">Cancel</Button>
+                            </ButtonGroup>
+                        </Form.Group>
+                    </Form>
+                </Col></Row>
+                :
+                <Row className="justify-content-md-center"><Col sm={8}>
+                    <h2>Ask a Question</h2>
+                    <br />
+                    <Form>
+                        <Form.Group>
+                            <Form.Label>Question Title</Form.Label>
+                            <Form.Control type="text"/>
+                            <br />
+                            <Form.Label>Question Text</Form.Label>
+                            <Form.Control as="textarea" rows={3} />
+                            <br />
+                            <Form.Label>Tag</Form.Label>
+                            <Form.Control as="select">
+                                <option value="0">Choose...</option>
+                                <option value="1">#One</option>
+                                <option value="2">#Two</option>
+                                <option value="3">#Three</option>
+                            </Form.Control>
+                        </Form.Group>
+                        <Form.Group controlId="formHorizontalCheck">
+                            <Form.Check onClick={() => this.handleCreateTagRadio()} label="or create your own #tag !" />
+                        </Form.Group>
+                        <Form.Group>
+                            <InputGroup>
+                                <InputGroup.Prepend>
+                                    <InputGroup.Text>#</InputGroup.Text>
+                                </InputGroup.Prepend>
+                                <FormControl disabled />
+                            </InputGroup>
+                            <br />
+                            <ButtonGroup>
+                                <Button variant="primary" type="button">Submit</Button>
+                                <Button variant="secondary" type="submit">Cancel</Button>
+                            </ButtonGroup>
+                        </Form.Group>
+                    </Form>
+                </Col></Row>
+        );
+    }
+
     render(){
         return (
             <MemoryRouter>
@@ -770,10 +811,12 @@ class App extends React.Component{
                             <this.QuestionHeader />
                         </Route>
                         <Route path="/CreateQuestion">
-                            <CreateQuestion />
+                            <this.CreateQuestion/>
                         </Route>
                         <Route path="/AnswerQuestion">
-                            <AnswerQuestion />
+                            <AnswerQuestion
+                                onChangeQuestionTitle={(e) => this.handleQuestionLink(e)}
+                            />
                         </Route>
                         <Route path="/sign_up">
                             <Signup
