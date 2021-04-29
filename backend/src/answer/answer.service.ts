@@ -18,7 +18,7 @@ export class AnswerService {
 
   create(newAnswer: Answer): Promise<Answer> {
     if (!newAnswer.body) {
-      throw new BadRequestException('Missing title of the answer');
+      throw new BadRequestException('Cannot create an empty answer');
     }
     return this.answerModel.create(newAnswer);
   }
