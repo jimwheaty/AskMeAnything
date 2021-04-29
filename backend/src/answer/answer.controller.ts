@@ -1,14 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request } from '@nestjs/common';
 import { AnswerService } from './answer.service';
 import { Answer } from './answer.model';
+import { AuthGuard } from '@nestjs/passport';
 
 
 @Controller('answers')
 export class AnswerController {
   constructor(private readonly answerService: AnswerService) {}
 
+  @UseGuards(AuthGuard('jwt'))
   @Post()
-  create(@Body() newAnswer: Answer) {
+  create(@Body() newAnswer: Answer, @Request() req) {
+    newAnswer.userId = req.user.id;
     return this.answerService.create(newAnswer);
   }
 
