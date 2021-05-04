@@ -12,7 +12,7 @@ import {
     Row,
     Accordion,
     DropdownButton,
-    InputGroup
+    InputGroup, Alert, CardGroup
 } from "react-bootstrap";
 import {MemoryRouter, Switch, Route, Link} from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -43,7 +43,7 @@ function Home (props) {
                 </Col>
                 <Col sm={3} style={{marginBottom:30}}>
                     <LinkContainer to="/CreateQuestion" >
-                        <button>
+                        <button onClick={() => props.onClickCreateQuestion()}>
                             <Jumbotron style={{margin:0}}>
                                 <h2>Ask a Question</h2>
                             </Jumbotron>
@@ -52,7 +52,7 @@ function Home (props) {
                 </Col>
                 <Col sm={3}>
                     <LinkContainer to="/AnswerQuestion" >
-                        <button>
+                        <button onClick={() => props.onClickAnswerQuestion()}>
                             <Jumbotron style={{margin:0}}>
                                 <h2>Answer a Question</h2>
                             </Jumbotron>
@@ -157,39 +157,30 @@ function QuestionsPerDay(props) {
             <Accordion>
                 <Card style={{width:400}}>
                     <Card.Header>
-                        <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                            Questions per day Graph !
+                        <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                            Questions per month Graph !
                         </Accordion.Toggle>
                     </Card.Header>
-                    <Accordion.Collapse eventKey="0">
+                    <Accordion.Collapse eventKey="1">
                         <Card.Body>
                             <Form>
-                                <Form.Group controlId="exampleForm.SelectCustom">
-                                    <Form.Label>Select a month !</Form.Label>
+                                <Form.Group>
+                                    <Form.Label>Select a year</Form.Label>
                                     <Form.Control as="select" custom>
-                                        <option>Ιανουάριος</option>
-                                        <option>Φεβρουάριος</option>
-                                        <option>Μάρτιος</option>
-                                        <option>Απρίλιος</option>
-                                        <option>Μάιος</option>
-                                        <option>Ιούνιος</option>
-                                        <option>Ιούλιος</option>
-                                        <option>Αύγουστος</option>
-                                        <option>Σεπτέμβριος</option>
-                                        <option>Οκτώμβριος</option>
-                                        <option>Νοέμβριος</option>
-                                        <option>Δεκέμβριος</option>
+                                        <option>2021</option>
+                                        <option>2020</option>
+                                        <option>2019</option>
                                     </Form.Control>
                                 </Form.Group>
                             </Form>
                             <VictoryChart
                                 theme={VictoryTheme.material}
-                                >
+                            >
                                 <VictoryAxis crossAxis
                                              width={400}
                                              height={400}
-                                             domain={[0, 31]}
-                                             label="day of the month"
+                                             domain={[0, 12]}
+                                             label="month of the year"
                                              style={{axisLabel: {fontSize: 20, padding: 30}}}
                                 />
                                 <VictoryAxis dependentAxis crossAxis
@@ -218,19 +209,36 @@ function QuestionsPerDay(props) {
                 </Card>
                 <Card style={{width:400}}>
                     <Card.Header>
-                        <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                            Questions per month Graph !
+                        <Accordion.Toggle as={Button} variant="link" eventKey="0">
+                            Questions per day Graph !
                         </Accordion.Toggle>
                     </Card.Header>
-                    <Accordion.Collapse eventKey="1">
+                    <Accordion.Collapse eventKey="0">
                         <Card.Body>
                             <Form>
-                                <Form.Group controlId="exampleForm.SelectCustom">
+                                <Form.Group>
                                     <Form.Label>Select a year</Form.Label>
                                     <Form.Control as="select" custom>
                                         <option>2021</option>
                                         <option>2020</option>
                                         <option>2019</option>
+                                    </Form.Control>
+                                </Form.Group>
+                                <Form.Group controlId="exampleForm.SelectCustom">
+                                    <Form.Label>and a month !</Form.Label>
+                                    <Form.Control as="select" custom>
+                                        <option>Ιανουάριος</option>
+                                        <option>Φεβρουάριος</option>
+                                        <option>Μάρτιος</option>
+                                        <option>Απρίλιος</option>
+                                        <option>Μάιος</option>
+                                        <option>Ιούνιος</option>
+                                        <option>Ιούλιος</option>
+                                        <option>Αύγουστος</option>
+                                        <option>Σεπτέμβριος</option>
+                                        <option>Οκτώμβριος</option>
+                                        <option>Νοέμβριος</option>
+                                        <option>Δεκέμβριος</option>
                                     </Form.Control>
                                 </Form.Group>
                             </Form>
@@ -240,8 +248,8 @@ function QuestionsPerDay(props) {
                                 <VictoryAxis crossAxis
                                              width={400}
                                              height={400}
-                                             domain={[0, 12]}
-                                             label="month of the year"
+                                             domain={[0, 31]}
+                                             label="day of the month"
                                              style={{axisLabel: {fontSize: 20, padding: 30}}}
                                 />
                                 <VictoryAxis dependentAxis crossAxis
@@ -303,21 +311,64 @@ function QuestionsPerDay(props) {
     );
 }
 
-function Question (props) {
+function MyHome (props) {
     return(
-        <Container>
+        <Container style={{marginTop:30, marginBottom:30}}>
+            <Row>
+                <Col sm={3} style={{marginBottom:30}}>
+                    <LinkContainer to="/ContributionsList" >
+                        <button onClick={() => props.onClickContributionsList()}>
+                            <Jumbotron style={{margin:0}}>
+                                <h2>My Questions & Answers</h2>
+                            </Jumbotron>
+                        </button>
+                    </LinkContainer>
+                </Col>
+                <Col sm={3} style={{marginBottom:30}}>
+                    <LinkContainer to="/ContributionsStatistics" >
+                        <button onClick={() => props.onClickContributionsStatistics()}>
+                            <Jumbotron style={{margin:0}}>
+                                <h2>My Contributions per day/month</h2>
+                            </Jumbotron>
+                        </button>
+                    </LinkContainer>
+                </Col>
+                <Col sm={3} style={{marginBottom:30}}>
+                    <LinkContainer to="/CreateQuestion" >
+                        <button onClick={() => props.onClickCreateQuestion()}>
+                            <Jumbotron style={{margin:0}}>
+                                <h2>Ask a Question</h2>
+                            </Jumbotron>
+                        </button>
+                    </LinkContainer>
+                </Col>
+                <Col sm={3}>
+                    <LinkContainer to="/AnswerQuestion" >
+                        <button onClick={() => props.onClickAnswerQuestion()}>
+                            <Jumbotron style={{margin:0}}>
+                                <h2>Answer a Question</h2>
+                            </Jumbotron>
+                        </button>
+                    </LinkContainer>
+                </Col>
+            </Row>
+        </Container>
+    );
+}
+
+function ContributionsList(props) {
+    return(
+        <Container style={{marginTop:30, marginBottom:30}}>
             <Card>
                 <Card.Body>
-                    <Card.Title>Η πρώτη μου ερώτηση</Card.Title>
-                    <LinkContainer to="/QuestionsPerDay" >
-                        <Card.Link><Link to='/QuestionsPerDay' name='#tag1' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
-                    </LinkContainer>
+                    <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">asked 1 hour ago by jimmy</Card.Subtitle>
+                    <Card.Link><Link name='#tag1' to='/QuestionsPerDay' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
                 </Card.Body>
                 <Card.Footer>
-                    <small className="text-muted">asked 1 hour ago by jimmy</small>
+                    <small className="text-muted">Last updated 3 minutes ago</small>
                 </Card.Footer>
             </Card>
-            <br /><h4>2 Answers:</h4>
             <Card>
                 <Card.Body>
                     <Card.Title>Η πρώτη μου απάντηση!</Card.Title>
@@ -335,103 +386,134 @@ function Question (props) {
                 </Card.Footer>
             </Card>
         </Container>
-    )
+    );
 }
 
-function MyHome () {
-    return(
+function ContributionsStatistics() {
+    return (
         <Container style={{marginTop:30, marginBottom:30}}>
             <Row>
-                <Col sm={3} style={{marginBottom:30}}>
-                    <LinkContainer to="/ContributionsList" >
-                        <button>
-                            <Jumbotron style={{margin:0}}>
-                                <h2>My Questions</h2>
-                                <br/>
-                                <h2>My Answers</h2>
-                            </Jumbotron>
-                        </button>
-                    </LinkContainer>
+                <Col sm={6}>
+                    <Card>
+                        <Card.Header>
+                            Questions per month Graph !
+                        </Card.Header>
+                        <Card.Body>
+                            <Form>
+                                <Form.Group>
+                                    <Form.Label>Select a year</Form.Label>
+                                    <Form.Control as="select" custom>
+                                        <option>2021</option>
+                                        <option>2020</option>
+                                        <option>2019</option>
+                                    </Form.Control>
+                                </Form.Group>
+                            </Form>
+                            <VictoryChart
+                                theme={VictoryTheme.material}
+                            >
+                                <VictoryAxis crossAxis
+                                             width={400}
+                                             height={400}
+                                             domain={[0, 12]}
+                                             label="month of the year"
+                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                />
+                                <VictoryAxis dependentAxis crossAxis
+                                             width={400}
+                                             height={400}
+                                             domain={[0, 10]}
+                                             label="Number of Questions"
+                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                />
+                                <VictoryLine
+                                    style={{
+                                        data: { stroke: "#c43a31" },
+                                        parent: { border: "1px solid #ccc"}
+                                    }}
+                                    data={[
+                                        { x: 1, y: 2 },
+                                        { x: 2, y: 3 },
+                                        { x: 3, y: 5 },
+                                        { x: 4, y: 4 },
+                                        { x: 5, y: 7 }
+                                    ]}
+                                />
+                            </VictoryChart>
+                        </Card.Body>
+                    </Card>
+                    <br />
                 </Col>
-                <Col sm={3} style={{marginBottom:30}}>
-                    <LinkContainer to="/ContributionsStatistics" >
-                        <button>
-                            <Jumbotron style={{margin:0}}>
-                                <h2>My contributions per day/period</h2>
-                            </Jumbotron>
-                        </button>
-                    </LinkContainer>
-                </Col>
-                <Col sm={3} style={{marginBottom:30}}>
-                    <LinkContainer to="/CreateQuestion" >
-                        <button>
-                            <Jumbotron style={{margin:0}}>
-                                <h2>Ask a Question</h2>
-                            </Jumbotron>
-                        </button>
-                    </LinkContainer>
-                </Col>
-                <Col sm={3}>
-                    <LinkContainer to="/AnswerQuestion" >
-                        <button>
-                            <Jumbotron style={{margin:0}}>
-                                <h2>Answer a Question</h2>
-                            </Jumbotron>
-                        </button>
-                    </LinkContainer>
+                <Col sm={6}>
+                    <Card>
+                        <Card.Header>
+                            Questions per day Graph !
+                        </Card.Header>
+                        <Card.Body>
+                            <Form>
+                                <Form.Group>
+                                    <Form.Label>Select a year</Form.Label>
+                                    <Form.Control as="select" custom>
+                                        <option>2021</option>
+                                        <option>2020</option>
+                                        <option>2019</option>
+                                    </Form.Control>
+                                </Form.Group>
+                                <Form.Group controlId="exampleForm.SelectCustom">
+                                    <Form.Label>and a month !</Form.Label>
+                                    <Form.Control as="select" custom>
+                                        <option>Ιανουάριος</option>
+                                        <option>Φεβρουάριος</option>
+                                        <option>Μάρτιος</option>
+                                        <option>Απρίλιος</option>
+                                        <option>Μάιος</option>
+                                        <option>Ιούνιος</option>
+                                        <option>Ιούλιος</option>
+                                        <option>Αύγουστος</option>
+                                        <option>Σεπτέμβριος</option>
+                                        <option>Οκτώμβριος</option>
+                                        <option>Νοέμβριος</option>
+                                        <option>Δεκέμβριος</option>
+                                    </Form.Control>
+                                </Form.Group>
+                            </Form>
+                            <VictoryChart
+                                theme={VictoryTheme.material}
+                            >
+                                <VictoryAxis crossAxis
+                                             width={400}
+                                             height={400}
+                                             domain={[0, 31]}
+                                             label="day of the month"
+                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                />
+                                <VictoryAxis dependentAxis crossAxis
+                                             width={400}
+                                             height={400}
+                                             domain={[0, 10]}
+                                             label="Number of Questions"
+                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                />
+                                <VictoryLine
+                                    style={{
+                                        data: { stroke: "#c43a31" },
+                                        parent: { border: "1px solid #ccc"}
+                                    }}
+                                    data={[
+                                        { x: 1, y: 2 },
+                                        { x: 2, y: 3 },
+                                        { x: 3, y: 5 },
+                                        { x: 4, y: 4 },
+                                        { x: 5, y: 7 }
+                                    ]}
+                                />
+                            </VictoryChart>
+                        </Card.Body>
+                    </Card>
                 </Col>
             </Row>
         </Container>
-    );
-}
-
-function ContributionsPerTag (props) {
-    return(
-        <Container>
-            <Card>
-                <Card.Body>
-                    <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
-                    <Card.Subtitle className="mb-2 text-muted">asked 1 hour ago by jimmy</Card.Subtitle>
-                    <Card.Link><Link name='#tag1' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
-                </Card.Body>
-                <Card.Footer>
-                    <small className="text-muted">Last updated 3 minutes ago</small>
-                </Card.Footer>
-            </Card>
-        </Container>
     )
-}
-
-function AnswerQuestion (props) {
-    return (
-        <Row className="justify-content-md-center" style={{marginBottom:30, marginTop:30}}>
-            <Col sm={8}>
-                <h2>Answer a Question</h2>
-                <br />
-                <Form>
-                    <Form.Group>
-                        <Form.Label>Choose Question Title</Form.Label>
-                        <Form.Control as="select" onChange={(e) => props.onChangeQuestionTitle(e)}>
-                            <option value="0">Choose...</option>
-                            <option value="1">Η πρώτη μου ερώτηση</option>
-                            <option value="2">Η πρώτη μου ερώτηση</option>
-                            <option value="3">Η πρώτη μου ερώτηση</option>
-                        </Form.Control>
-                        <br/>
-                        <Question />
-                        <br />
-                        <Form.Label>Your Answer</Form.Label>
-                        <Form.Control as="textarea" rows={3} />
-                        <br/>
-                        <ButtonGroup>
-                            <Button variant="primary" type="button">Submit</Button>
-                            <Button variant="secondary" type="submit">Cancel</Button>
-                        </ButtonGroup>
-                    </Form.Group>
-                </Form>
-            </Col>
-        </Row>
-    );
 }
 
 function Signup (props) {
@@ -528,8 +610,6 @@ class App extends React.Component{
         };
     }
 
-    MySelect = () => <span>Test</span>
-
     handleChange = (event) => {
         const target = event.target;
         const value = (target.type === 'button') ? true : target.value;
@@ -540,7 +620,11 @@ class App extends React.Component{
 
     handleHomeButton = () => this.setState({history:[]});
 
-    handleMyHomeLink = () => this.setState({history:["myHome"]});
+    handleMyHomeLink = () => this.setState({history:["My Home"]});
+
+    handleContributionsListButton = () => this.setState({history:["My Home", "My Contributions"]});
+
+    handleContributionsStatisticsButton = () => this.setState({history:["My Home", "My Statistics"]});
 
     handleTagsButton = () => this.setState({history:["Tags"]})
 
@@ -560,26 +644,79 @@ class App extends React.Component{
         const history = this.state.history.slice();
         const target = event.target;
         let id = (target.id) ? target.id : target.value;
-        if (history[0] === "Tags") {
-            history.push("Question"+id)
-            this.setState({questionActive: id, history});
-        }
-        else
+        if (id === '0')
+            this.setState({questionActive: undefined, history: ["Questions","Answer a Question"]});
+        else if (history[0] === "Questions")
             this.setState({questionActive: id, history: ["Questions","Question"+id]});
+        else if (history[0] === "Tags") {
+            history.push("Question"+id)
+            this.setState({questionActive: id, history:history});
+        }
+        else if (history[0] === "My Home") {
+            history.push("Question" + id)
+            this.setState({questionActive: id, history: history});
+        }
     }
 
     handleCreateTagRadio = () => this.setState({createTag: !this.state.createTag});
+
+    handleCreateQuestionButton = () => {
+        const history = this.state.history.slice();
+        history.push('Create Question')
+        this.setState({history: history})
+    }
+    handleAnswerQuestionButton = () => {
+        const history = this.state.history.slice();
+        history.push('Answer Question')
+        this.setState({history: history})
+    }
 
     QuestionHeader = () => {
         return(
             <Container  style={{marginTop:30, marginBottom:30}}>
                 <h2>Question {this.state.questionActive}</h2><br />
-                <Question
-                    onClickTag={(event) => this.handleTagButton(event)}
-                />
+                <this.Question />
                 <br />
                 <LinkContainer to="/AnswerQuestion"><Button>Answer!</Button></LinkContainer>
             </Container>
+        )
+    }
+
+    Question = () => {
+        return(
+            (this.state.questionActive) ?
+                <Container>
+                    <Card>
+                        <Card.Body>
+                            <Card.Title>Η πρώτη μου ερώτηση</Card.Title>
+                            <LinkContainer to="/QuestionsPerDay" >
+                                <Card.Link><Link to='/QuestionsPerDay' name='#tag1' onClick={(e) => this.handleTagButton(e)}>#tag1</Link></Card.Link>
+                            </LinkContainer>
+                        </Card.Body>
+                        <Card.Footer>
+                            <small className="text-muted">asked 1 hour ago by jimmy</small>
+                        </Card.Footer>
+                    </Card>
+                    <br /><h4>2 Answers:</h4>
+                    <Card>
+                        <Card.Body>
+                            <Card.Title>Η πρώτη μου απάντηση!</Card.Title>
+                        </Card.Body>
+                        <Card.Footer>
+                            <small className="text-muted">answered 30 minutes ago by jimmy</small>
+                        </Card.Footer>
+                    </Card>
+                    <Card>
+                        <Card.Body>
+                            <Card.Title>Η δεύτερη μου απάντηση!</Card.Title>
+                        </Card.Body>
+                        <Card.Footer>
+                            <small className="text-muted">answered 20 minutes ago by jimmy</small>
+                        </Card.Footer>
+                    </Card>
+                </Container>
+                :
+                <Container />
         )
     }
 
@@ -640,11 +777,11 @@ class App extends React.Component{
                 </Breadcrumb>
             )
         }
-        else if (history == "Questions") {
+        else if (history.length == 1) {
             return(
                 <Breadcrumb>
                     <Breadcrumb.Item></Breadcrumb.Item>
-                    <Breadcrumb.Item active>Questions</Breadcrumb.Item>
+                    <Breadcrumb.Item active>{history}</Breadcrumb.Item>
                 </Breadcrumb>
             )
         }
@@ -654,14 +791,6 @@ class App extends React.Component{
                     <Breadcrumb.Item></Breadcrumb.Item>
                     <LinkContainer to="/QuestionsPerDay" onClick={() => this.handleQuestionsPerDayButton()}><Breadcrumb.Item>Questions</Breadcrumb.Item></LinkContainer>
                     <BreadcrumbItem active>{history[1]}</BreadcrumbItem>
-                </Breadcrumb>
-            )
-        }
-        else if (history == "Tags") {
-            return(
-                <Breadcrumb>
-                    <Breadcrumb.Item></Breadcrumb.Item>
-                    <Breadcrumb.Item active>Tags</Breadcrumb.Item>
                 </Breadcrumb>
             )
         }
@@ -684,10 +813,22 @@ class App extends React.Component{
                 </Breadcrumb>
             )
         }
-        else if (history == "myHome") {
+        else if (history[0] == "My Home" && history.length == 2) {
             return(
                 <Breadcrumb>
-                    <Breadcrumb.Item active>My Home</Breadcrumb.Item>
+                    <Breadcrumb.Item></Breadcrumb.Item>
+                    <LinkContainer to="/myHome" onClick={() => this.handleMyHomeLink()}><Breadcrumb.Item>My Home</Breadcrumb.Item></LinkContainer>
+                    <BreadcrumbItem active>{history[1]}</BreadcrumbItem>
+                </Breadcrumb>
+            )
+        }
+        else if (history[0] == "My Home" && history.length == 3) {
+            return(
+                <Breadcrumb>
+                    <Breadcrumb.Item></Breadcrumb.Item>
+                    <LinkContainer to="/myHome" onClick={() => this.handleMyHomeLink()}><Breadcrumb.Item>My Home</Breadcrumb.Item></LinkContainer>
+                    <LinkContainer to="/ContributionsList" onClick={() => this.handleContributionsListButton()}><Breadcrumb.Item>My Contributions</Breadcrumb.Item></LinkContainer>
+                    <BreadcrumbItem active>{history[2]}</BreadcrumbItem>
                 </Breadcrumb>
             )
         }
@@ -703,82 +844,124 @@ class App extends React.Component{
 
     CreateQuestion = () => {
         return (
-            (this.state.createTag) ?
-                <Row className="justify-content-md-center"><Col sm={8}>
-                    <h2>Ask a Question</h2>
-                    <br />
-                    <Form>
-                        <Form.Group>
-                            <Form.Label>Question Title</Form.Label>
-                            <Form.Control type="text"/>
-                            <br />
-                            <Form.Label>Question Text</Form.Label>
-                            <Form.Control as="textarea" rows={3} />
-                            <br />
-                            <Form.Label>Tag</Form.Label>
-                            <Form.Control as="select" disabled>
-                                <option value="0">Choose...</option>
-                                <option value="1">#One</option>
-                                <option value="2">#Two</option>
-                                <option value="3">#Three</option>
-                            </Form.Control>
-                        </Form.Group>
-                        <Form.Group controlId="formHorizontalCheck">
-                            <Form.Check onClick={() => this.handleCreateTagRadio()} label="or create your own #tag !" />
-                        </Form.Group>
-                        <Form.Group>
-                            <InputGroup>
-                                <InputGroup.Prepend>
-                                    <InputGroup.Text>#</InputGroup.Text>
-                                </InputGroup.Prepend>
-                                <FormControl />
-                            </InputGroup>
-                            <br />
-                            <ButtonGroup>
-                                <Button variant="primary" type="button">Submit</Button>
-                                <Button variant="secondary" type="submit">Cancel</Button>
-                            </ButtonGroup>
-                        </Form.Group>
-                    </Form>
-                </Col></Row>
+            (this.state.isSigned === false) ?
+                <Alert variant={'warning'}>
+                    You have to sign in first !!!
+                </Alert>
                 :
-                <Row className="justify-content-md-center"><Col sm={8}>
-                    <h2>Ask a Question</h2>
-                    <br />
-                    <Form>
-                        <Form.Group>
-                            <Form.Label>Question Title</Form.Label>
-                            <Form.Control type="text"/>
-                            <br />
-                            <Form.Label>Question Text</Form.Label>
-                            <Form.Control as="textarea" rows={3} />
-                            <br />
-                            <Form.Label>Tag</Form.Label>
-                            <Form.Control as="select">
-                                <option value="0">Choose...</option>
-                                <option value="1">#One</option>
-                                <option value="2">#Two</option>
-                                <option value="3">#Three</option>
-                            </Form.Control>
-                        </Form.Group>
-                        <Form.Group controlId="formHorizontalCheck">
-                            <Form.Check onClick={() => this.handleCreateTagRadio()} label="or create your own #tag !" />
-                        </Form.Group>
-                        <Form.Group>
-                            <InputGroup>
-                                <InputGroup.Prepend>
-                                    <InputGroup.Text>#</InputGroup.Text>
-                                </InputGroup.Prepend>
-                                <FormControl disabled />
-                            </InputGroup>
-                            <br />
-                            <ButtonGroup>
-                                <Button variant="primary" type="button">Submit</Button>
-                                <Button variant="secondary" type="submit">Cancel</Button>
-                            </ButtonGroup>
-                        </Form.Group>
-                    </Form>
-                </Col></Row>
+                (this.state.createTag) ?
+                    <Row className="justify-content-md-center"><Col sm={8}>
+                        <h2>Ask a Question</h2>
+                        <br />
+                        <Form>
+                            <Form.Group>
+                                <Form.Label>Question Title</Form.Label>
+                                <Form.Control type="text"/>
+                                <br />
+                                <Form.Label>Question Text</Form.Label>
+                                <Form.Control as="textarea" rows={3} />
+                                <br />
+                                <Form.Label>Tag</Form.Label>
+                                <Form.Control as="select" disabled>
+                                    <option value="0">Choose...</option>
+                                    <option value="1">#One</option>
+                                    <option value="2">#Two</option>
+                                    <option value="3">#Three</option>
+                                </Form.Control>
+                            </Form.Group>
+                            <Form.Group controlId="formHorizontalCheck">
+                                <Form.Check onClick={() => this.handleCreateTagRadio()} label="or create your own #tag !" />
+                            </Form.Group>
+                            <Form.Group>
+                                <InputGroup>
+                                    <InputGroup.Prepend>
+                                        <InputGroup.Text>#</InputGroup.Text>
+                                    </InputGroup.Prepend>
+                                    <FormControl />
+                                </InputGroup>
+                                <br />
+                                <ButtonGroup>
+                                    <Button variant="primary" type="button">Submit</Button>
+                                    <Button variant="secondary" type="submit">Cancel</Button>
+                                </ButtonGroup>
+                            </Form.Group>
+                        </Form>
+                    </Col></Row>
+                    :
+                    <Row className="justify-content-md-center"><Col sm={8}>
+                        <h2>Ask a Question</h2>
+                        <br />
+                        <Form>
+                            <Form.Group>
+                                <Form.Label>Question Title</Form.Label>
+                                <Form.Control type="text"/>
+                                <br />
+                                <Form.Label>Question Text</Form.Label>
+                                <Form.Control as="textarea" rows={3} />
+                                <br />
+                                <Form.Label>Tag</Form.Label>
+                                <Form.Control as="select">
+                                    <option value="0">Choose...</option>
+                                    <option value="1">#One</option>
+                                    <option value="2">#Two</option>
+                                    <option value="3">#Three</option>
+                                </Form.Control>
+                            </Form.Group>
+                            <Form.Group controlId="formHorizontalCheck">
+                                <Form.Check onClick={() => this.handleCreateTagRadio()} label="or create your own #tag !" />
+                            </Form.Group>
+                            <Form.Group>
+                                <InputGroup>
+                                    <InputGroup.Prepend>
+                                        <InputGroup.Text>#</InputGroup.Text>
+                                    </InputGroup.Prepend>
+                                    <FormControl disabled />
+                                </InputGroup>
+                                <br />
+                                <ButtonGroup>
+                                    <Button variant="primary" type="button">Submit</Button>
+                                    <Button variant="secondary" type="submit">Cancel</Button>
+                                </ButtonGroup>
+                            </Form.Group>
+                        </Form>
+                    </Col></Row>
+        );
+    }
+
+    AnswerQuestion = () => {
+        return (
+            (this.state.isSigned === false) ?
+                <Alert variant={'warning'}>
+                    You have to sign in first !!!
+                </Alert>
+                :
+                <Row className="justify-content-md-center" style={{marginBottom:30, marginTop:30}}>
+                    <Col sm={8}>
+                        <h2>Answer a Question</h2>
+                        <br />
+                        <Form>
+                            <Form.Group>
+                                <Form.Label>Choose Question Title</Form.Label>
+                                <Form.Control as="select" onChange={(e) => this.handleQuestionLink(e)}>
+                                    <option value="0">Choose...</option>
+                                    <option value="1">Η πρώτη μου ερώτηση</option>
+                                    <option value="2">Η πρώτη μου ερώτηση</option>
+                                    <option value="3">Η πρώτη μου ερώτηση</option>
+                                </Form.Control>
+                                <br/>
+                                <this.Question />
+                                <br />
+                                <Form.Label>Your Answer</Form.Label>
+                                <Form.Control as="textarea" rows={3} />
+                                <br/>
+                                <ButtonGroup>
+                                    <Button variant="primary" type="button">Submit</Button>
+                                    <Button variant="secondary" type="submit">Cancel</Button>
+                                </ButtonGroup>
+                            </Form.Group>
+                        </Form>
+                    </Col>
+                </Row>
         );
     }
 
@@ -794,10 +977,21 @@ class App extends React.Component{
                     <this.CustomBreadcrump />
                     <Switch>
                         <Route path="/myHome">
-                            <MyHome />
+                            <MyHome
+                                onClickContributionsList={() => this.handleContributionsListButton()}
+                                onClickContributionsStatistics={() => this.handleContributionsStatisticsButton()}
+                                onClickCreateQuestion={() => this.handleCreateQuestionButton()}
+                                onClickAnswerQuestion={() => this.handleAnswerQuestionButton()}
+                            />
                         </Route>
-                        <Route path="/Contributions">
-                            <MyHome />
+                        <Route path="/ContributionsList">
+                            <ContributionsList
+                                onClickQuestion={(event) => this.handleQuestionLink(event)}
+                                onClickTag={(event) => this.handleTagButton(event)}
+                            />
+                        </Route>
+                        <Route path="/ContributionsStatistics">
+                            <ContributionsStatistics />
                         </Route>
                         <Route path="/Tags">
                             <Tags
@@ -814,9 +1008,7 @@ class App extends React.Component{
                             <this.CreateQuestion/>
                         </Route>
                         <Route path="/AnswerQuestion">
-                            <AnswerQuestion
-                                onChangeQuestionTitle={(e) => this.handleQuestionLink(e)}
-                            />
+                            <this.AnswerQuestion />
                         </Route>
                         <Route path="/sign_up">
                             <Signup
@@ -834,6 +1026,8 @@ class App extends React.Component{
                             <Home
                                 onClickQuestionsPerDay={() => this.handleQuestionsPerDayButton()}
                                 onClickTags={() => this.handleTagsButton()}
+                                onClickCreateQuestion={() => this.handleCreateQuestionButton()}
+                                onClickAnswerQuestion={() => this.handleAnswerQuestionButton()}
                             />
                         </Route>
                     </Switch>
