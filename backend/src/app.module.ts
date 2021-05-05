@@ -5,6 +5,7 @@ import { QuestionModule } from './question/question.module';
 import { UsersModule } from './users/users.module';
 import { TagsModule } from './tags/tags.module';
 import { AuthModule } from './auth/auth.module';
+import { StatsModule } from './stats/stats.module';
 const db = require('../db.config.js');
 
 const sequelizeModule = SequelizeModule.forRoot({
@@ -27,7 +28,7 @@ const sequelizeModule = SequelizeModule.forRoot({
     QuestionModule, 
     AnswerModule, 
     UsersModule, 
-    TagsModule
+    TagsModule, StatsModule
   ],
 })
 export class AppModule {}
