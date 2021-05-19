@@ -315,8 +315,8 @@ function MyHome (props) {
         <Container style={{marginTop:30, marginBottom:30}}>
             <Row>
                 <Col sm={3} style={{marginBottom:30}}>
-                    <LinkContainer to="/ContributionsList" >
-                        <button onClick={() => props.onClickContributionsList()}>
+                    <LinkContainer to="/ActivityList" >
+                        <button onClick={() => props.onClickActivityList()}>
                             <Jumbotron style={{margin:0}}>
                                 <h2>My Questions & Answers</h2>
                             </Jumbotron>
@@ -324,10 +324,10 @@ function MyHome (props) {
                     </LinkContainer>
                 </Col>
                 <Col sm={3} style={{marginBottom:30}}>
-                    <LinkContainer to="/ContributionsStatistics" >
-                        <button onClick={() => props.onClickContributionsStatistics()}>
+                    <LinkContainer to="/ActivityStatistics" >
+                        <button onClick={() => props.onClickActivityStatistics()}>
                             <Jumbotron style={{margin:0}}>
-                                <h2>My Contributions per day/month</h2>
+                                <h2>My Activity per day/month</h2>
                             </Jumbotron>
                         </button>
                     </LinkContainer>
@@ -355,7 +355,7 @@ function MyHome (props) {
     );
 }
 
-function ContributionsList(props) {
+function ActivityList(props) {
     return(
         <Container style={{marginTop:30, marginBottom:30}}>
             <Card>
@@ -364,85 +364,29 @@ function ContributionsList(props) {
                     <Card.Subtitle className="mb-2 text-muted">asked 1 hour ago by jimmy</Card.Subtitle>
                     <Card.Link><Link name='#tag1' to='/QuestionsPerDay' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
                 </Card.Body>
-                <Card.Footer>
-                    <small className="text-muted">Last updated 3 minutes ago</small>
-                </Card.Footer>
             </Card>
             <Card>
                 <Card.Body>
-                    <Card.Title>Η πρώτη μου απάντηση!</Card.Title>
+                    <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">answered 20 minutes ago by jimmy</Card.Subtitle>
+                    <Card.Link><Link name='#tag1' to='/QuestionsPerDay' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
                 </Card.Body>
-                <Card.Footer>
-                    <small className="text-muted">answered 30 minutes ago by jimmy</small>
-                </Card.Footer>
             </Card>
             <Card>
                 <Card.Body>
-                    <Card.Title>Η δεύτερη μου απάντηση!</Card.Title>
+                    <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">answered 30 minutes ago by jimmy</Card.Subtitle>
+                    <Card.Link><Link name='#tag1' to='/QuestionsPerDay' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
                 </Card.Body>
-                <Card.Footer>
-                    <small className="text-muted">answered 20 minutes ago by jimmy</small>
-                </Card.Footer>
             </Card>
         </Container>
     );
 }
 
-function ContributionsStatistics() {
+function ActivityStatistics() {
     return (
         <Container style={{marginTop:30, marginBottom:30}}>
             <Row>
-                <Col sm={6}>
-                    <Card>
-                        <Card.Header>
-                            Questions per month Graph !
-                        </Card.Header>
-                        <Card.Body>
-                            <Form>
-                                <Form.Group>
-                                    <Form.Label>Select a year</Form.Label>
-                                    <Form.Control as="select" custom>
-                                        <option>2021</option>
-                                        <option>2020</option>
-                                        <option>2019</option>
-                                    </Form.Control>
-                                </Form.Group>
-                            </Form>
-                            <VictoryChart
-                                theme={VictoryTheme.material}
-                            >
-                                <VictoryAxis crossAxis
-                                             width={400}
-                                             height={400}
-                                             domain={[0, 12]}
-                                             label="month of the year"
-                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
-                                />
-                                <VictoryAxis dependentAxis crossAxis
-                                             width={400}
-                                             height={400}
-                                             domain={[0, 10]}
-                                             label="Number of Questions"
-                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
-                                />
-                                <VictoryLine
-                                    style={{
-                                        data: { stroke: "#c43a31" },
-                                        parent: { border: "1px solid #ccc"}
-                                    }}
-                                    data={[
-                                        { x: 1, y: 2 },
-                                        { x: 2, y: 3 },
-                                        { x: 3, y: 5 },
-                                        { x: 4, y: 4 },
-                                        { x: 5, y: 7 }
-                                    ]}
-                                />
-                            </VictoryChart>
-                        </Card.Body>
-                    </Card>
-                    <br />
-                </Col>
                 <Col sm={6}>
                     <Card>
                         <Card.Header>
@@ -491,6 +435,73 @@ function ContributionsStatistics() {
                                              height={400}
                                              domain={[0, 10]}
                                              label="Number of Questions"
+                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                />
+                                <VictoryLine
+                                    style={{
+                                        data: { stroke: "#c43a31" },
+                                        parent: { border: "1px solid #ccc"}
+                                    }}
+                                    data={[
+                                        { x: 1, y: 2 },
+                                        { x: 2, y: 3 },
+                                        { x: 3, y: 5 },
+                                        { x: 4, y: 4 },
+                                        { x: 5, y: 7 }
+                                    ]}
+                                />
+                            </VictoryChart>
+                        </Card.Body>
+                    </Card>
+                </Col>
+                <Col sm={6}>
+                    <Card>
+                        <Card.Header>
+                            Answers per day Graph !
+                        </Card.Header>
+                        <Card.Body>
+                            <Form>
+                                <Form.Group>
+                                    <Form.Label>Select a year</Form.Label>
+                                    <Form.Control as="select" custom>
+                                        <option>2021</option>
+                                        <option>2020</option>
+                                        <option>2019</option>
+                                    </Form.Control>
+                                </Form.Group>
+                                <Form.Group controlId="exampleForm.SelectCustom">
+                                    <Form.Label>and a month !</Form.Label>
+                                    <Form.Control as="select" custom>
+                                        <option>Ιανουάριος</option>
+                                        <option>Φεβρουάριος</option>
+                                        <option>Μάρτιος</option>
+                                        <option>Απρίλιος</option>
+                                        <option>Μάιος</option>
+                                        <option>Ιούνιος</option>
+                                        <option>Ιούλιος</option>
+                                        <option>Αύγουστος</option>
+                                        <option>Σεπτέμβριος</option>
+                                        <option>Οκτώμβριος</option>
+                                        <option>Νοέμβριος</option>
+                                        <option>Δεκέμβριος</option>
+                                    </Form.Control>
+                                </Form.Group>
+                            </Form>
+                            <VictoryChart
+                                theme={VictoryTheme.material}
+                            >
+                                <VictoryAxis crossAxis
+                                             width={400}
+                                             height={400}
+                                             domain={[0, 31]}
+                                             label="day of the month"
+                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                />
+                                <VictoryAxis dependentAxis crossAxis
+                                             width={400}
+                                             height={400}
+                                             domain={[0, 10]}
+                                             label="Number of Answers"
                                              style={{axisLabel: {fontSize: 20, padding: 30}}}
                                 />
                                 <VictoryLine
@@ -621,9 +632,9 @@ class App extends React.Component{
 
     handleMyHomeLink = () => this.setState({history:["My Home"]});
 
-    handleContributionsListButton = () => this.setState({history:["My Home", "My Contributions"]});
+    handleActivityListButton = () => this.setState({history:["My Home", "My Activity"]});
 
-    handleContributionsStatisticsButton = () => this.setState({history:["My Home", "My Statistics"]});
+    handleActivityStatisticsButton = () => this.setState({history:["My Home", "My Statistics"]});
 
     handleTagsButton = () => this.setState({history:["Tags"]})
 
@@ -826,7 +837,7 @@ class App extends React.Component{
                 <Breadcrumb>
                     <Breadcrumb.Item></Breadcrumb.Item>
                     <LinkContainer to="/myHome" onClick={() => this.handleMyHomeLink()}><Breadcrumb.Item>My Home</Breadcrumb.Item></LinkContainer>
-                    <LinkContainer to="/ContributionsList" onClick={() => this.handleContributionsListButton()}><Breadcrumb.Item>My Contributions</Breadcrumb.Item></LinkContainer>
+                    <LinkContainer to="/ActivityList" onClick={() => this.handleActivityListButton()}><Breadcrumb.Item>My Activity</Breadcrumb.Item></LinkContainer>
                     <BreadcrumbItem active>{history[2]}</BreadcrumbItem>
                 </Breadcrumb>
             )
@@ -977,20 +988,20 @@ class App extends React.Component{
                     <Switch>
                         <Route path="/myHome">
                             <MyHome
-                                onClickContributionsList={() => this.handleContributionsListButton()}
-                                onClickContributionsStatistics={() => this.handleContributionsStatisticsButton()}
+                                onClickActivityList={() => this.handleActivityListButton()}
+                                onClickActivityStatistics={() => this.handleActivityStatisticsButton()}
                                 onClickCreateQuestion={() => this.handleCreateQuestionButton()}
                                 onClickAnswerQuestion={() => this.handleAnswerQuestionButton()}
                             />
                         </Route>
-                        <Route path="/ContributionsList">
-                            <ContributionsList
+                        <Route path="/ActivityList">
+                            <ActivityList
                                 onClickQuestion={(event) => this.handleQuestionLink(event)}
                                 onClickTag={(event) => this.handleTagButton(event)}
                             />
                         </Route>
-                        <Route path="/ContributionsStatistics">
-                            <ContributionsStatistics />
+                        <Route path="/ActivityStatistics">
+                            <ActivityStatistics />
                         </Route>
                         <Route path="/Tags">
                             <Tags
