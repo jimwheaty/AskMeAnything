@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Tag } from './tags.model';
-const natural = require('natural');
 
 @Injectable()
 export class TagsService {
@@ -10,13 +9,12 @@ export class TagsService {
     private tagModel: typeof Tag
     ) {}
 
-    create(newTag: Tag): Promise<Tag> {
-      if (!newTag.field) {
-        throw new BadRequestException('Missing field of the tag');
-      }
-      newTag.stemmed = natural.LancasterStemmer.stem(newTag.field);
-      return this.tagModel.create(newTag);
+  create(newTag: Tag): Promise<Tag> {
+    if (!newTag.field) {
+      throw new BadRequestException('Missing field of the tag');
     }
+    return this.tagModel.create(newTag);
+  }
 
   async findAll(): Promise<Tag[]> {
     return this.tagModel.findAll();
@@ -41,7 +39,6 @@ export class TagsService {
     }
     if (tagUpdate.field) {
       tag.field = tagUpdate.field;
-      tag.stemmed = natural.LancasterStemmer.stem(tag.field);
     }
 
     await tag.save();

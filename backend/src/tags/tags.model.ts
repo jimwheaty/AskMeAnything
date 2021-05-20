@@ -9,10 +9,6 @@ export class Tag extends Model {
     @Column
     field: string;
 
-    @AllowNull(false)
-    @Column
-    stemmed: string;
-
     @ForeignKey(() => Question)
     @Column
     questionId: number;
