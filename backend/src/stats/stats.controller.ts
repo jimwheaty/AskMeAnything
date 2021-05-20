@@ -10,11 +10,11 @@ export class StatsController {
     return this.statsService.getPopularTags(limit);
   }
 
-  // // statistics of question with tags
-  // getNumberOfTags()
+// TODO
+// statistics of question with tags
+//   getNumberOfTags()
 
-  // get
-
-  // @Get('popular-tags/questions')
-  // getPopularQuestionsPerTag('limit')
+// TODO
+//   @Get('popular-tags/questions')
+//   getPopularQuestionsPerTag('limit')
 }
