@@ -16,6 +16,8 @@ import {
 import {MemoryRouter, Switch, Route, Link} from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 import { VictoryChart, VictoryAxis, VictoryTheme, VictoryPie, VictoryLine } from 'victory'
+/* Daytime imports */
+import TimeAgo from 'react-timeago'
 
 
 function Home (props) {
@@ -32,8 +34,8 @@ function Home (props) {
                     </LinkContainer>
                 </Col>
                 <Col sm={3} style={{marginBottom:30}}>
-                    <LinkContainer to="/QuestionsPerDay" >
-                        <button onClick={() => props.onClickQuestionsPerDay()}>
+                    <LinkContainer to="/QuestionsList" >
+                        <button onClick={() => props.onClickQuestionsList()}>
                             <Jumbotron style={{margin:0}}>
                                 <h2>Questions per day/period</h2>
                             </Jumbotron>
@@ -100,7 +102,7 @@ function Tags(props) {
             </Container> <br/>
             <CardDeck>
                 <Card body style={{minWidth:200}}>
-                    <LinkContainer to="/QuestionsPerDay" >
+                    <LinkContainer to="/QuestionsList" >
                         <Button onClick={(e) => props.onClick(e)} name="#tag1">#Tag1</Button>
                     </LinkContainer>
                     <small className="text-muted"> (10 questions)</small>
@@ -150,7 +152,82 @@ function Tags(props) {
     );
 }
 
-function QuestionsPerDay(props) {
+class QuestionsList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null,
+            isLoaded1: false,
+            questionItems: [],
+        }
+    }
+
+    componentDidMount() {
+        fetch("http://localhost:8080/api/questions")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        isLoaded1: true,
+                        questionItems: result
+                    });
+                    const { questionItems } = this.state;
+                    return Promise.all(
+                        questionItems.map(item => (
+                            fetch("http://localhost:8080/api/users/" + item.userId)
+                                .then(res => res.json())
+                                .then(
+                                    (result) => {
+                                        item.userName = result.username;
+                                        this.setState({
+                                            questionItems : questionItems
+                                        })
+                                    },
+                                    (error) => {
+                                        this.setState({
+                                            error
+                                        });
+                                    }
+                                )
+                        ))
+                    )
+                },
+                (error) => {
+                    this.setState({
+                        isLoaded1: true,
+                        error
+                    });
+                })
+    }
+
+    render() {
+        const { error, isLoaded1, questionItems } = this.state;
+        if (error) {
+            return <div>Error: {error.message}</div>;
+        } else if (!isLoaded1) {
+            return <div>Loading...</div>;
+        } else {
+            return (
+                <Container>
+                    {questionItems.map(item => (
+                        <Container>
+                        <Card key={item.id}>
+                            <Card.Body>
+                                <Card.Title><Link to='/Question' id='1' onClick={(e) => this.props.onClickQuestion(e)}>{item.title}</Link></Card.Title>
+                                <Card.Subtitle className="mb-2 text-muted">asked <TimeAgo date={item.createdAt}/> by {item.userName}</Card.Subtitle>
+                                <Card.Link><Link name='#tag1' onClick={(e) => this.props.onClickTag(e)}>#tag1</Link></Card.Link>
+                            </Card.Body>
+                            <Card.Footer>
+                                <small className="text-muted">Last updated <TimeAgo date={item.updatedAt} /></small>
+                            </Card.Footer>
+                        </Card>
+                        </Container>
+                    ))}
+                </Container>
+            );
+        }
+    }
+    /* TODO
     return(
         <Container>
             <Accordion>
@@ -308,6 +385,7 @@ function QuestionsPerDay(props) {
             </Card>
         </Container>
     );
+    */
 }
 
 function MyHome (props) {
@@ -362,21 +440,21 @@ function ActivityList(props) {
                 <Card.Body>
                     <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
                     <Card.Subtitle className="mb-2 text-muted">asked 1 hour ago by jimmy</Card.Subtitle>
-                    <Card.Link><Link name='#tag1' to='/QuestionsPerDay' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
+                    <Card.Link><Link name='#tag1' to='/QuestionsList' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
                 </Card.Body>
             </Card>
             <Card>
                 <Card.Body>
                     <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
                     <Card.Subtitle className="mb-2 text-muted">answered 20 minutes ago by jimmy</Card.Subtitle>
-                    <Card.Link><Link name='#tag1' to='/QuestionsPerDay' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
+                    <Card.Link><Link name='#tag1' to='/QuestionsList' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
                 </Card.Body>
             </Card>
             <Card>
                 <Card.Body>
                     <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
                     <Card.Subtitle className="mb-2 text-muted">answered 30 minutes ago by jimmy</Card.Subtitle>
-                    <Card.Link><Link name='#tag1' to='/QuestionsPerDay' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
+                    <Card.Link><Link name='#tag1' to='/QuestionsList' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
                 </Card.Body>
             </Card>
         </Container>
@@ -648,7 +726,7 @@ class App extends React.Component{
         )
     }
 
-    handleQuestionsPerDayButton = () => this.setState({tag: undefined, history:["Questions"]});
+    handleQuestionsListButton = () => this.setState({tag: undefined, history:["Questions"]});
 
     handleQuestionLink = (event) => {
         const history = this.state.history.slice();
@@ -699,8 +777,8 @@ class App extends React.Component{
                     <Card>
                         <Card.Body>
                             <Card.Title>Η πρώτη μου ερώτηση</Card.Title>
-                            <LinkContainer to="/QuestionsPerDay" >
-                                <Card.Link><Link to='/QuestionsPerDay' name='#tag1' onClick={(e) => this.handleTagButton(e)}>#tag1</Link></Card.Link>
+                            <LinkContainer to="/QuestionsList" >
+                                <Card.Link><Link to='/QuestionsList' name='#tag1' onClick={(e) => this.handleTagButton(e)}>#tag1</Link></Card.Link>
                             </LinkContainer>
                         </Card.Body>
                         <Card.Footer>
@@ -730,12 +808,12 @@ class App extends React.Component{
         )
     }
 
-    QuestionsPerDayHeader = () => {
+    QuestionsListHeader = () => {
         return(
             (this.state.tag) ?
                 <Container  style={{marginTop:30, marginBottom:30}}>
                     <h2>Questions with {this.state.tag}</h2><br />
-                    <QuestionsPerDay
+                    <QuestionsList
                         onClickQuestion={(event) => this.handleQuestionLink(event)}
                         onClickTag={(event) => this.handleTagButton(event)}
                     />
@@ -743,7 +821,7 @@ class App extends React.Component{
                 :
                 <Container  style={{marginTop:30, marginBottom:30}}>
                     <h2>Recent questions</h2><br />
-                    <QuestionsPerDay
+                    <QuestionsList
                         onClickQuestion={(event) => this.handleQuestionLink(event)}
                         onClickTag={(event) => this.handleTagButton(event)}
                     />
@@ -780,6 +858,7 @@ class App extends React.Component{
 
     CustomBreadcrump = () => {
         const history = this.state.history.slice();
+        // eslint-disable-next-line
         if (history == ""){
             return(
                 <Breadcrumb>
@@ -799,7 +878,7 @@ class App extends React.Component{
             return(
                 <Breadcrumb>
                     <Breadcrumb.Item></Breadcrumb.Item>
-                    <LinkContainer to="/QuestionsPerDay" onClick={() => this.handleQuestionsPerDayButton()}><Breadcrumb.Item>Questions</Breadcrumb.Item></LinkContainer>
+                    <LinkContainer to="/QuestionsList" onClick={() => this.handleQuestionsListButton()}><Breadcrumb.Item>Questions</Breadcrumb.Item></LinkContainer>
                     <BreadcrumbItem active>{history[1]}</BreadcrumbItem>
                 </Breadcrumb>
             )
@@ -818,7 +897,7 @@ class App extends React.Component{
                 <Breadcrumb>
                     <Breadcrumb.Item></Breadcrumb.Item>
                     <LinkContainer to="/Tags" onClick={() => this.handleTagsButton()}><Breadcrumb.Item>Tags</Breadcrumb.Item></LinkContainer>
-                    <LinkContainer to="/QuestionsPerDay" onClick={(e) => this.handleTagButton(e)}><BreadcrumbItem>{history[1]}</BreadcrumbItem></LinkContainer>
+                    <LinkContainer to="/QuestionsList" onClick={(e) => this.handleTagButton(e)}><BreadcrumbItem>{history[1]}</BreadcrumbItem></LinkContainer>
                     <BreadcrumbItem active>{history[2]}</BreadcrumbItem>
                 </Breadcrumb>
             )
@@ -1008,8 +1087,8 @@ class App extends React.Component{
                                 onClick={(event) => this.handleTagButton(event)}
                             />
                         </Route>
-                        <Route path="/QuestionsPerDay">
-                            <this.QuestionsPerDayHeader />
+                        <Route path="/QuestionsList">
+                            <this.QuestionsListHeader />
                         </Route>
                         <Route path="/Question">
                             <this.QuestionHeader />
@@ -1034,7 +1113,7 @@ class App extends React.Component{
                         </Route>
                         <Route path="/">
                             <Home
-                                onClickQuestionsPerDay={() => this.handleQuestionsPerDayButton()}
+                                onClickQuestionsList={() => this.handleQuestionsListButton()}
                                 onClickTags={() => this.handleTagsButton()}
                                 onClickCreateQuestion={() => this.handleCreateQuestionButton()}
                                 onClickAnswerQuestion={() => this.handleAnswerQuestionButton()}
