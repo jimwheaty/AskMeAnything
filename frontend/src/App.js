@@ -19,7 +19,6 @@ import { VictoryChart, VictoryAxis, VictoryTheme, VictoryPie, VictoryLine } from
 /* Daytime imports */
 import TimeAgo from 'react-timeago'
 
-
 function Home (props) {
     return(
         <Container style={{marginTop:30, marginBottom:30}}>
@@ -157,7 +156,7 @@ class QuestionsList extends React.Component {
         super(props);
         this.state = {
             error: null,
-            isLoaded1: false,
+            isLoaded: false,
             questionItems: [],
         }
     }
@@ -168,7 +167,7 @@ class QuestionsList extends React.Component {
             .then(
                 (result) => {
                     this.setState({
-                        isLoaded1: true,
+                        isLoaded: true,
                         questionItems: result
                     });
                     const { questionItems } = this.state;
@@ -194,17 +193,17 @@ class QuestionsList extends React.Component {
                 },
                 (error) => {
                     this.setState({
-                        isLoaded1: true,
+                        isLoaded: true,
                         error
                     });
                 })
     }
 
     render() {
-        const { error, isLoaded1, questionItems } = this.state;
+        const { error, isLoaded, questionItems } = this.state;
         if (error) {
             return <div>Error: {error.message}</div>;
-        } else if (!isLoaded1) {
+        } else if (!isLoaded) {
             return <div>Loading...</div>;
         } else {
             return (
@@ -213,7 +212,7 @@ class QuestionsList extends React.Component {
                         <Container>
                         <Card key={item.id}>
                             <Card.Body>
-                                <Card.Title><Link to='/Question' id='1' onClick={(e) => this.props.onClickQuestion(e)}>{item.title}</Link></Card.Title>
+                                <Card.Title><Link to='/Question' id={item.id} onClick={(e) => this.props.onClickQuestion(e)}>{item.title}</Link></Card.Title>
                                 <Card.Subtitle className="mb-2 text-muted">asked <TimeAgo date={item.createdAt}/> by {item.userName}</Card.Subtitle>
                                 <Card.Link><Link name='#tag1' onClick={(e) => this.props.onClickTag(e)}>#tag1</Link></Card.Link>
                             </Card.Body>
@@ -386,6 +385,117 @@ class QuestionsList extends React.Component {
         </Container>
     );
     */
+}
+
+class Question extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null,
+            isLoaded: false,
+            questionItem: undefined,
+        }
+    }
+
+    componentDidMount() {
+        const { questionActive } = this.props;
+        if (questionActive) {
+            fetch("http://localhost:8080/api/answers/per-question?questionId=" + questionActive)
+                .then(res => res.json())
+                .then(
+                    (result) => {
+                        this.setState({
+                            isLoaded: true,
+                            questionItem: result
+                        });
+                        const { questionItem } = this.state;
+                        return Promise.all([
+                            fetch("http://localhost:8080/api/users/" + questionItem.userId)
+                            .then(res => res.json())
+                            .then(
+                                (result) => {
+                                    questionItem.userName = result.username;
+                                    this.setState({
+                                        questionItem : questionItem
+                                    })
+                                },
+                                (error) => {
+                                    this.setState({
+                                        error
+                                    });
+                                }
+                            ),
+                            questionItem.answers.map(answer => (
+                                fetch("http://localhost:8080/api/users/" + answer.userId)
+                                    .then(res => res.json())
+                                    .then(
+                                        (result) => {
+                                            answer.userName = result.username;
+                                            this.setState({
+                                                questionItem : questionItem
+                                            })
+                                        },
+                                        (error) => {
+                                            this.setState({
+                                                error
+                                            });
+                                        }
+                                    )
+                            ))
+                        ])
+                    },
+                    (error) => {
+                        this.setState({
+                            isLoaded: true,
+                            error
+                        });
+                    })
+        }
+    }
+
+    render() {
+        if (!this.props.questionActive)
+            return <Container />
+
+        const {error, isLoaded, questionItem} = this.state;
+        if (error) {
+            return <div>Error: {error.message}</div>;
+        } else if (!isLoaded) {
+            return <div>Loading...</div>;
+        } else {
+            return (
+                <Container  style={{marginTop:30, marginBottom:30}}>
+                    <h2>{questionItem.title}</h2><br />
+                    <Container>
+                        <Card>
+                            <Card.Body>
+                                <Card.Title>{questionItem.body}</Card.Title>
+                                <LinkContainer to="/QuestionsList" >
+                                    <Card.Link><Link to='/QuestionsList' name='#tag1' onClick={(e) => this.handleTagButton(e)}>#tag1</Link></Card.Link>
+                                </LinkContainer>
+                            </Card.Body>
+                            <Card.Footer>
+                                <small className="text-muted">asked <TimeAgo date={questionItem.createdAt}/> by {questionItem.userName}</small>
+                            </Card.Footer>
+                        </Card>
+                        <br /><h4>{questionItem.answers.length} Answers:</h4>
+                        {questionItem.answers.map(answer => (
+                            <Card key={answer.id}>
+                                <Card.Body>
+                                    <Card.Title>{answer.body}</Card.Title>
+                                </Card.Body>
+                                <Card.Footer>
+                                    <small className="text-muted">answered <TimeAgo date={answer.createdAt}/> by {answer.userName}</small>
+                                </Card.Footer>
+                            </Card>
+                        ))}
+                    </Container>
+                    <br />
+                    <LinkContainer to="/AnswerQuestion"><Button>Answer!</Button></LinkContainer>
+                </Container>
+            )
+        }
+    }
 }
 
 function MyHome (props) {
@@ -721,7 +831,7 @@ class App extends React.Component{
         return(
             (name == "") ?
                 this.setState({history:["Tags",this.state.tag]})
-            :
+                :
                 this.setState({tag: name, history:["Tags",name]})
         )
     }
@@ -757,55 +867,6 @@ class App extends React.Component{
         const history = this.state.history.slice();
         history.push('Answer Question')
         this.setState({history: history})
-    }
-
-    QuestionHeader = () => {
-        return(
-            <Container  style={{marginTop:30, marginBottom:30}}>
-                <h2>Question {this.state.questionActive}</h2><br />
-                <this.Question />
-                <br />
-                <LinkContainer to="/AnswerQuestion"><Button>Answer!</Button></LinkContainer>
-            </Container>
-        )
-    }
-
-    Question = () => {
-        return(
-            (this.state.questionActive) ?
-                <Container>
-                    <Card>
-                        <Card.Body>
-                            <Card.Title>Η πρώτη μου ερώτηση</Card.Title>
-                            <LinkContainer to="/QuestionsList" >
-                                <Card.Link><Link to='/QuestionsList' name='#tag1' onClick={(e) => this.handleTagButton(e)}>#tag1</Link></Card.Link>
-                            </LinkContainer>
-                        </Card.Body>
-                        <Card.Footer>
-                            <small className="text-muted">asked 1 hour ago by jimmy</small>
-                        </Card.Footer>
-                    </Card>
-                    <br /><h4>2 Answers:</h4>
-                    <Card>
-                        <Card.Body>
-                            <Card.Title>Η πρώτη μου απάντηση!</Card.Title>
-                        </Card.Body>
-                        <Card.Footer>
-                            <small className="text-muted">answered 30 minutes ago by jimmy</small>
-                        </Card.Footer>
-                    </Card>
-                    <Card>
-                        <Card.Body>
-                            <Card.Title>Η δεύτερη μου απάντηση!</Card.Title>
-                        </Card.Body>
-                        <Card.Footer>
-                            <small className="text-muted">answered 20 minutes ago by jimmy</small>
-                        </Card.Footer>
-                    </Card>
-                </Container>
-                :
-                <Container />
-        )
     }
 
     QuestionsListHeader = () => {
@@ -1091,7 +1152,11 @@ class App extends React.Component{
                             <this.QuestionsListHeader />
                         </Route>
                         <Route path="/Question">
-                            <this.QuestionHeader />
+                            <Question
+                                questionActive = {this.state.questionActive}
+                                onClickQuestion={(event) => this.handleQuestionLink(event)}
+                                onClickTag={(event) => this.handleTagButton(event)}
+                            />
                         </Route>
                         <Route path="/CreateQuestion">
                             <this.CreateQuestion/>
