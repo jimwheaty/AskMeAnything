@@ -13,10 +13,9 @@ import {
     Accordion,
     InputGroup, Alert
 } from "react-bootstrap";
-import {MemoryRouter, Switch, Route, Link} from 'react-router-dom';
+import {MemoryRouter, Switch, Route, Link, Redirect} from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 import { VictoryChart, VictoryAxis, VictoryTheme, VictoryPie, VictoryLine } from 'victory'
-/* Daytime imports */
 import TimeAgo from 'react-timeago'
 
 function Home (props) {
@@ -757,41 +756,75 @@ function Signup (props) {
     );
 }
 
-function Signin (props) {
-    return(
-        <Row className="justify-content-md-center" style={{marginBottom:30, marginTop:30}}>
-            <Col sm={3}>
-                <h2>Log In</h2>
-                <br />
-                <Form>
-                    <Form.Group controlId="formBasicEmail" >
-                        <Form.Label>Email address</Form.Label>
-                        <Form.Control type="email" placeholder="Enter email" name="email" onChange={(e) => props.onChange(e)}/>
-                        <Form.Text className="text-muted">
-                            We'll never share your email with anyone else.
-                        </Form.Text>
-                    </Form.Group>
+class Signin extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null,
+        }
+    }
 
-                    <Form.Group controlId="formBasicPassword" >
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" placeholder="Password" name="password" onChange={(e) => props.onChange(e)}/>
-                    </Form.Group>
-                    <ButtonGroup >
-                        <LinkContainer to="/">
-                            <Button variant="primary" type="button" name="isSigned" onClick={ (e) => props.onClick(e)}>
+    onSubmit() {
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username: this.props.username, password: this.props.password})
+        };
+        fetch('http://localhost:8080/api/auth/login', requestOptions)
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    if (result.error)
+                        this.setState({error : result.message})
+                    else
+                        this.props.onClick(result.access_token)
+                }
+            )
+    }
+    render() {
+        const { error } = this.state;
+        if (this.props.redirect) {
+            return <Redirect to={this.props.redirect} />
+        }
+        return(
+            <Row className="justify-content-md-center" style={{marginBottom:30, marginTop:30}}>
+                <Col sm={3}>
+                    <h2>Log In</h2>
+                    <br />
+                    <Form>
+                        <Form.Group controlId="formBasicUsername" >
+                            <Form.Label>Username</Form.Label>
+                            <Form.Control type="text" placeholder="Enter username" name="username" onChange={(e) => this.props.onChange(e)}/>
+                        </Form.Group>
+
+                        <Form.Group controlId="formBasicPassword" >
+                            <Form.Label>Password</Form.Label>
+                            <Form.Control type="password" placeholder="Password" name="password" onChange={(e) => this.props.onChange(e)}/>
+                        </Form.Group>
+                        <ButtonGroup >
+                            <Button variant="primary" type="button" name="isSigned" onClick={ (e) => this.onSubmit(e)}>
                                 Log In
                             </Button>
-                        </LinkContainer>
-                        <LinkContainer to="/">
-                            <Button variant="secondary" type="submit">
-                                Cancel
-                            </Button>
-                        </LinkContainer>
-                    </ButtonGroup>
-                </Form>
-            </Col>
-        </Row>
-    );
+                            <LinkContainer to="/">
+                                <Button variant="secondary" type="submit">
+                                    Cancel
+                                </Button>
+                            </LinkContainer>
+                        </ButtonGroup>
+                    </Form>
+                    {error ?
+                        <Container>
+                            <br />
+                            <Alert variant={'warning'}>
+                                {error}
+                            </Alert> </Container>
+                        :
+                        <br/>
+                    }
+                </Col>
+            </Row>
+        );
+    }
 }
 
 class App extends React.Component{
@@ -799,22 +832,21 @@ class App extends React.Component{
         super(props);
         this.state = {
             isSigned: false,
+            access_token: undefined,
             email: "jimmy@gmail.com",
+            username: "jimmy",
             password: "pass",
             tag: undefined,
             questionActive: undefined,
             history: [],
             createTag: false,
+            redirect: null
         };
     }
 
-    handleChange = (event) => {
-        const target = event.target;
-        const value = (target.type === 'button') ? true : target.value;
-        this.setState({
-            [target.name]: value
-        });
-    };
+    handleChange = (event) => this.setState({[event.target.name]: event.target.value });
+
+    handleClick = (access_token) => this.setState({isSigned : true, access_token: access_token, redirect: "/"});
 
     handleHomeButton = () => this.setState({history:[]});
 
@@ -908,7 +940,7 @@ class App extends React.Component{
                 <Navbar bg="dark" expand="lg" variant="dark" className="justify-content-between">
                     <LinkContainer to="/" ><Button onClick={()=> this.handleHomeButton()} variant="outline-secondary" >Home</Button></LinkContainer>
                     <Nav>
-                        <Navbar.Text>Signed in as: <LinkContainer to="/myHome" onClick={()=> this.handleMyHomeLink()}><Link>{this.state.email}</Link></LinkContainer></Navbar.Text>
+                        <Navbar.Text>Signed in as: <LinkContainer to="/myHome" onClick={()=> this.handleMyHomeLink()}><Link>{this.state.username}</Link></LinkContainer></Navbar.Text>
                         <LinkContainer id="sign_out_btn" to="/">
                             <Button variant="outline-secondary" name="isSigned" onClick={() => this.handleChange()}>Sign out</Button>
                         </LinkContainer>
@@ -1167,13 +1199,16 @@ class App extends React.Component{
                         <Route path="/sign_up">
                             <Signup
                                 onChange={(event) => this.handleChange(event)}
-                                onClick={(event) => this.handleChange(event)}
+                                onClick={(event) => this.handleClick(event)}
                             />
                         </Route>
                         <Route path="/sign_in">
                             <Signin
+                                redirect = {this.state.redirect}
+                                username = {this.state.username}
+                                password = {this.state.password}
                                 onChange={(event) => this.handleChange(event)}
-                                onClick={(event) => this.handleChange(event)}
+                                onClick={(access_token) => this.handleClick(access_token)}
                             />
                         </Route>
                         <Route path="/">
