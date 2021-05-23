@@ -11,7 +11,7 @@ import {
     Navbar,
     Row,
     Accordion,
-    InputGroup, Alert
+    InputGroup, Alert, Tabs, Tab
 } from "react-bootstrap";
 import {MemoryRouter, Switch, Route, Link, Redirect} from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -542,32 +542,113 @@ function MyHome (props) {
     );
 }
 
-function ActivityList(props) {
-    return(
-        <Container style={{marginTop:30, marginBottom:30}}>
-            <Card>
-                <Card.Body>
-                    <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
-                    <Card.Subtitle className="mb-2 text-muted">asked 1 hour ago by jimmy</Card.Subtitle>
-                    <Card.Link><Link name='#tag1' to='/QuestionsList' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
-                </Card.Body>
-            </Card>
-            <Card>
-                <Card.Body>
-                    <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
-                    <Card.Subtitle className="mb-2 text-muted">answered 20 minutes ago by jimmy</Card.Subtitle>
-                    <Card.Link><Link name='#tag1' to='/QuestionsList' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
-                </Card.Body>
-            </Card>
-            <Card>
-                <Card.Body>
-                    <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
-                    <Card.Subtitle className="mb-2 text-muted">answered 30 minutes ago by jimmy</Card.Subtitle>
-                    <Card.Link><Link name='#tag1' to='/QuestionsList' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
-                </Card.Body>
-            </Card>
-        </Container>
-    );
+class ActivityList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null,
+            isLoaded1: false,
+            isLoaded2: false,
+            userId: undefined,
+            userName: undefined,
+            questionItems: [],
+            answerItems: [],
+        }
+    }
+
+    componentDidMount() {
+        fetch("http://localhost:8080/api/users")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    result.forEach((item) => {
+                        if (item.username == this.props.userName) {
+                            this.setState({
+                                userId: item.id,
+                                userName: item.username
+                            })
+                        }
+                    })
+                    return (
+                        Promise.all([
+                            fetch("http://localhost:8080/api/questions/per-user?userId=" + this.state.userId + "&limit=all")
+                                .then(res => res.json())
+                                .then(
+                                    (result) => {
+                                        this.setState({
+                                            isLoaded1: true,
+                                            questionItems: result
+                                        });
+                                    },
+                                    (error) => {
+                                        this.setState({
+                                            isLoaded1: true,
+                                            error
+                                        });
+                                    }),
+                            fetch("http://localhost:8080/api/answers/per-user?userId=" + this.state.userId + "&limit=all")
+                                .then(res => res.json())
+                                .then(
+                                    (result) => {
+                                        this.setState({
+                                            isLoaded2: true,
+                                            answerItems: result
+                                        });
+                                    },
+                                    (error) => {
+                                        this.setState({
+                                            isLoaded2: true,
+                                            error
+                                        });
+                                    })
+                        ])
+                    )
+                },
+                (error) => {
+                    this.setState({
+                        error
+                    });
+                }
+            )
+    }
+
+    render() {
+        const {error, isLoaded1, isLoaded2, questionItems, answerItems} = this.state;
+        if (error) {
+            return <div>Error: {error.message}</div>;
+        } else if (!isLoaded1 || !isLoaded2) {
+            return <div>Loading...</div>;
+        } else {
+            return (
+                <Container style={{marginTop: 30, marginBottom: 30}}>
+                    <Tabs defaultActiveKey="questions">
+                        <Tab eventKey="questions" title="Questions">
+                            {questionItems.map(item => (
+                                <Card key={item.id}>
+                                    <Card.Body>
+                                        <Card.Title><Link to='/Question' id={item.id} onClick={(e) => this.props.onClickQuestion(e)}>{item.title}</Link></Card.Title>
+                                        <Card.Subtitle className="mb-2 text-muted">asked <TimeAgo date={item.createdAt}/> by {this.state.userName}</Card.Subtitle>
+                                        <Card.Link><Link name='#tag1' to='/QuestionsList' onClick={(e) => this.props.onClickTag(e)}>#tag1</Link></Card.Link>
+                                    </Card.Body>
+                                </Card>
+                            ))}
+                        </Tab>
+                        <Tab eventKey="answers" title="Answers">
+                            {answerItems.map(item => (
+                                <Card key={item.id}>
+                                    <Card.Body>
+                                        <Card.Title><Link to='/Question' id={item.questionId} onClick={(e) => this.props.onClickQuestion(e)}>{item.body}</Link></Card.Title>
+                                        <Card.Subtitle className="mb-2 text-muted">answered <TimeAgo date={item.createdAt}/> by {this.state.userName}</Card.Subtitle>
+                                        <Card.Link><Link name='#tag1' to='/QuestionsList' onClick={(e) => this.props.onClickTag(e)}>#tag1</Link></Card.Link>
+                                    </Card.Body>
+                                </Card>
+                            ))}
+                        </Tab>
+                    </Tabs>
+                </Container>
+            )
+        }
+    }
 }
 
 function ActivityStatistics() {
@@ -836,6 +917,7 @@ class App extends React.Component{
             email: "jimmy@gmail.com",
             username: "jimmy",
             password: "pass",
+            userId: undefined,
             tag: undefined,
             questionActive: undefined,
             history: [],
@@ -1168,6 +1250,7 @@ class App extends React.Component{
                         </Route>
                         <Route path="/ActivityList">
                             <ActivityList
+                                userName = {this.state.username}
                                 onClickQuestion={(event) => this.handleQuestionLink(event)}
                                 onClickTag={(event) => this.handleTagButton(event)}
                             />
