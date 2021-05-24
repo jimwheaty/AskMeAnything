@@ -15,7 +15,13 @@ export class QuestionService {
   ) {}
 
   async findAll(): Promise<Question[]> {
-    return this.questionModel.findAll();
+    return this.questionModel.findAll({
+      include: {
+        model: Answer,
+        as: 'answers',
+        required: true
+      }
+    });
   }
 
 
