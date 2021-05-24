@@ -63,91 +63,88 @@ function Home (props) {
     );
 }
 
-function Tags(props) {
+class Tags extends React.Component{
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null,
+            isLoaded: false,
+            tagItems: [],
+        }
+    }
 
-    return(
-        <Container style={{marginTop:30, marginBottom:30}}>
-            <h2>Most popular Tags</h2><br />
-            <Container>
-                <Accordion>
-                    <Card style={{width:400}}>
-                        <Card.Header>
-                            <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                                Graph !
-                            </Accordion.Toggle>
-                        </Card.Header>
-                        <Accordion.Collapse eventKey="0">
-                            <Card.Body>
-                                <VictoryPie
-                                    data={[
-                                        { x: "Tag1", y: 35 },
-                                        { x: "Tag2", y: 40 },
-                                        { x: "Tag3", y: 55 },
-                                        { x: "Tag4", y: 25 },
-                                        { x: "Tag5", y: 15 }
-                                    ]}
-                                    labels={({ datum }) => `${datum.x}: ${datum.y}`}
-                                    labelPlacement={({ index }) => index
-                                        ? "parallel"
-                                        : "vertical"
-                                    }
-                                    padding={100}
-                                />
-                            </Card.Body>
-                        </Accordion.Collapse>
-                    </Card>
-                </Accordion>
-            </Container> <br/>
-            <CardDeck>
-                <Card body style={{minWidth:200}}>
-                    <LinkContainer to="/QuestionsList" >
-                        <Button onClick={(e) => props.onClick(e)} name="#tag1">#Tag1</Button>
-                    </LinkContainer>
-                    <small className="text-muted"> (10 questions)</small>
-                </Card>
-                <Card body style={{minWidth:200}}>
-                    <Button>#Tag1</Button>
-                    <small className="text-muted"> (10 questions)</small>
-                </Card>
-                <Card body style={{minWidth:200}}>
-                    <Button>#Tag1</Button>
-                    <small className="text-muted"> (10 questions)</small>
-                </Card>
-                <Card body style={{minWidth:200}}>
-                    <Button>#Tag1</Button>
-                    <small className="text-muted"> (10 questions)</small>
-                </Card>
-                <Card body style={{minWidth:200}}>
-                    <Button>#Tag1</Button>
-                    <small className="text-muted"> (10 questions)</small>
-                </Card>
-                <Card body style={{minWidth:200}}>
-                    <Button>#Tag1</Button>
-                    <small className="text-muted"> (10 questions)</small>
-                </Card>
-                <Card body style={{minWidth:200}}>
-                    <Button>#Tag1</Button>
-                    <small className="text-muted"> (10 questions)</small>
-                </Card>
-                <Card body style={{minWidth:200}}>
-                    <Button>#Tag1</Button>
-                    <small className="text-muted"> (10 questions)</small>
-                </Card>
-                <Card body style={{minWidth:200}}>
-                    <Button>#Tag1</Button>
-                    <small className="text-muted"> (10 questions)</small>
-                </Card>
-                <Card body style={{minWidth:200}}>
-                    <Button>#Tag1</Button>
-                    <small className="text-muted"> (10 questions)</small>
-                </Card>
-                <Card body style={{minWidth:200}}>
-                    <Button>#Tag1</Button>
-                    <small className="text-muted"> (10 questions)</small>
-                </Card>
-            </CardDeck>
-        </Container>
-    );
+    componentDidMount() {
+        fetch("http://localhost:8080/api/tags")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        isLoaded: true,
+                        tagItems: result
+                    });
+                },
+                (error) => {
+                    this.setState({
+                        isLoaded: true,
+                        error
+                    });
+                })
+    }
+
+    render() {
+        const {error, isLoaded, tagItems} = this.state;
+        if (error) {
+            return <div>Error: {error.message}</div>;
+        } else if (!isLoaded) {
+            return <div>Loading...</div>;
+        } else {
+            return (
+                <Container style={{marginTop: 30, marginBottom: 30}}>
+                    <h2>Most popular Tags</h2><br/>
+                    <Container>
+                        <Accordion>
+                            <Card style={{width: 400}}>
+                                <Card.Header>
+                                    <Accordion.Toggle as={Button} variant="link" eventKey="0">
+                                        Graph !
+                                    </Accordion.Toggle>
+                                </Card.Header>
+                                <Accordion.Collapse eventKey="0">
+                                    <Card.Body>
+                                        <VictoryPie
+                                            data={[
+                                                {x: "Tag1", y: 35},
+                                                {x: "Tag2", y: 40},
+                                                {x: "Tag3", y: 55},
+                                                {x: "Tag4", y: 25},
+                                                {x: "Tag5", y: 15}
+                                            ]}
+                                            labels={({datum}) => `${datum.x}: ${datum.y}`}
+                                            labelPlacement={({index}) => index
+                                                ? "parallel"
+                                                : "vertical"
+                                            }
+                                            padding={100}
+                                        />
+                                    </Card.Body>
+                                </Accordion.Collapse>
+                            </Card>
+                        </Accordion>
+                    </Container> <br/>
+                    <CardDeck>
+                        {tagItems.map(item => (
+                            <Card body key={item.id} style={{minWidth: 200}}>
+                                <LinkContainer to="/QuestionsList">
+                                    <Button onClick={(e) => this.props.onClick(e)} name={item.field}>#{item.field}</Button>
+                                </LinkContainer>
+                                <small className="text-muted"> (10 questions)</small>
+                            </Card>
+                        ))}
+                    </CardDeck>
+                </Container>
+            );
+        }
+    }
 }
 
 class QuestionsList extends React.Component {
@@ -169,7 +166,7 @@ class QuestionsList extends React.Component {
                         isLoaded: true,
                         questionItems: result
                     });
-                    const { questionItems } = this.state;
+                    const {questionItems} = this.state;
                     return Promise.all(
                         questionItems.map(item => (
                             fetch("http://localhost:8080/api/users/" + item.userId)
@@ -178,7 +175,7 @@ class QuestionsList extends React.Component {
                                     (result) => {
                                         item.userName = result.username;
                                         this.setState({
-                                            questionItems : questionItems
+                                            questionItems: questionItems
                                         })
                                     },
                                     (error) => {
@@ -199,191 +196,166 @@ class QuestionsList extends React.Component {
     }
 
     render() {
-        const { error, isLoaded, questionItems } = this.state;
+        const {error, isLoaded, questionItems} = this.state;
         if (error) {
             return <div>Error: {error.message}</div>;
         } else if (!isLoaded) {
             return <div>Loading...</div>;
         } else {
             return (
-                <Container>
-                    {questionItems.map(item => (
-                        <Container>
-                        <Card key={item.id}>
-                            <Card.Body>
-                                <Card.Title><Link to='/Question' id={item.id} onClick={(e) => this.props.onClickQuestion(e)}>{item.title}</Link></Card.Title>
-                                <Card.Subtitle className="mb-2 text-muted">asked <TimeAgo date={item.createdAt}/> by {item.userName}</Card.Subtitle>
-                                <Card.Link><Link name='#tag1' onClick={(e) => this.props.onClickTag(e)}>#tag1</Link></Card.Link>
-                            </Card.Body>
-                            <Card.Footer>
-                                <small className="text-muted">Last updated <TimeAgo date={item.updatedAt} /></small>
-                            </Card.Footer>
-                        </Card>
-                        </Container>
-                    ))}
+                <Container style={{marginTop: 30, marginBottom: 30}}>
+                    {
+                        (this.props.tag) ?
+                            <h2>Questions with {this.props.tag} </h2>
+                            :
+                            <h2>Recent questions</h2>
+                    }
+                    <Container>
+                        <br/>
+                        <Accordion>
+                            <Card style={{width: 400}}>
+                                <Card.Header>
+                                    <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                                        Questions per month Graph !
+                                    </Accordion.Toggle>
+                                </Card.Header>
+                                <Accordion.Collapse eventKey="1">
+                                    <Card.Body>
+                                        <Form>
+                                            <Form.Group>
+                                                <Form.Label>Select a year</Form.Label>
+                                                <Form.Control as="select" custom>
+                                                    <option>2021</option>
+                                                    <option>2020</option>
+                                                    <option>2019</option>
+                                                </Form.Control>
+                                            </Form.Group>
+                                        </Form>
+                                        <VictoryChart
+                                            theme={VictoryTheme.material}
+                                        >
+                                            <VictoryAxis crossAxis
+                                                         width={400}
+                                                         height={400}
+                                                         domain={[0, 12]}
+                                                         label="month of the year"
+                                                         style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                            />
+                                            <VictoryAxis dependentAxis crossAxis
+                                                         width={400}
+                                                         height={400}
+                                                         domain={[0, 10]}
+                                                         label="Number of Questions"
+                                                         style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                            />
+                                            <VictoryLine
+                                                style={{
+                                                    data: {stroke: "#c43a31"},
+                                                    parent: {border: "1px solid #ccc"}
+                                                }}
+                                                data={[
+                                                    {x: 1, y: 2},
+                                                    {x: 2, y: 3},
+                                                    {x: 3, y: 5},
+                                                    {x: 4, y: 4},
+                                                    {x: 5, y: 7}
+                                                ]}
+                                            />
+                                        </VictoryChart>
+                                    </Card.Body>
+                                </Accordion.Collapse>
+                            </Card>
+                            <Card style={{width: 400}}>
+                                <Card.Header>
+                                    <Accordion.Toggle as={Button} variant="link" eventKey="0">
+                                        Questions per day Graph !
+                                    </Accordion.Toggle>
+                                </Card.Header>
+                                <Accordion.Collapse eventKey="0">
+                                    <Card.Body>
+                                        <Form>
+                                            <Form.Group>
+                                                <Form.Label>Select a year</Form.Label>
+                                                <Form.Control as="select" custom>
+                                                    <option>2021</option>
+                                                    <option>2020</option>
+                                                    <option>2019</option>
+                                                </Form.Control>
+                                            </Form.Group>
+                                            <Form.Group controlId="exampleForm.SelectCustom">
+                                                <Form.Label>and a month !</Form.Label>
+                                                <Form.Control as="select" custom>
+                                                    <option>Ιανουάριος</option>
+                                                    <option>Φεβρουάριος</option>
+                                                    <option>Μάρτιος</option>
+                                                    <option>Απρίλιος</option>
+                                                    <option>Μάιος</option>
+                                                    <option>Ιούνιος</option>
+                                                    <option>Ιούλιος</option>
+                                                    <option>Αύγουστος</option>
+                                                    <option>Σεπτέμβριος</option>
+                                                    <option>Οκτώμβριος</option>
+                                                    <option>Νοέμβριος</option>
+                                                    <option>Δεκέμβριος</option>
+                                                </Form.Control>
+                                            </Form.Group>
+                                        </Form>
+                                        <VictoryChart
+                                            theme={VictoryTheme.material}
+                                        >
+                                            <VictoryAxis crossAxis
+                                                         width={400}
+                                                         height={400}
+                                                         domain={[0, 31]}
+                                                         label="day of the month"
+                                                         style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                            />
+                                            <VictoryAxis dependentAxis crossAxis
+                                                         width={400}
+                                                         height={400}
+                                                         domain={[0, 10]}
+                                                         label="Number of Questions"
+                                                         style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                            />
+                                            <VictoryLine
+                                                style={{
+                                                    data: {stroke: "#c43a31"},
+                                                    parent: {border: "1px solid #ccc"}
+                                                }}
+                                                data={[
+                                                    {x: 1, y: 2},
+                                                    {x: 2, y: 3},
+                                                    {x: 3, y: 5},
+                                                    {x: 4, y: 4},
+                                                    {x: 5, y: 7}
+                                                ]}
+                                            />
+                                        </VictoryChart>
+                                    </Card.Body>
+                                </Accordion.Collapse>
+                            </Card>
+                        </Accordion> <br/>
+                        {questionItems.map(item => (
+                            (item.tag === this.props.tag) ?
+                                <Card key={item.id}>
+                                    <Card.Body>
+                                        <Card.Title><Link to='/Question' id={item.id} onClick={(e) => this.props.onClickQuestion(e)}>{item.title}</Link></Card.Title>
+                                        <Card.Subtitle className="mb-2 text-muted">asked <TimeAgo date={item.createdAt}/> by {item.userName}</Card.Subtitle>
+                                        <Card.Link><Link name='#tag1' onClick={(e) => this.props.onClickTag(e)}>#tag1</Link></Card.Link>
+                                    </Card.Body>
+                                    <Card.Footer>
+                                        <small className="text-muted">Last updated <TimeAgo
+                                            date={item.updatedAt}/></small>
+                                    </Card.Footer>
+                                </Card>
+                                :
+                                <Container />
+                        ))}
+                    </Container>
                 </Container>
             );
         }
     }
-    /* TODO
-    return(
-        <Container>
-            <Accordion>
-                <Card style={{width:400}}>
-                    <Card.Header>
-                        <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                            Questions per month Graph !
-                        </Accordion.Toggle>
-                    </Card.Header>
-                    <Accordion.Collapse eventKey="1">
-                        <Card.Body>
-                            <Form>
-                                <Form.Group>
-                                    <Form.Label>Select a year</Form.Label>
-                                    <Form.Control as="select" custom>
-                                        <option>2021</option>
-                                        <option>2020</option>
-                                        <option>2019</option>
-                                    </Form.Control>
-                                </Form.Group>
-                            </Form>
-                            <VictoryChart
-                                theme={VictoryTheme.material}
-                            >
-                                <VictoryAxis crossAxis
-                                             width={400}
-                                             height={400}
-                                             domain={[0, 12]}
-                                             label="month of the year"
-                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
-                                />
-                                <VictoryAxis dependentAxis crossAxis
-                                             width={400}
-                                             height={400}
-                                             domain={[0, 10]}
-                                             label="Number of Questions"
-                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
-                                />
-                                <VictoryLine
-                                    style={{
-                                        data: { stroke: "#c43a31" },
-                                        parent: { border: "1px solid #ccc"}
-                                    }}
-                                    data={[
-                                        { x: 1, y: 2 },
-                                        { x: 2, y: 3 },
-                                        { x: 3, y: 5 },
-                                        { x: 4, y: 4 },
-                                        { x: 5, y: 7 }
-                                    ]}
-                                />
-                            </VictoryChart>
-                        </Card.Body>
-                    </Accordion.Collapse>
-                </Card>
-                <Card style={{width:400}}>
-                    <Card.Header>
-                        <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                            Questions per day Graph !
-                        </Accordion.Toggle>
-                    </Card.Header>
-                    <Accordion.Collapse eventKey="0">
-                        <Card.Body>
-                            <Form>
-                                <Form.Group>
-                                    <Form.Label>Select a year</Form.Label>
-                                    <Form.Control as="select" custom>
-                                        <option>2021</option>
-                                        <option>2020</option>
-                                        <option>2019</option>
-                                    </Form.Control>
-                                </Form.Group>
-                                <Form.Group controlId="exampleForm.SelectCustom">
-                                    <Form.Label>and a month !</Form.Label>
-                                    <Form.Control as="select" custom>
-                                        <option>Ιανουάριος</option>
-                                        <option>Φεβρουάριος</option>
-                                        <option>Μάρτιος</option>
-                                        <option>Απρίλιος</option>
-                                        <option>Μάιος</option>
-                                        <option>Ιούνιος</option>
-                                        <option>Ιούλιος</option>
-                                        <option>Αύγουστος</option>
-                                        <option>Σεπτέμβριος</option>
-                                        <option>Οκτώμβριος</option>
-                                        <option>Νοέμβριος</option>
-                                        <option>Δεκέμβριος</option>
-                                    </Form.Control>
-                                </Form.Group>
-                            </Form>
-                            <VictoryChart
-                                theme={VictoryTheme.material}
-                            >
-                                <VictoryAxis crossAxis
-                                             width={400}
-                                             height={400}
-                                             domain={[0, 31]}
-                                             label="day of the month"
-                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
-                                />
-                                <VictoryAxis dependentAxis crossAxis
-                                             width={400}
-                                             height={400}
-                                             domain={[0, 10]}
-                                             label="Number of Questions"
-                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
-                                />
-                                <VictoryLine
-                                    style={{
-                                        data: { stroke: "#c43a31" },
-                                        parent: { border: "1px solid #ccc"}
-                                    }}
-                                    data={[
-                                        { x: 1, y: 2 },
-                                        { x: 2, y: 3 },
-                                        { x: 3, y: 5 },
-                                        { x: 4, y: 4 },
-                                        { x: 5, y: 7 }
-                                    ]}
-                                />
-                            </VictoryChart>
-                        </Card.Body>
-                    </Accordion.Collapse>
-                </Card>
-            </Accordion> <br/>
-            <Card>
-                <Card.Body>
-                    <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
-                    <Card.Subtitle className="mb-2 text-muted">asked 1 hour ago by jimmy</Card.Subtitle>
-                    <Card.Link><Link name='#tag1' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
-                </Card.Body>
-                <Card.Footer>
-                    <small className="text-muted">Last updated 3 minutes ago</small>
-                </Card.Footer>
-            </Card>
-            <Card>
-                <Card.Body>
-                    <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
-                    <Card.Subtitle className="mb-2 text-muted">asked 1 hour ago by jimmy</Card.Subtitle>
-                    <Card.Link><Link name='#tag1' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
-                </Card.Body>
-                <Card.Footer>
-                    <small className="text-muted">Last updated 3 minutes ago</small>
-                </Card.Footer>
-            </Card>
-            <Card>
-                <Card.Body>
-                    <Card.Title><Link to='/Question' id='1' onClick={(e) => props.onClickQuestion(e)}>Η πρώτη μου ερώτηση</Link></Card.Title>
-                    <Card.Subtitle className="mb-2 text-muted">asked 1 hour ago by jimmy</Card.Subtitle>
-                    <Card.Link><Link name='#tag1' onClick={(e) => props.onClickTag(e)}>#tag1</Link></Card.Link>
-                </Card.Body>
-                <Card.Footer>
-                    <small className="text-muted">Last updated 3 minutes ago</small>
-                </Card.Footer>
-            </Card>
-        </Container>
-    );
-    */
 }
 
 class Question extends React.Component {
@@ -470,7 +442,7 @@ class Question extends React.Component {
                             <Card.Body>
                                 <Card.Title>{questionItem.body}</Card.Title>
                                 <LinkContainer to="/QuestionsList" >
-                                    <Card.Link><Link to='/QuestionsList' name='#tag1' onClick={(e) => this.handleTagButton(e)}>#tag1</Link></Card.Link>
+                                    <Card.Link><Link to='/QuestionsList' name='#tag1' onClick={(e) => this.props.onClickTag(e)}>#tag1</Link></Card.Link>
                                 </LinkContainer>
                             </Card.Body>
                             <Card.Footer>
@@ -883,7 +855,7 @@ class Signin extends React.Component {
                             <Form.Control type="password" placeholder="Password" name="password" onChange={(e) => this.props.onChange(e)}/>
                         </Form.Group>
                         <ButtonGroup >
-                            <Button variant="primary" type="button" name="isSigned" onClick={ (e) => this.onSubmit(e)}>
+                            <Button variant="primary" type="button" name="isSigned" onClick={ () => this.onSubmit()}>
                                 Log In
                             </Button>
                             <LinkContainer to="/">
@@ -908,27 +880,192 @@ class Signin extends React.Component {
     }
 }
 
+class CreateQuestion extends React.Component{
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null,
+            isLoaded: false,
+            tagItems: [],
+            success: false
+        }
+    }
+
+    componentDidMount() {
+        fetch("http://localhost:8080/api/tags")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        isLoaded: true,
+                        tagItems: result
+                    });
+                },
+                (error) => {
+                    this.setState({
+                        isLoaded: true,
+                        error
+                    });
+                })
+    }
+
+    submitQuestion() {
+        alert(this.props.access_token)
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.props.access_token},
+            body: JSON.stringify({title: this.props.newQuestionTitle, body: this.props.newQuestionBody})
+        };
+        fetch('http://localhost:8080/api/questions', requestOptions)
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    if (result.message)
+                        this.setState({error: result})
+                    else
+                        this.setState({success: true})
+                }
+            )
+    }
+
+    render() {
+        const {error, isLoaded, tagItems} = this.state;
+        if (error) {
+            return <Alert variant="danger">Error: {error.message}</Alert>;
+        } else if (!isLoaded) {
+            return <div>Loading...</div>;
+        } else {
+            return (
+                (this.props.isSigned === false) ?
+                    <Alert variant={'warning'}>
+                        You have to sign in first !!!
+                    </Alert>
+                    :
+                    <Row className="justify-content-md-center"><Col sm={8}>
+                        <h2>Ask a Question</h2>
+                        <br/>
+                        <Form>
+                            <Form.Group>
+                                <Form.Label>Question Title</Form.Label>
+                                <Form.Control type="text" name="newQuestionTitle" onChange={(e) => this.props.onChange(e)}/>
+                                <br/>
+                                <Form.Label>Question Text</Form.Label>
+                                <Form.Control as="textarea" name="newQuestionBody" rows={3} onChange={(e) => this.props.onChange(e)}/>
+                                <br/>
+                                <Form.Label>Tag</Form.Label>
+                                {
+                                    (this.props.createTag) ?
+                                        <Form.Control as="select" disabled >
+                                            <option value="0">Choose...</option>
+                                        </Form.Control>
+                                        :
+                                        <Form.Control as="select" name="newQuestionTag" onChange={(e) => this.props.onChange(e)}>
+                                            <option value="0">Choose...</option>
+                                            {tagItems.map((item, index) => (
+                                                <option value={index}>#{item.field}</option>
+                                            ))}
+                                        </Form.Control>
+                                }
+                            </Form.Group>
+                            <Form.Group controlId="formHorizontalCheck">
+                                <Form.Check onClick={() => this.props.onCreateTagRadio()} label="or create your own #tag !"/>
+                            </Form.Group>
+                            <Form.Group>
+                                {
+                                    (this.props.createTag) ?
+                                        <InputGroup name="newQuestionTag" onChange={(e) => this.props.onChange(e)}>
+                                            <InputGroup.Prepend>
+                                                <InputGroup.Text>#</InputGroup.Text>
+                                            </InputGroup.Prepend>
+                                            <FormControl/>
+                                        </InputGroup>
+                                        :
+                                        <InputGroup>
+                                            <InputGroup.Prepend>
+                                                <InputGroup.Text>#</InputGroup.Text>
+                                            </InputGroup.Prepend>
+                                            <FormControl disabled/>
+                                        </InputGroup>
+                                }
+                                <br/>
+                                <ButtonGroup>
+                                    <Button variant="primary" type="button" onClick={() => this.submitQuestion()}>Submit</Button>
+                                    <Button variant="secondary" type="submit">Cancel</Button>
+                                </ButtonGroup>
+                            </Form.Group>
+                        </Form>
+                        {
+                            this.state.success ?
+                                <Alert variant="success">Thank you!</Alert>
+                                :
+                                <Container/>
+                        }
+                    </Col></Row>
+            );
+        }
+    }
+}
+
+function AnswerQuestion(props) {
+    return (
+        (props.isSigned === false) ?
+            <Alert variant={'warning'}>
+                You have to sign in first !!!
+            </Alert>
+            :
+            <Row className="justify-content-md-center" style={{marginBottom: 30, marginTop: 30}}>
+                <Col sm={8}>
+                    <h2>Answer a Question</h2>
+                    <br/>
+                    <Form>
+                        <Form.Group>
+                            <Form.Label>Choose Question Title</Form.Label>
+                            <Form.Control as="select" onChange={(e) => props.onQuestionLink(e)}>
+                                <option value="0">Choose...</option>
+                                <option value="1">Η πρώτη μου ερώτηση</option>
+                                <option value="2">Η πρώτη μου ερώτηση</option>
+                                <option value="3">Η πρώτη μου ερώτηση</option>
+                            </Form.Control>
+                            <br/>
+                            <Question/>
+                            <br/>
+                            <Form.Label>Your Answer</Form.Label>
+                            <Form.Control as="textarea" rows={3}/>
+                            <br/>
+                            <ButtonGroup>
+                                <Button variant="primary" type="button">Submit</Button>
+                                <Button variant="secondary" type="submit">Cancel</Button>
+                            </ButtonGroup>
+                        </Form.Group>
+                    </Form>
+                </Col>
+            </Row>
+    );
+}
+
 class App extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
             isSigned: false,
             access_token: undefined,
-            email: "jimmy@gmail.com",
-            username: "jimmy",
-            password: "pass",
-            userId: undefined,
+            email: undefined,
+            username: "jackie",
+            password: "el_presidente",
             tag: undefined,
             questionActive: undefined,
             history: [],
             createTag: false,
-            redirect: null
+            redirect: null,
+            newQuestionTitle: undefined,
+            newQuestionBody: undefined,
+            newQuestionTag: undefined
         };
     }
 
     handleChange = (event) => this.setState({[event.target.name]: event.target.value });
 
-    handleClick = (access_token) => this.setState({isSigned : true, access_token: access_token, redirect: "/"});
+    handleSignin = (access_token) => this.setState({isSigned : true, access_token: access_token, redirect: "/", history: []});
 
     handleHomeButton = () => this.setState({history:[]});
 
@@ -946,7 +1083,7 @@ class App extends React.Component{
             (name == "") ?
                 this.setState({history:["Tags",this.state.tag]})
                 :
-                this.setState({tag: name, history:["Tags",name]})
+                this.setState({tag: name, history:["Tags","#"+name]})
         )
     }
 
@@ -981,27 +1118,6 @@ class App extends React.Component{
         const history = this.state.history.slice();
         history.push('Answer Question')
         this.setState({history: history})
-    }
-
-    QuestionsListHeader = () => {
-        return(
-            (this.state.tag) ?
-                <Container  style={{marginTop:30, marginBottom:30}}>
-                    <h2>Questions with {this.state.tag}</h2><br />
-                    <QuestionsList
-                        onClickQuestion={(event) => this.handleQuestionLink(event)}
-                        onClickTag={(event) => this.handleTagButton(event)}
-                    />
-                </Container>
-                :
-                <Container  style={{marginTop:30, marginBottom:30}}>
-                    <h2>Recent questions</h2><br />
-                    <QuestionsList
-                        onClickQuestion={(event) => this.handleQuestionLink(event)}
-                        onClickTag={(event) => this.handleTagButton(event)}
-                    />
-                </Container>
-        )
     }
 
     CustomNavbar = () => {
@@ -1106,129 +1222,6 @@ class App extends React.Component{
         }
     }
 
-    CreateQuestion = () => {
-        return (
-            (this.state.isSigned === false) ?
-                <Alert variant={'warning'}>
-                    You have to sign in first !!!
-                </Alert>
-                :
-                (this.state.createTag) ?
-                    <Row className="justify-content-md-center"><Col sm={8}>
-                        <h2>Ask a Question</h2>
-                        <br />
-                        <Form>
-                            <Form.Group>
-                                <Form.Label>Question Title</Form.Label>
-                                <Form.Control type="text"/>
-                                <br />
-                                <Form.Label>Question Text</Form.Label>
-                                <Form.Control as="textarea" rows={3} />
-                                <br />
-                                <Form.Label>Tag</Form.Label>
-                                <Form.Control as="select" disabled>
-                                    <option value="0">Choose...</option>
-                                    <option value="1">#One</option>
-                                    <option value="2">#Two</option>
-                                    <option value="3">#Three</option>
-                                </Form.Control>
-                            </Form.Group>
-                            <Form.Group controlId="formHorizontalCheck">
-                                <Form.Check onClick={() => this.handleCreateTagRadio()} label="or create your own #tag !" />
-                            </Form.Group>
-                            <Form.Group>
-                                <InputGroup>
-                                    <InputGroup.Prepend>
-                                        <InputGroup.Text>#</InputGroup.Text>
-                                    </InputGroup.Prepend>
-                                    <FormControl />
-                                </InputGroup>
-                                <br />
-                                <ButtonGroup>
-                                    <Button variant="primary" type="button">Submit</Button>
-                                    <Button variant="secondary" type="submit">Cancel</Button>
-                                </ButtonGroup>
-                            </Form.Group>
-                        </Form>
-                    </Col></Row>
-                    :
-                    <Row className="justify-content-md-center"><Col sm={8}>
-                        <h2>Ask a Question</h2>
-                        <br />
-                        <Form>
-                            <Form.Group>
-                                <Form.Label>Question Title</Form.Label>
-                                <Form.Control type="text"/>
-                                <br />
-                                <Form.Label>Question Text</Form.Label>
-                                <Form.Control as="textarea" rows={3} />
-                                <br />
-                                <Form.Label>Tag</Form.Label>
-                                <Form.Control as="select">
-                                    <option value="0">Choose...</option>
-                                    <option value="1">#One</option>
-                                    <option value="2">#Two</option>
-                                    <option value="3">#Three</option>
-                                </Form.Control>
-                            </Form.Group>
-                            <Form.Group controlId="formHorizontalCheck">
-                                <Form.Check onClick={() => this.handleCreateTagRadio()} label="or create your own #tag !" />
-                            </Form.Group>
-                            <Form.Group>
-                                <InputGroup>
-                                    <InputGroup.Prepend>
-                                        <InputGroup.Text>#</InputGroup.Text>
-                                    </InputGroup.Prepend>
-                                    <FormControl disabled />
-                                </InputGroup>
-                                <br />
-                                <ButtonGroup>
-                                    <Button variant="primary" type="button">Submit</Button>
-                                    <Button variant="secondary" type="submit">Cancel</Button>
-                                </ButtonGroup>
-                            </Form.Group>
-                        </Form>
-                    </Col></Row>
-        );
-    }
-
-    AnswerQuestion = () => {
-        return (
-            (this.state.isSigned === false) ?
-                <Alert variant={'warning'}>
-                    You have to sign in first !!!
-                </Alert>
-                :
-                <Row className="justify-content-md-center" style={{marginBottom:30, marginTop:30}}>
-                    <Col sm={8}>
-                        <h2>Answer a Question</h2>
-                        <br />
-                        <Form>
-                            <Form.Group>
-                                <Form.Label>Choose Question Title</Form.Label>
-                                <Form.Control as="select" onChange={(e) => this.handleQuestionLink(e)}>
-                                    <option value="0">Choose...</option>
-                                    <option value="1">Η πρώτη μου ερώτηση</option>
-                                    <option value="2">Η πρώτη μου ερώτηση</option>
-                                    <option value="3">Η πρώτη μου ερώτηση</option>
-                                </Form.Control>
-                                <br/>
-                                <this.Question />
-                                <br />
-                                <Form.Label>Your Answer</Form.Label>
-                                <Form.Control as="textarea" rows={3} />
-                                <br/>
-                                <ButtonGroup>
-                                    <Button variant="primary" type="button">Submit</Button>
-                                    <Button variant="secondary" type="submit">Cancel</Button>
-                                </ButtonGroup>
-                            </Form.Group>
-                        </Form>
-                    </Col>
-                </Row>
-        );
-    }
-
     render(){
         return (
             <MemoryRouter>
@@ -1264,7 +1257,11 @@ class App extends React.Component{
                             />
                         </Route>
                         <Route path="/QuestionsList">
-                            <this.QuestionsListHeader />
+                            <QuestionsList
+                                tag = {this.state.tag}
+                                onClickQuestion={(event) => this.handleQuestionLink(event)}
+                                onClickTag={(event) => this.handleTagButton(event)}
+                            />
                         </Route>
                         <Route path="/Question">
                             <Question
@@ -1274,15 +1271,26 @@ class App extends React.Component{
                             />
                         </Route>
                         <Route path="/CreateQuestion">
-                            <this.CreateQuestion/>
+                            <CreateQuestion
+                                createTag = {this.state.createTag}
+                                isSigned = {this.state.isSigned}
+                                newQuestionTitle = {this.state.newQuestionTitle}
+                                newQuestionBody = {this.state.newQuestionBody}
+                                access_token = {this.state.access_token}
+                                onChange = {(e) => this.handleChange(e)}
+                                onCreateTagRadio = {() => this.handleCreateTagRadio()}
+                            />
                         </Route>
                         <Route path="/AnswerQuestion">
-                            <this.AnswerQuestion />
+                            <AnswerQuestion
+                                isSigned = {this.state.isSigned}
+                                onQuestionLink = {() => this.handleQuestionLink()}
+                            />
                         </Route>
                         <Route path="/sign_up">
                             <Signup
                                 onChange={(event) => this.handleChange(event)}
-                                onClick={(event) => this.handleClick(event)}
+                                onClick={(event) => this.handleSignin(event)}
                             />
                         </Route>
                         <Route path="/sign_in">
@@ -1291,7 +1299,7 @@ class App extends React.Component{
                                 username = {this.state.username}
                                 password = {this.state.password}
                                 onChange={(event) => this.handleChange(event)}
-                                onClick={(access_token) => this.handleClick(access_token)}
+                                onClick={(access_token) => this.handleSignin(access_token)}
                             />
                         </Route>
                         <Route path="/">
