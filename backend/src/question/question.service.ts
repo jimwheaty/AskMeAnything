@@ -2,7 +2,6 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectModel } from '@nestjs/sequelize';
 import { Tag } from 'src/tags/tags.model';
 import { Question } from './question.model';
-const natural = require('natural');
 
 @Injectable()
 export class QuestionService {
@@ -62,7 +61,7 @@ export class QuestionService {
         model: this.tagModel,
         as: 'tags',
         where: {
-          stemmed: natural.LancasterStemmer.stem(tag)
+          field: tag
         }
       }
     });
