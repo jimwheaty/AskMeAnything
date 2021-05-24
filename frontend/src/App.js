@@ -910,7 +910,6 @@ class CreateQuestion extends React.Component{
     }
 
     submitQuestion() {
-        alert(this.props.access_token)
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.props.access_token},
@@ -1006,41 +1005,102 @@ class CreateQuestion extends React.Component{
     }
 }
 
-function AnswerQuestion(props) {
-    return (
-        (props.isSigned === false) ?
-            <Alert variant={'warning'}>
-                You have to sign in first !!!
-            </Alert>
-            :
-            <Row className="justify-content-md-center" style={{marginBottom: 30, marginTop: 30}}>
-                <Col sm={8}>
-                    <h2>Answer a Question</h2>
-                    <br/>
-                    <Form>
-                        <Form.Group>
-                            <Form.Label>Choose Question Title</Form.Label>
-                            <Form.Control as="select" onChange={(e) => props.onQuestionLink(e)}>
-                                <option value="0">Choose...</option>
-                                <option value="1">Η πρώτη μου ερώτηση</option>
-                                <option value="2">Η πρώτη μου ερώτηση</option>
-                                <option value="3">Η πρώτη μου ερώτηση</option>
-                            </Form.Control>
+class AnswerQuestion extends React.Component{
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null,
+            isLoaded: false,
+            questionItems: [],
+            success: false
+        }
+    }
+
+    componentDidMount() {
+        fetch("http://localhost:8080/api/questions")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        isLoaded: true,
+                        questionItems: result
+                    });
+                },
+                (error) => {
+                    this.setState({
+                        isLoaded: true,
+                        error
+                    });
+                })
+    }
+
+    submitAnswer() {
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.props.access_token},
+            body: JSON.stringify({body: this.props.newAnswerBody, questionId: this.props.questionActive})
+        };
+        fetch('http://localhost:8080/api/answers', requestOptions)
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    if (result.message)
+                        this.setState({error: result})
+                    else
+                        this.setState({success: true})
+                }
+            )
+    }
+
+    render() {
+        const {error, isLoaded, questionItems} = this.state;
+        if (error) {
+            return <Alert variant="danger">Error: {error.message}</Alert>;
+        } else if (!isLoaded) {
+            return <div>Loading...</div>;
+        } else {
+            return (
+                (this.props.isSigned === false) ?
+                    <Alert variant={'warning'}>
+                        You have to sign in first !!!
+                    </Alert>
+                    :
+                    <Row className="justify-content-md-center" style={{marginBottom: 30, marginTop: 30}}>
+                        <Col sm={8}>
+                            <h2>Answer a Question</h2>
                             <br/>
-                            <Question/>
-                            <br/>
-                            <Form.Label>Your Answer</Form.Label>
-                            <Form.Control as="textarea" rows={3}/>
-                            <br/>
-                            <ButtonGroup>
-                                <Button variant="primary" type="button">Submit</Button>
-                                <Button variant="secondary" type="submit">Cancel</Button>
-                            </ButtonGroup>
-                        </Form.Group>
-                    </Form>
-                </Col>
-            </Row>
-    );
+                            <Form>
+                                <Form.Group>
+                                    <Form.Label>Choose Question Title</Form.Label>
+                                    <Form.Control as="select" onChange={(e) => this.props.onQuestionLink(e)}>
+                                        <option value="0">Choose...</option>
+                                        {questionItems.map(item => (
+                                            <option value={item.id}>{item.title}</option>
+                                        ))}
+                                    </Form.Control>
+                                    <br/>
+                                    <Question/>
+                                    <br/>
+                                    <Form.Label>Your Answer</Form.Label>
+                                    <Form.Control as="textarea" rows={3} name="newAnswerBody" onChange={(e) => this.props.onChange(e)} />
+                                    <br/>
+                                    <ButtonGroup>
+                                        <Button variant="primary" type="button" onClick={() => this.submitAnswer()}>Submit</Button>
+                                        <Button variant="secondary" type="submit">Cancel</Button>
+                                    </ButtonGroup>
+                                </Form.Group>
+                            </Form>
+                            {
+                                this.state.success ?
+                                    <Alert variant="success">Thank you!</Alert>
+                                    :
+                                    <Container/>
+                            }
+                        </Col>
+                    </Row>
+            );
+        }
+    }
 }
 
 class App extends React.Component{
@@ -1059,7 +1119,8 @@ class App extends React.Component{
             redirect: null,
             newQuestionTitle: undefined,
             newQuestionBody: undefined,
-            newQuestionTag: undefined
+            newQuestionTag: undefined,
+            newAnswerBody: undefined
         };
     }
 
@@ -1097,13 +1158,13 @@ class App extends React.Component{
             this.setState({questionActive: undefined, history: ["Questions","Answer a Question"]});
         else if (history[0] === "Questions")
             this.setState({questionActive: id, history: ["Questions","Question"+id]});
-        else if (history[0] === "Tags") {
+        else if (history[0] === "Answer Question")
+            this.setState({questionActive: id, history: ["Answer Question", "Question"+id]});
+        else if (history[1] === "Answer Question")
+            this.setState({questionActive: id, history: ["My Home", "Answer Question", "Question"+id]});
+        else {
             history.push("Question"+id)
             this.setState({questionActive: id, history:history});
-        }
-        else if (history[0] === "My Home") {
-            history.push("Question" + id)
-            this.setState({questionActive: id, history: history});
         }
     }
 
@@ -1193,6 +1254,15 @@ class App extends React.Component{
                 </Breadcrumb>
             )
         }
+        else if (history[0] == "Answer Question") {
+            return(
+                <Breadcrumb>
+                    <Breadcrumb.Item></Breadcrumb.Item>
+                    <LinkContainer to="/AnswerQuestion" onClick={() => this.handleAnswerQuestionButton()}><Breadcrumb.Item>Answer Question</Breadcrumb.Item></LinkContainer>
+                    <BreadcrumbItem active>{history[1]}</BreadcrumbItem>
+                </Breadcrumb>
+            )
+        }
         else if (history[0] == "My Home" && history.length == 2) {
             return(
                 <Breadcrumb>
@@ -1207,7 +1277,7 @@ class App extends React.Component{
                 <Breadcrumb>
                     <Breadcrumb.Item></Breadcrumb.Item>
                     <LinkContainer to="/myHome" onClick={() => this.handleMyHomeLink()}><Breadcrumb.Item>My Home</Breadcrumb.Item></LinkContainer>
-                    <LinkContainer to="/ActivityList" onClick={() => this.handleActivityListButton()}><Breadcrumb.Item>My Activity</Breadcrumb.Item></LinkContainer>
+                    <LinkContainer to="/ActivityList" onClick={() => this.handleActivityListButton()}><Breadcrumb.Item>{history[1]}</Breadcrumb.Item></LinkContainer>
                     <BreadcrumbItem active>{history[2]}</BreadcrumbItem>
                 </Breadcrumb>
             )
@@ -1284,7 +1354,11 @@ class App extends React.Component{
                         <Route path="/AnswerQuestion">
                             <AnswerQuestion
                                 isSigned = {this.state.isSigned}
-                                onQuestionLink = {() => this.handleQuestionLink()}
+                                newAnswerBody = {this.state.newAnswerBody}
+                                questionActive = {this.state.questionActive}
+                                access_token = {this.state.access_token}
+                                onChange = {(e) => this.handleChange(e)}
+                                onQuestionLink = {(e) => this.handleQuestionLink(e)}
                             />
                         </Route>
                         <Route path="/sign_up">
