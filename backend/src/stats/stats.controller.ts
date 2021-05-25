@@ -15,7 +15,10 @@ export class StatsController {
     return this.statsService.getQuestionsByDate(userId, year, month);
   }
 
-
+  @Get('answers-by-date') 
+  getAnswersByDate(@Query('userId') userId: string, @Query('year') year: string, @Query('month') month: string) {
+    return this.statsService.getAnswersByDate(userId, year, month);
+  }
 
 
 
