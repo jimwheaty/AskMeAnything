@@ -1,5 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import sequelize from 'sequelize';
 import { Sequelize } from 'sequelize';
 import { Answer } from 'src/answer/answer.model';
 import { Question } from 'src/question/question.model';
@@ -71,28 +72,21 @@ export class StatsService {
     }
 
 
-    // TODO
-    async getPopularTags(limit: string): Promise<any>{
-        return;
+    async getPopularTags(limit: string): Promise<Tag[]> {   
+        if (!limit) limit = 'all'; 
         
-        // interface response {
-        //     count: number;
-        // }
+        const popularTags = await this.tagModel.findAll({
+            attributes: [
+                'field',
+                [Sequelize.fn('COUNT'), 'count']
+            ],
+            order:  [[sequelize.literal('count'), 'DESC']],
+            group: 'field',
+        });
 
-        // const popularTags: response = await this.tagModel.findAll({
-        //     raw: true,
-        //     attributes: [
-        //         'field',
-        //     ],
-        //     group: [
-        //         'field'
-        //     ]
-        // });
-        // if (!popularTags) return [];
+        if (!popularTags) return [];
 
-        // const sortedTags = popularTags.sort((a,b) => b.count - a.count);
-
-        // return popularTags;
+        return limit === 'all'? popularTags:  popularTags.slice(0, parseInt(limit));
     }
 
 

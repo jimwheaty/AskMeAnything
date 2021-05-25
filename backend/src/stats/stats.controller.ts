@@ -20,13 +20,4 @@ export class StatsController {
     return this.statsService.getAnswersByDate(userId, year, month);
   }
 
-
-
-// TODO
-// statistics of question with tags
-//   getNumberOfTags()
-
-// TODO
-//   @Get('popular-tags/questions')
-//   getPopularQuestionsPerTag('limit')
 }
