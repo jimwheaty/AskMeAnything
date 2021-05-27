@@ -370,7 +370,7 @@ class Question extends React.Component {
     componentDidMount() {
         const { questionActive } = this.props;
         if (questionActive) {
-            fetch("http://localhost:8080/api/answers/per-question?questionId=" + questionActive)
+            fetch("http://localhost:8080/api/questions/" + questionActive)
                 .then(res => res.json())
                 .then(
                     (result) => {
@@ -379,23 +379,7 @@ class Question extends React.Component {
                             questionItem: result
                         });
                         const { questionItem } = this.state;
-                        return Promise.all([
-                            fetch("http://localhost:8080/api/users/" + questionItem.userId)
-                            .then(res => res.json())
-                            .then(
-                                (result) => {
-                                    questionItem.userName = result.username;
-                                    this.setState({
-                                        questionItem : questionItem
-                                    })
-                                },
-                                (error) => {
-                                    this.setState({
-                                        error
-                                    });
-                                }
-                            ),
-                            questionItem.answers.map(answer => (
+                        return questionItem.answers.map(answer => (
                                 fetch("http://localhost:8080/api/users/" + answer.userId)
                                     .then(res => res.json())
                                     .then(
@@ -412,7 +396,6 @@ class Question extends React.Component {
                                         }
                                     )
                             ))
-                        ])
                     },
                     (error) => {
                         this.setState({
@@ -440,12 +423,12 @@ class Question extends React.Component {
                         <Card>
                             <Card.Body>
                                 <Card.Title>{questionItem.body}</Card.Title>
-                                <LinkContainer to="/QuestionsList" >
-                                    <Card.Link><Link to='/QuestionsList' name='#tag1' onClick={(e) => this.props.onClickTag(e)}>#tag1</Link></Card.Link>
-                                </LinkContainer>
+                                {questionItem.tags.map(tag =>
+                                    <Card.Link><Link to='/QuestionsList' name={tag.field} onClick={(e) => this.props.onClickTag(e)}>#{tag.field}</Link></Card.Link>
+                                )}
                             </Card.Body>
                             <Card.Footer>
-                                <small className="text-muted">asked <TimeAgo date={questionItem.createdAt}/> by {questionItem.userName}</small>
+                                <small className="text-muted">asked <TimeAgo date={questionItem.createdAt}/> by {questionItem.user.username}</small>
                             </Card.Footer>
                         </Card>
                         <br /><h4>{questionItem.answers.length} Answers:</h4>
