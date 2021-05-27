@@ -74,7 +74,7 @@ class Tags extends React.Component{
     }
 
     componentDidMount() {
-        fetch("http://localhost:8080/api/tags")
+        fetch("http://localhost:8080/api/stats/popular-tags")
             .then(res => res.json())
             .then(
                 (result) => {
@@ -98,6 +98,10 @@ class Tags extends React.Component{
         } else if (!isLoaded) {
             return <div>Loading...</div>;
         } else {
+            let data = []
+            tagItems.map(item => (
+                data.push({x: item.field, y: item.count})
+            ))
             return (
                 <Container style={{marginTop: 30, marginBottom: 30}}>
                     <h2>Most popular Tags</h2><br/>
@@ -112,13 +116,7 @@ class Tags extends React.Component{
                                 <Accordion.Collapse eventKey="0">
                                     <Card.Body>
                                         <VictoryPie
-                                            data={[
-                                                {x: "Tag1", y: 35},
-                                                {x: "Tag2", y: 40},
-                                                {x: "Tag3", y: 55},
-                                                {x: "Tag4", y: 25},
-                                                {x: "Tag5", y: 15}
-                                            ]}
+                                            data={data}
                                             labels={({datum}) => `${datum.x}: ${datum.y}`}
                                             labelPlacement={({index}) => index
                                                 ? "parallel"
@@ -133,11 +131,11 @@ class Tags extends React.Component{
                     </Container> <br/>
                     <CardDeck>
                         {tagItems.map(item => (
-                            <Card body key={item.id} style={{minWidth: 200}}>
+                            <Card body style={{minWidth: 200}}>
                                 <LinkContainer to="/QuestionsList">
                                     <Button onClick={(e) => this.props.onClick(e)} name={item.field}>#{item.field}</Button>
                                 </LinkContainer>
-                                <small className="text-muted"> (10 questions)</small>
+                                <small className="text-muted"> ({item.count} questions)</small>
                             </Card>
                         ))}
                     </CardDeck>
@@ -166,26 +164,6 @@ class QuestionsList extends React.Component {
                         isLoaded: true,
                         questionItems: result
                     });
-                    const {questionItems} = this.state;
-                    return Promise.all(
-                        questionItems.map(item => (
-                            fetch("http://localhost:8080/api/users/" + item.userId)
-                                .then(res => res.json())
-                                .then(
-                                    (result) => {
-                                        item.userName = result.username;
-                                        this.setState({
-                                            questionItems: questionItems
-                                        })
-                                    },
-                                    (error) => {
-                                        this.setState({
-                                            error
-                                        });
-                                    }
-                                )
-                        ))
-                    )
                 },
                 (error) => {
                     this.setState({
@@ -206,7 +184,7 @@ class QuestionsList extends React.Component {
                 <Container style={{marginTop: 30, marginBottom: 30}}>
                     {
                         (this.props.tag) ?
-                            <h2>Questions with {this.props.tag} </h2>
+                            <h2>Questions with #{this.props.tag} </h2>
                             :
                             <h2>Recent questions</h2>
                     }
@@ -335,21 +313,42 @@ class QuestionsList extends React.Component {
                                 </Accordion.Collapse>
                             </Card>
                         </Accordion> <br/>
-                        {questionItems.map(item => (
-                            (item.tag === this.props.tag) ?
-                                <Card key={item.id}>
-                                    <Card.Body>
-                                        <Card.Title><Link to='/Question' id={item.id} onClick={(e) => this.props.onClickQuestion(e)}>{item.title}</Link></Card.Title>
-                                        <Card.Subtitle className="mb-2 text-muted">asked <TimeAgo date={item.createdAt}/> by {item.userName}</Card.Subtitle>
-                                        <Card.Link><Link name='#tag1' onClick={(e) => this.props.onClickTag(e)}>#tag1</Link></Card.Link>
-                                    </Card.Body>
-                                    <Card.Footer>
-                                        <small className="text-muted">Last updated <TimeAgo
-                                            date={item.updatedAt}/></small>
-                                    </Card.Footer>
-                                </Card>
-                                :
-                                <Container />
+                        {this.props.tag ?
+                            questionItems.map(item => (
+                                item.tags.map(tag =>
+                                    (tag.field === this.props.tag) ?
+                                        <Card key={item.id}>
+                                            <Card.Body>
+                                                <Card.Title><Link to='/Question' id={item.id} onClick={(e) => this.props.onClickQuestion(e)}>{item.title}</Link></Card.Title>
+                                                <Card.Subtitle className="mb-2 text-muted">asked <TimeAgo date={item.createdAt}/> by {item.user.username}</Card.Subtitle>
+                                                {item.tags.map(tag =>
+                                                    <Card.Link><Link name={tag.field} onClick={(e) => this.props.onClickTag(e)}>#{tag.field}</Link></Card.Link>
+                                                )}
+                                            </Card.Body>
+                                            <Card.Footer>
+                                                <small className="text-muted">Last updated <TimeAgo
+                                                    date={item.updatedAt}/></small>
+                                            </Card.Footer>
+                                        </Card>
+                                        :
+                                        <Container />
+                                )
+                            ))
+                        :
+                        questionItems.map(item => (
+                            <Card key={item.id}>
+                                <Card.Body>
+                                    <Card.Title><Link to='/Question' id={item.id} onClick={(e) => this.props.onClickQuestion(e)}>{item.title}</Link></Card.Title>
+                                    <Card.Subtitle className="mb-2 text-muted">asked <TimeAgo date={item.createdAt}/> by {item.user.username}</Card.Subtitle>
+                                    {item.tags.map(tag =>
+                                        <Card.Link><Link name={tag.field} onClick={(e) => this.props.onClickTag(e)}>#{tag.field}</Link></Card.Link>
+                                    )}
+                                </Card.Body>
+                                <Card.Footer>
+                                    <small className="text-muted">Last updated <TimeAgo
+                                        date={item.updatedAt}/></small>
+                                </Card.Footer>
+                            </Card>
                         ))}
                     </Container>
                 </Container>
