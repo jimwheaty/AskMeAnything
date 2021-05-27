@@ -364,51 +364,54 @@ class Question extends React.Component {
             error: null,
             isLoaded: false,
             questionItem: undefined,
+            questionActive: undefined
         }
     }
 
-    componentDidMount() {
-        const { questionActive } = this.props;
-        if (questionActive) {
-            fetch("http://localhost:8080/api/questions/" + questionActive)
-                .then(res => res.json())
-                .then(
-                    (result) => {
-                        this.setState({
-                            isLoaded: true,
-                            questionItem: result
-                        });
-                        const { questionItem } = this.state;
-                        return questionItem.answers.map(answer => (
-                                fetch("http://localhost:8080/api/users/" + answer.userId)
-                                    .then(res => res.json())
-                                    .then(
-                                        (result) => {
-                                            answer.userName = result.username;
-                                            this.setState({
-                                                questionItem : questionItem
-                                            })
-                                        },
-                                        (error) => {
-                                            this.setState({
-                                                error
-                                            });
-                                        }
-                                    )
-                            ))
-                    },
-                    (error) => {
-                        this.setState({
-                            isLoaded: true,
-                            error
-                        });
-                    })
-        }
+    fetchQuestions() {
+        fetch("http://localhost:8080/api/questions/" + this.props.questionActive)
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        isLoaded: true,
+                        questionItem: result
+                    });
+                    const { questionItem } = this.state;
+                    return questionItem.answers.map(answer => (
+                        fetch("http://localhost:8080/api/users/" + answer.userId)
+                            .then(res => res.json())
+                            .then(
+                                (result) => {
+                                    answer.userName = result.username;
+                                    this.setState({
+                                        questionItem : questionItem
+                                    })
+                                },
+                                (error) => {
+                                    this.setState({
+                                        error
+                                    });
+                                }
+                            )
+                    ))
+                },
+                (error) => {
+                    this.setState({
+                        isLoaded: true,
+                        error
+                    });
+                })
     }
 
     render() {
-        if (!this.props.questionActive)
-            return <Container />
+        let {questionActive} = this.props;
+        if (!questionActive)
+            return <Container/>
+        else if (this.state.questionActive != questionActive) {
+            this.setState({questionActive: questionActive})
+            this.fetchQuestions()
+        }
 
         const {error, isLoaded, questionItem} = this.state;
         if (error) {
@@ -443,8 +446,6 @@ class Question extends React.Component {
                             </Card>
                         ))}
                     </Container>
-                    <br />
-                    <LinkContainer to="/AnswerQuestion"><Button>Answer!</Button></LinkContainer>
                 </Container>
             )
         }
@@ -1106,7 +1107,11 @@ class AnswerQuestion extends React.Component{
                                         ))}
                                     </Form.Control>
                                     <br/>
-                                    <Question/>
+                                    <Question
+                                        questionActive={this.props.questionActive}
+                                        onClickTag={(e) => this.props.onClickTag(e)}
+                                        onClickAnswerQuestion={() => this.props.onClickAnswerQuestion()}
+                                    />
                                     <br/>
                                     <Form.Label>Your Answer</Form.Label>
                                     <Form.Control as="textarea" rows={3} name="newAnswerBody" onChange={(e) => this.props.onChange(e)} />
@@ -1203,7 +1208,9 @@ class App extends React.Component{
         this.setState({history: history})
     }
     handleAnswerQuestionButton = () => {
-        const history = this.state.history.slice();
+        let history = this.state.history.slice();
+        if (history[0] === "Tags")
+            history = ["Questions", history[2]]
         history.push('Answer Question')
         this.setState({history: history})
     }
@@ -1253,7 +1260,7 @@ class App extends React.Component{
                 </Breadcrumb>
             )
         }
-        else if (history[0] == "Questions" && history.length == 2) {
+        else if (history[0] == "Questions") {
             return(
                 <Breadcrumb>
                     <Breadcrumb.Item></Breadcrumb.Item>
@@ -1271,7 +1278,7 @@ class App extends React.Component{
                 </Breadcrumb>
             )
         }
-        else if (history[0] == "Tags" && history.length == 3) {
+        else if (history[0] == "Tags") {
             return(
                 <Breadcrumb>
                     <Breadcrumb.Item></Breadcrumb.Item>
@@ -1299,7 +1306,7 @@ class App extends React.Component{
                 </Breadcrumb>
             )
         }
-        else if (history[0] == "My Home" && history.length == 3) {
+        else if (history[0] == "My Home") {
             return(
                 <Breadcrumb>
                     <Breadcrumb.Item></Breadcrumb.Item>
@@ -1363,8 +1370,8 @@ class App extends React.Component{
                         <Route path="/Question">
                             <Question
                                 questionActive = {this.state.questionActive}
-                                onClickQuestion={(event) => this.handleQuestionLink(event)}
                                 onClickTag={(event) => this.handleTagButton(event)}
+                                onClickAnswerQuestion={() => this.handleAnswerQuestionButton()}
                             />
                         </Route>
                         <Route path="/CreateQuestion">
