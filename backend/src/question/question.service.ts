@@ -1,6 +1,8 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Answer } from 'src/answer/answer.model';
 import { Tag } from 'src/tags/tags.model';
+import { User } from 'src/users/users.model';
 import { Question } from './question.model';
 
 @Injectable()
@@ -14,7 +16,27 @@ export class QuestionService {
   ) {}
 
   async findAll(): Promise<Question[]> {
-    return this.questionModel.findAll();
+
+    const questions = await this.questionModel.findAll({
+      include: [{
+        model: Answer,
+        as: 'answers',
+        attributes: ['body']
+      },{
+        model: Tag,
+        as: 'tags',
+        attributes: ['field'],
+      },{
+        model: User,
+        as: 'user',
+        attributes: ['username'],
+      }]
+    });
+
+    if (!questions) return [];
+
+    let sortedQuestions = [...questions].sort((a,b) => b.updatedAt - a.updatedAt);
+    return sortedQuestions;
   }
 
 
@@ -40,6 +62,10 @@ export class QuestionService {
 
     const questions = await this.questionModel.findAll({
       where: { userId },
+      include: { 
+        model: Answer,
+        as: 'answers'
+       }
     })
     if (!questions) return [];
 
@@ -57,12 +83,13 @@ export class QuestionService {
     if (!limit) limit = 'all';
 
     const questionsPerTag = await this.questionModel.findAll({
+      where: {
+        '$tags.field$': tag
+      },
       include: {
-        model: this.tagModel,
+        model: Tag,
         as: 'tags',
-        where: {
-          field: tag
-        }
+        attributes: ['field'],
       }
     });
 

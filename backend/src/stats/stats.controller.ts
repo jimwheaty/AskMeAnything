@@ -10,11 +10,14 @@ export class StatsController {
     return this.statsService.getPopularTags(limit);
   }
 
-// TODO
-// statistics of question with tags
-//   getNumberOfTags()
+  @Get('questions-by-date') 
+  getQuestionsByDate(@Query('userId') userId: string, @Query('year') year: string, @Query('month') month: string) {
+    return this.statsService.getQuestionsByDate(userId, year, month);
+  }
 
-// TODO
-//   @Get('popular-tags/questions')
-//   getPopularQuestionsPerTag('limit')
+  @Get('answers-by-date') 
+  getAnswersByDate(@Query('userId') userId: string, @Query('year') year: string, @Query('month') month: string) {
+    return this.statsService.getAnswersByDate(userId, year, month);
+  }
+
 }
