@@ -44,6 +44,18 @@ export class QuestionService {
   async findOne(id: string): Promise<Question> {
     const question = await this.questionModel.findOne({
       where: { id },
+      include: [{
+        model: Answer,
+        as: 'answers'
+      },{
+        model: Tag,
+        as: 'tags',
+        attributes: ['field'],
+      },{
+        model: User,
+        as: 'user',
+        attributes: ['username'],
+      }],
     });
     if (!question) {
       throw new NotFoundException(`Question with id ${id} not found!`);
