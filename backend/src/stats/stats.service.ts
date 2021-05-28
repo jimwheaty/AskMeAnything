@@ -21,55 +21,96 @@ export class StatsService {
     ) {}
 
     async getQuestionsByDate(userId: string, year: string, month: string)  {
-        if (!userId) throw new BadRequestException('missing userId parameter');
+        if (!userId) userId = 'all';
         if (!year) throw new BadRequestException('missing year parameter');
         if (!month) throw new BadRequestException('missing month parameter');
 
-        const questions = await this.questionModel.findAll({
-            attributes: [
-                [Sequelize.literal(`DATE("createdAt")`), 'date'],
-                [Sequelize.literal(`strftime('%Y',"createdAt")`), 'year'],
-                [Sequelize.literal(`strftime('%m',"createdAt")`), 'month'],
-                [Sequelize.literal(`strftime('%d',"createdAt")`), 'day'],
-                [Sequelize.literal(`COUNT(*)`), 'count']
-            ],
-            group: 'date',
-            where: { 
-                userId,
-                '$year$': year,
-                '$month$': month
-            }
-        })
+        if (userId === 'all') {
+            const questions = await this.questionModel.findAll({
+                attributes: [
+                    [Sequelize.literal(`DATE("createdAt")`), 'date'],
+                    [Sequelize.literal(`strftime('%Y',"createdAt")`), 'year'],
+                    [Sequelize.literal(`strftime('%m',"createdAt")`), 'month'],
+                    [Sequelize.literal(`strftime('%d',"createdAt")`), 'day'],
+                    [Sequelize.literal(`COUNT(*)`), 'count']
+                ],
+                group: 'date',
+                where: { 
+                    '$year$': year,
+                    '$month$': month
+                }
+            });
+            if (!questions) return [];
+            return questions;
 
-        if (!questions) return [];
-        return questions;
+        } else {
+            const questions = await this.questionModel.findAll({
+                attributes: [
+                    [Sequelize.literal(`DATE("createdAt")`), 'date'],
+                    [Sequelize.literal(`strftime('%Y',"createdAt")`), 'year'],
+                    [Sequelize.literal(`strftime('%m',"createdAt")`), 'month'],
+                    [Sequelize.literal(`strftime('%d',"createdAt")`), 'day'],
+                    [Sequelize.literal(`COUNT(*)`), 'count']
+                ],
+                group: 'date',
+                where: { 
+                    userId,
+                    '$year$': year,
+                    '$month$': month
+                }
+            });
+            if (!questions) return [];
+            return questions;
+        }
+
     }
 
 
     async getAnswersByDate(userId: string, year: string, month: string)  {
-        if (!userId) throw new BadRequestException('missing userId parameter');
+        if (!userId) userId = 'all';
         if (!year) throw new BadRequestException('missing year parameter');
         if (!month) throw new BadRequestException('missing month parameter');
 
-        const answers = await this.answerModel.findAll({
-            attributes: [
-                [Sequelize.literal(`DATE("createdAt")`), 'date'],
-                [Sequelize.literal(`strftime('%Y',"createdAt")`), 'year'],
-                [Sequelize.literal(`strftime('%m',"createdAt")`), 'month'],
-                [Sequelize.literal(`strftime('%d',"createdAt")`), 'day'],
-                [Sequelize.literal(`COUNT(*)`), 'count']
-            ],
-            group: 'date',
-            where: { 
-                userId,
-                '$year$': year,
-                '$month$': month
-            }
-        })
+        if (userId === 'all') {
+            let answers = await this.answerModel.findAll({
+                attributes: [
+                    [Sequelize.literal(`DATE("createdAt")`), 'date'],
+                    [Sequelize.literal(`strftime('%Y',"createdAt")`), 'year'],
+                    [Sequelize.literal(`strftime('%m',"createdAt")`), 'month'],
+                    [Sequelize.literal(`strftime('%d',"createdAt")`), 'day'],
+                    [Sequelize.literal(`COUNT(*)`), 'count']
+                ],
+                group: 'date',
+                where: { 
+                    '$year$': year,
+                    '$month$': month
+                }
+            });   
+            if (!answers) return [];
+            return answers;
 
-        if (!answers) return [];
-        return answers;
+        } else {
+            const answers = await this.answerModel.findAll({
+                attributes: [
+                    [Sequelize.literal(`DATE("createdAt")`), 'date'],
+                    [Sequelize.literal(`strftime('%Y',"createdAt")`), 'year'],
+                    [Sequelize.literal(`strftime('%m',"createdAt")`), 'month'],
+                    [Sequelize.literal(`strftime('%d',"createdAt")`), 'day'],
+                    [Sequelize.literal(`COUNT(*)`), 'count']
+                ],
+                group: 'date',
+                where: { 
+                    userId,
+                    '$year$': year,
+                    '$month$': month
+                }
+            });         
+            if (!answers) return [];
+            return answers;
+
+        }
     }
+
 
 
     async getPopularTags(limit: string): Promise<Tag[]> {   
