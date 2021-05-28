@@ -1444,6 +1444,7 @@ class App extends React.Component{
                                 access_token = {this.state.access_token}
                                 onChange = {(e) => this.handleChange(e)}
                                 onQuestionLink = {(e) => this.handleQuestionLink(e)}
+                                onClickTag={(event) => this.handleTagButton(event)}
                             />
                         </Route>
                         <Route path="/sign_up">
