@@ -1,19 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import {
-    Breadcrumb, BreadcrumbItem,
-    Button, ButtonGroup, Card, CardDeck,
-    Col,
-    Container,
-    Form,
-    FormControl,
-    Jumbotron, Nav,
-    Navbar,
-    Row,
-    Accordion,
-    InputGroup, Alert, Tabs, Tab
+    Breadcrumb, BreadcrumbItem, Button, ButtonGroup, Card, CardDeck, Col, Container,
+    Form, FormControl, Jumbotron, Nav, Navbar, Row, Accordion, InputGroup, Alert, Tabs, Tab
 } from "react-bootstrap";
-import {MemoryRouter, Switch, Route, Link, Redirect} from 'react-router-dom';
+import { MemoryRouter, Switch, Route, Link, Redirect } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 import { VictoryChart, VictoryAxis, VictoryTheme, VictoryPie, VictoryLine } from 'victory'
 import TimeAgo from 'react-timeago'
@@ -504,67 +495,44 @@ class ActivityList extends React.Component {
             error: null,
             isLoaded1: false,
             isLoaded2: false,
-            userId: undefined,
-            userName: undefined,
             questionItems: [],
             answerItems: [],
         }
     }
 
     componentDidMount() {
-        fetch("http://localhost:8080/api/users")
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    result.forEach((item) => {
-                        if (item.username == this.props.userName) {
-                            this.setState({
-                                userId: item.id,
-                                userName: item.username
-                            })
-                        }
+        Promise.all([
+            fetch("http://localhost:8080/api/questions/per-user?userId=" + this.props.userId + "&limit=all")
+                .then(res => res.json())
+                .then(
+                    (result) => {
+                        this.setState({
+                            isLoaded1: true,
+                            questionItems: result
+                        });
+                    },
+                    (error) => {
+                        this.setState({
+                            isLoaded1: true,
+                            error
+                        });
+                    }),
+            fetch("http://localhost:8080/api/answers/per-user?userId=" + this.props.userId + "&limit=all")
+                .then(res => res.json())
+                .then(
+                    (result) => {
+                        this.setState({
+                            isLoaded2: true,
+                            answerItems: result
+                        });
+                    },
+                    (error) => {
+                        this.setState({
+                            isLoaded2: true,
+                            error
+                        });
                     })
-                    return (
-                        Promise.all([
-                            fetch("http://localhost:8080/api/questions/per-user?userId=" + this.state.userId + "&limit=all")
-                                .then(res => res.json())
-                                .then(
-                                    (result) => {
-                                        this.setState({
-                                            isLoaded1: true,
-                                            questionItems: result
-                                        });
-                                    },
-                                    (error) => {
-                                        this.setState({
-                                            isLoaded1: true,
-                                            error
-                                        });
-                                    }),
-                            fetch("http://localhost:8080/api/answers/per-user?userId=" + this.state.userId + "&limit=all")
-                                .then(res => res.json())
-                                .then(
-                                    (result) => {
-                                        this.setState({
-                                            isLoaded2: true,
-                                            answerItems: result
-                                        });
-                                    },
-                                    (error) => {
-                                        this.setState({
-                                            isLoaded2: true,
-                                            error
-                                        });
-                                    })
-                        ])
-                    )
-                },
-                (error) => {
-                    this.setState({
-                        error
-                    });
-                }
-            )
+        ])
     }
 
     render() {
@@ -582,7 +550,7 @@ class ActivityList extends React.Component {
                                 <Card key={item.id}>
                                     <Card.Body>
                                         <Card.Title><Link to='/Question' id={item.id} onClick={(e) => this.props.onClickQuestion(e)}>{item.title}</Link></Card.Title>
-                                        <Card.Subtitle className="mb-2 text-muted">asked <TimeAgo date={item.createdAt}/> by {this.state.userName}</Card.Subtitle>
+                                        <Card.Subtitle className="mb-2 text-muted">asked <TimeAgo date={item.createdAt}/> by {this.props.userName}</Card.Subtitle>
                                         <Card.Link><Link name='#tag1' to='/QuestionsList' onClick={(e) => this.props.onClickTag(e)}>#tag1</Link></Card.Link>
                                     </Card.Body>
                                 </Card>
@@ -593,7 +561,7 @@ class ActivityList extends React.Component {
                                 <Card key={item.id}>
                                     <Card.Body>
                                         <Card.Title><Link to='/Question' id={item.questionId} onClick={(e) => this.props.onClickQuestion(e)}>{item.body}</Link></Card.Title>
-                                        <Card.Subtitle className="mb-2 text-muted">answered <TimeAgo date={item.createdAt}/> by {this.state.userName}</Card.Subtitle>
+                                        <Card.Subtitle className="mb-2 text-muted">answered <TimeAgo date={item.createdAt}/> by {this.props.userName}</Card.Subtitle>
                                         <Card.Link><Link name='#tag1' to='/QuestionsList' onClick={(e) => this.props.onClickTag(e)}>#tag1</Link></Card.Link>
                                     </Card.Body>
                                 </Card>
@@ -606,147 +574,177 @@ class ActivityList extends React.Component {
     }
 }
 
-function ActivityStatistics() {
-    return (
-        <Container style={{marginTop:30, marginBottom:30}}>
-            <Row>
-                <Col sm={6}>
-                    <Card>
-                        <Card.Header>
-                            Questions per day Graph !
-                        </Card.Header>
-                        <Card.Body>
+class ActivityStatistics extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null,
+            isLoaded: false,
+            questionStats: [],
+            answerStats: [],
+            year: this.props.year,
+            month: this.props.month
+        }
+    }
+
+    fetchData(year, month) {
+        fetch("http://localhost:8080/api/stats/questions-by-date?userId=" + this.props.userId + "&year=" + year + "&month=" + month)
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({questionStats: result, isLoaded: true})
+                },
+                (error) => {
+                    this.setState({error, isLoaded: true})
+                }
+            )
+        fetch("http://localhost:8080/api/stats/answers-by-date?userId=" + this.props.userId + "&year=" + year + "&month=" + month)
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({answerStats: result, isLoaded: true})
+                },
+                (error) => {
+                    this.setState({error, isLoaded: true})
+                }
+            )
+    }
+
+    componentDidMount = () => this.fetchData(this.props.year, this.props.month)
+
+    onSelectYear(event) {
+        let year = event.target.value
+        this.setState({year: year})
+        this.fetchData(year, this.state.month)
+    }
+
+    onSelectMonth(event) {
+        let month = event.target.value
+        month = (month <= 9) ? ("0"+month) : month;
+        this.setState({month: month})
+        this.fetchData(this.state.year, month)
+    }
+
+    render() {
+        const {error, isLoaded, questionStats, answerStats} = this.state;
+        if (error) {
+            return <div>Error: {error.message}</div>;
+        } else if (!isLoaded) {
+            return <div>Loading...</div>;
+        } else {
+            let questionData = []
+            questionStats.map(item => (
+                questionData.push({x: parseInt(item.day), y: parseInt(item.count)})
+            ))
+            let answerData = []
+            answerStats.map(item => (
+                answerData.push({x: parseInt(item.day), y: parseInt(item.count)})
+            ))
+            return (
+                <Container style={{marginTop: 30, marginBottom: 30}}>
+                    <Row>
+                        <Col sm={2}>
                             <Form>
                                 <Form.Group>
                                     <Form.Label>Select a year</Form.Label>
-                                    <Form.Control as="select" custom>
-                                        <option>2021</option>
-                                        <option>2020</option>
-                                        <option>2019</option>
+                                    <Form.Control as="select" custom onChange={(e) => this.onSelectYear(e)}>
+                                        <option value={2021}>2021</option>
+                                        <option value={2020}>2020</option>
+                                        <option value={2019}>2019</option>
                                     </Form.Control>
                                 </Form.Group>
                                 <Form.Group controlId="exampleForm.SelectCustom">
                                     <Form.Label>and a month !</Form.Label>
-                                    <Form.Control as="select" custom>
-                                        <option>Ιανουάριος</option>
-                                        <option>Φεβρουάριος</option>
-                                        <option>Μάρτιος</option>
-                                        <option>Απρίλιος</option>
-                                        <option>Μάιος</option>
-                                        <option>Ιούνιος</option>
-                                        <option>Ιούλιος</option>
-                                        <option>Αύγουστος</option>
-                                        <option>Σεπτέμβριος</option>
-                                        <option>Οκτώμβριος</option>
-                                        <option>Νοέμβριος</option>
-                                        <option>Δεκέμβριος</option>
+                                    <Form.Control as="select" custom onChange={(e) => this.onSelectMonth(e)}>
+                                        <option value={1}>Ιανουάριος</option>
+                                        <option value={2}>Φεβρουάριος</option>
+                                        <option value={3}>Μάρτιος</option>
+                                        <option value={4}>Απρίλιος</option>
+                                        <option value={5}>Μάιος</option>
+                                        <option value={6}>Ιούνιος</option>
+                                        <option value={7}>Ιούλιος</option>
+                                        <option value={8}>Αύγουστος</option>
+                                        <option value={9}>Σεπτέμβριος</option>
+                                        <option value={10}>Οκτώμβριος</option>
+                                        <option value={11}>Νοέμβριος</option>
+                                        <option value={12}>Δεκέμβριος</option>
                                     </Form.Control>
                                 </Form.Group>
                             </Form>
-                            <VictoryChart
-                                theme={VictoryTheme.material}
-                            >
-                                <VictoryAxis crossAxis
-                                             width={400}
-                                             height={400}
-                                             domain={[0, 31]}
-                                             label="day of the month"
-                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
-                                />
-                                <VictoryAxis dependentAxis crossAxis
-                                             width={400}
-                                             height={400}
-                                             domain={[0, 10]}
-                                             label="Number of Questions"
-                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
-                                />
-                                <VictoryLine
-                                    style={{
-                                        data: { stroke: "#c43a31" },
-                                        parent: { border: "1px solid #ccc"}
-                                    }}
-                                    data={[
-                                        { x: 1, y: 2 },
-                                        { x: 2, y: 3 },
-                                        { x: 3, y: 5 },
-                                        { x: 4, y: 4 },
-                                        { x: 5, y: 7 }
-                                    ]}
-                                />
-                            </VictoryChart>
-                        </Card.Body>
-                    </Card>
-                </Col>
-                <Col sm={6}>
-                    <Card>
-                        <Card.Header>
-                            Answers per day Graph !
-                        </Card.Header>
-                        <Card.Body>
-                            <Form>
-                                <Form.Group>
-                                    <Form.Label>Select a year</Form.Label>
-                                    <Form.Control as="select" custom>
-                                        <option>2021</option>
-                                        <option>2020</option>
-                                        <option>2019</option>
-                                    </Form.Control>
-                                </Form.Group>
-                                <Form.Group controlId="exampleForm.SelectCustom">
-                                    <Form.Label>and a month !</Form.Label>
-                                    <Form.Control as="select" custom>
-                                        <option>Ιανουάριος</option>
-                                        <option>Φεβρουάριος</option>
-                                        <option>Μάρτιος</option>
-                                        <option>Απρίλιος</option>
-                                        <option>Μάιος</option>
-                                        <option>Ιούνιος</option>
-                                        <option>Ιούλιος</option>
-                                        <option>Αύγουστος</option>
-                                        <option>Σεπτέμβριος</option>
-                                        <option>Οκτώμβριος</option>
-                                        <option>Νοέμβριος</option>
-                                        <option>Δεκέμβριος</option>
-                                    </Form.Control>
-                                </Form.Group>
-                            </Form>
-                            <VictoryChart
-                                theme={VictoryTheme.material}
-                            >
-                                <VictoryAxis crossAxis
-                                             width={400}
-                                             height={400}
-                                             domain={[0, 31]}
-                                             label="day of the month"
-                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
-                                />
-                                <VictoryAxis dependentAxis crossAxis
-                                             width={400}
-                                             height={400}
-                                             domain={[0, 10]}
-                                             label="Number of Answers"
-                                             style={{axisLabel: {fontSize: 20, padding: 30}}}
-                                />
-                                <VictoryLine
-                                    style={{
-                                        data: { stroke: "#c43a31" },
-                                        parent: { border: "1px solid #ccc"}
-                                    }}
-                                    data={[
-                                        { x: 1, y: 2 },
-                                        { x: 2, y: 3 },
-                                        { x: 3, y: 5 },
-                                        { x: 4, y: 4 },
-                                        { x: 5, y: 7 }
-                                    ]}
-                                />
-                            </VictoryChart>
-                        </Card.Body>
-                    </Card>
-                </Col>
-            </Row>
-        </Container>
-    )
+                        </Col>
+                        <Col sm={5}>
+                            <Card>
+                                <Card.Header>
+                                    Questions per day Graph !
+                                </Card.Header>
+                                <Card.Body>
+                                    <VictoryChart
+                                        theme={VictoryTheme.material}
+                                    >
+                                        <VictoryAxis crossAxis
+                                                     width={400}
+                                                     height={400}
+                                                     domain={[0, 31]}
+                                                     label="day of the month"
+                                                     style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                        />
+                                        <VictoryAxis dependentAxis crossAxis
+                                                     width={400}
+                                                     height={400}
+                                                     domain={[0, 10]}
+                                                     label="Number of Questions"
+                                                     style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                        />
+                                        <VictoryLine
+                                            style={{
+                                                data: {stroke: "#c43a31"},
+                                                parent: {border: "1px solid #ccc"}
+                                            }}
+                                            data={questionData}
+                                        />
+                                    </VictoryChart>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                        <Col sm={5}>
+                            <Card>
+                                <Card.Header>
+                                    Answers per day Graph !
+                                </Card.Header>
+                                <Card.Body>
+                                    <VictoryChart
+                                        theme={VictoryTheme.material}
+                                    >
+                                        <VictoryAxis crossAxis
+                                                     width={400}
+                                                     height={400}
+                                                     domain={[0, 31]}
+                                                     label="day of the month"
+                                                     style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                        />
+                                        <VictoryAxis dependentAxis crossAxis
+                                                     width={400}
+                                                     height={400}
+                                                     domain={[0, 10]}
+                                                     label="Number of Answers"
+                                                     style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                        />
+                                        <VictoryLine
+                                            style={{
+                                                data: {stroke: "#c43a31"},
+                                                parent: {border: "1px solid #ccc"}
+                                            }}
+                                            data={answerData}
+                                        />
+                                    </VictoryChart>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                </Container>
+            )
+        }
+    }
 }
 
 class Signup extends React.Component{
@@ -857,8 +855,20 @@ class Signin extends React.Component {
                 (result) => {
                     if (result.error)
                         this.setState({error : result.message})
-                    else
+                    else {
                         this.props.onClick(result.access_token)
+                        fetch("http://localhost:8080/api/users")
+                            .then(res => res.json())
+                            .then(
+                                (result) => {
+                                    result.forEach((item) => {
+                                        if (item.username == this.props.username)
+                                            this.props.onUserId(item.id)
+                                    })
+                                },
+                                (error) => this.setState({error: error})
+                            )
+                    }
                 }
             )
     }
@@ -1141,6 +1151,7 @@ class App extends React.Component{
         this.state = {
             isSigned: false,
             access_token: undefined,
+            userId: undefined,
             email: undefined,
             username: "jackie",
             password: "el_presidente",
@@ -1152,13 +1163,25 @@ class App extends React.Component{
             newQuestionTitle: undefined,
             newQuestionBody: undefined,
             newQuestionTag: undefined,
-            newAnswerBody: undefined
+            newAnswerBody: undefined,
+            year: undefined,
+            month: undefined,
+            day: undefined
         };
+    }
+
+    componentDidMount() {
+        let today = new Date();
+        let month = today.getMonth() + 1;
+        month = (month <= 9) ? ("0"+month) : month;
+        this.setState({year: today.getFullYear() , month: month , day: today.getDate() });
     }
 
     handleChange = (event) => this.setState({[event.target.name]: event.target.value });
 
     handleSignin = (access_token) => this.setState({isSigned : true, access_token: access_token, redirect: "/", history: []});
+
+    handleUserId = (userId) => this.setState({userId: userId})
 
     handleHomeButton = () => this.setState({history:[]});
 
@@ -1347,13 +1370,19 @@ class App extends React.Component{
                         </Route>
                         <Route path="/ActivityList">
                             <ActivityList
+                                userId = {this.state.userId}
                                 userName = {this.state.username}
                                 onClickQuestion={(event) => this.handleQuestionLink(event)}
                                 onClickTag={(event) => this.handleTagButton(event)}
                             />
                         </Route>
                         <Route path="/ActivityStatistics">
-                            <ActivityStatistics />
+                            <ActivityStatistics
+                                year = {this.state.year}
+                                month = {this.state.month}
+                                day = {this.state.day}
+                                userId = {this.state.userId}
+                            />
                         </Route>
                         <Route path="/Tags">
                             <Tags
@@ -1362,6 +1391,9 @@ class App extends React.Component{
                         </Route>
                         <Route path="/QuestionsList">
                             <QuestionsList
+                                year = {this.state.year}
+                                month = {this.state.month}
+                                day = {this.state.day}
                                 tag = {this.state.tag}
                                 onClickQuestion={(event) => this.handleQuestionLink(event)}
                                 onClickTag={(event) => this.handleTagButton(event)}
@@ -1409,6 +1441,7 @@ class App extends React.Component{
                                 redirect = {this.state.redirect}
                                 username = {this.state.username}
                                 password = {this.state.password}
+                                onUserId = {(userId) => this.handleUserId(userId)}
                                 onChange={(event) => this.handleChange(event)}
                                 onClick={(access_token) => this.handleSignin(access_token)}
                             />
