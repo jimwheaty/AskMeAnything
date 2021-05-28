@@ -6,7 +6,7 @@ import {
 } from "react-bootstrap";
 import { MemoryRouter, Switch, Route, Link, Redirect } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
-import { VictoryChart, VictoryAxis, VictoryTheme, VictoryPie, VictoryLine } from 'victory'
+import { VictoryChart, VictoryAxis, VictoryTheme, VictoryPie, VictoryBar } from 'victory'
 import TimeAgo from 'react-timeago'
 
 function Home (props) {
@@ -143,7 +143,36 @@ class QuestionsList extends React.Component {
             error: null,
             isLoaded: false,
             questionItems: [],
+            questionStats: [],
+            year: this.props.year,
+            month: this.props.month
         }
+    }
+
+    fetchStats(year, month) {
+        fetch("http://localhost:8080/api/stats/questions-by-date?year=" + year + "&month=" + month)
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({questionStats: result, isLoaded: true})
+                },
+                (error) => {
+                    this.setState({error, isLoaded: true})
+                }
+            )
+    }
+
+    onSelectYear(event) {
+        let year = event.target.value
+        this.setState({year: year})
+        this.fetchStats(year, this.state.month)
+    }
+
+    onSelectMonth(event) {
+        let month = event.target.value
+        month = (month <= 9) ? ("0"+month) : month;
+        this.setState({month: month})
+        this.fetchStats(this.state.year, month)
     }
 
     componentDidMount() {
@@ -155,6 +184,7 @@ class QuestionsList extends React.Component {
                         isLoaded: true,
                         questionItems: result
                     });
+                    return this.fetchStats(this.props.year, this.props.month)
                 },
                 (error) => {
                     this.setState({
@@ -165,12 +195,18 @@ class QuestionsList extends React.Component {
     }
 
     render() {
-        const {error, isLoaded, questionItems} = this.state;
+        const {error, isLoaded, questionItems, questionStats} = this.state;
         if (error) {
             return <div>Error: {error.message}</div>;
         } else if (!isLoaded) {
             return <div>Loading...</div>;
         } else {
+            let dayStatsData = []
+            let monthStatsData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            questionStats.map(item => (
+                dayStatsData.push({x: parseInt(item.day), y: parseInt(item.count)}),
+                monthStatsData[parseInt(item.month)] += item.count
+            ))
             return (
                 <Container style={{marginTop: 30, marginBottom: 30}}>
                     {
@@ -180,128 +216,117 @@ class QuestionsList extends React.Component {
                             <h2>Recent questions</h2>
                     }
                     <Container>
-                        <br/>
                         <Accordion>
-                            <Card style={{width: 400}}>
+                            <Card>
                                 <Card.Header>
                                     <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                                        Questions per month Graph !
+                                        View Statistical Graphs !
                                     </Accordion.Toggle>
                                 </Card.Header>
-                                <Accordion.Collapse eventKey="1">
-                                    <Card.Body>
-                                        <Form>
-                                            <Form.Group>
-                                                <Form.Label>Select a year</Form.Label>
-                                                <Form.Control as="select" custom>
-                                                    <option>2021</option>
-                                                    <option>2020</option>
-                                                    <option>2019</option>
-                                                </Form.Control>
-                                            </Form.Group>
-                                        </Form>
-                                        <VictoryChart
-                                            theme={VictoryTheme.material}
-                                        >
-                                            <VictoryAxis crossAxis
-                                                         width={400}
-                                                         height={400}
-                                                         domain={[0, 12]}
-                                                         label="month of the year"
-                                                         style={{axisLabel: {fontSize: 20, padding: 30}}}
-                                            />
-                                            <VictoryAxis dependentAxis crossAxis
-                                                         width={400}
-                                                         height={400}
-                                                         domain={[0, 10]}
-                                                         label="Number of Questions"
-                                                         style={{axisLabel: {fontSize: 20, padding: 30}}}
-                                            />
-                                            <VictoryLine
-                                                style={{
-                                                    data: {stroke: "#c43a31"},
-                                                    parent: {border: "1px solid #ccc"}
-                                                }}
-                                                data={[
-                                                    {x: 1, y: 2},
-                                                    {x: 2, y: 3},
-                                                    {x: 3, y: 5},
-                                                    {x: 4, y: 4},
-                                                    {x: 5, y: 7}
-                                                ]}
-                                            />
-                                        </VictoryChart>
-                                    </Card.Body>
-                                </Accordion.Collapse>
-                            </Card>
-                            <Card style={{width: 400}}>
-                                <Card.Header>
-                                    <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                                        Questions per day Graph !
-                                    </Accordion.Toggle>
-                                </Card.Header>
-                                <Accordion.Collapse eventKey="0">
-                                    <Card.Body>
-                                        <Form>
-                                            <Form.Group>
-                                                <Form.Label>Select a year</Form.Label>
-                                                <Form.Control as="select" custom>
-                                                    <option>2021</option>
-                                                    <option>2020</option>
-                                                    <option>2019</option>
-                                                </Form.Control>
-                                            </Form.Group>
-                                            <Form.Group controlId="exampleForm.SelectCustom">
-                                                <Form.Label>and a month !</Form.Label>
-                                                <Form.Control as="select" custom>
-                                                    <option>Ιανουάριος</option>
-                                                    <option>Φεβρουάριος</option>
-                                                    <option>Μάρτιος</option>
-                                                    <option>Απρίλιος</option>
-                                                    <option>Μάιος</option>
-                                                    <option>Ιούνιος</option>
-                                                    <option>Ιούλιος</option>
-                                                    <option>Αύγουστος</option>
-                                                    <option>Σεπτέμβριος</option>
-                                                    <option>Οκτώμβριος</option>
-                                                    <option>Νοέμβριος</option>
-                                                    <option>Δεκέμβριος</option>
-                                                </Form.Control>
-                                            </Form.Group>
-                                        </Form>
-                                        <VictoryChart
-                                            theme={VictoryTheme.material}
-                                        >
-                                            <VictoryAxis crossAxis
-                                                         width={400}
-                                                         height={400}
-                                                         domain={[0, 31]}
-                                                         label="day of the month"
-                                                         style={{axisLabel: {fontSize: 20, padding: 30}}}
-                                            />
-                                            <VictoryAxis dependentAxis crossAxis
-                                                         width={400}
-                                                         height={400}
-                                                         domain={[0, 10]}
-                                                         label="Number of Questions"
-                                                         style={{axisLabel: {fontSize: 20, padding: 30}}}
-                                            />
-                                            <VictoryLine
-                                                style={{
-                                                    data: {stroke: "#c43a31"},
-                                                    parent: {border: "1px solid #ccc"}
-                                                }}
-                                                data={[
-                                                    {x: 1, y: 2},
-                                                    {x: 2, y: 3},
-                                                    {x: 3, y: 5},
-                                                    {x: 4, y: 4},
-                                                    {x: 5, y: 7}
-                                                ]}
-                                            />
-                                        </VictoryChart>
-                                    </Card.Body>
-                                </Accordion.Collapse>
+                                <Card.Body>
+                                    <Accordion.Collapse eventKey="1">
+                                        <Row>
+                                            <Col sm={2}>
+                                                <Form>
+                                                    <Form.Group>
+                                                        <Form.Label>Select a year</Form.Label>
+                                                        <Form.Control as="select" custom onChange={(e) => this.onSelectYear(e)}>
+                                                            <option>Choose...</option>
+                                                            <option value={2021}>2021</option>
+                                                            <option value={2020}>2020</option>
+                                                            <option value={2019}>2019</option>
+                                                        </Form.Control>
+                                                    </Form.Group>
+                                                    <Form.Group controlId="exampleForm.SelectCustom">
+                                                        <Form.Label>and a month !</Form.Label>
+                                                        <Form.Control as="select" custom onChange={(e) => this.onSelectMonth(e)}>
+                                                            <option>Choose...</option>
+                                                            <option value={1}>Ιανουάριος</option>
+                                                            <option value={2}>Φεβρουάριος</option>
+                                                            <option value={3}>Μάρτιος</option>
+                                                            <option value={4}>Απρίλιος</option>
+                                                            <option value={5}>Μάιος</option>
+                                                            <option value={6}>Ιούνιος</option>
+                                                            <option value={7}>Ιούλιος</option>
+                                                            <option value={8}>Αύγουστος</option>
+                                                            <option value={9}>Σεπτέμβριος</option>
+                                                            <option value={10}>Οκτώμβριος</option>
+                                                            <option value={11}>Νοέμβριος</option>
+                                                            <option value={12}>Δεκέμβριος</option>
+                                                        </Form.Control>
+                                                    </Form.Group>
+                                                </Form>
+                                            </Col>
+                                            <Col sm={5}>
+                                                <Card>
+                                                    <Card.Header>
+                                                        Questions per month Graph ! <br/>
+                                                        Year: {this.state.year}
+                                                    </Card.Header>
+                                                    <Card.Body>
+                                                        <VictoryChart
+                                                            theme={VictoryTheme.material}
+                                                        >
+                                                            <VictoryAxis crossAxis
+                                                                         width={400}
+                                                                         height={400}
+                                                                         domain={[0, 12]}
+                                                                         label="month of the year"
+                                                                         style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                                            />
+                                                            <VictoryAxis dependentAxis crossAxis
+                                                                         width={400}
+                                                                         height={400}
+                                                                         minDomain={0}
+                                                                         label="Number of Questions"
+                                                                         style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                                            />
+                                                            <VictoryBar
+                                                                style={{ data: { fill: "#c43a31" } }}
+                                                                barWidth={8}
+                                                                data={monthStatsData}
+                                                            />
+                                                        </VictoryChart>
+                                                    </Card.Body>
+                                                </Card>
+                                            </Col>
+                                            <Col sm={5}>
+                                                <Card>
+                                                    <Card.Header>
+                                                        Questions per day Graph ! <br/>
+                                                        Month: {this.state.month}, Year: {this.state.year}
+                                                    </Card.Header>
+                                                    <Card.Body>
+                                                        <VictoryChart
+                                                            theme={VictoryTheme.material}
+                                                        >
+                                                            <VictoryAxis crossAxis
+                                                                         width={400}
+                                                                         height={400}
+                                                                         domain={[0, 31]}
+                                                                         tickCount={15}
+                                                                         label="day of the month"
+                                                                         style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                                            />
+                                                            <VictoryAxis dependentAxis crossAxis
+                                                                         width={400}
+                                                                         height={400}
+                                                                         minDomain={0}
+                                                                         label="Number of Questions"
+                                                                         style={{axisLabel: {fontSize: 20, padding: 30}}}
+                                                            />
+                                                            <VictoryBar
+                                                                style={{ data: { fill: "#c43a31" } }}
+                                                                barWidth={8}
+                                                                data={dayStatsData}
+                                                            />
+                                                        </VictoryChart>
+                                                    </Card.Body>
+                                                </Card>
+                                            </Col>
+                                        </Row>
+                                    </Accordion.Collapse>
+                                </Card.Body>
                             </Card>
                         </Accordion> <br/>
                         {this.props.tag ?
@@ -633,13 +658,9 @@ class ActivityStatistics extends React.Component {
             return <div>Loading...</div>;
         } else {
             let questionData = []
-            questionStats.map(item => (
-                questionData.push({x: parseInt(item.day), y: parseInt(item.count)})
-            ))
+            questionStats.map(item => questionData.push({x: parseInt(item.day), y: parseInt(item.count)}));
             let answerData = []
-            answerStats.map(item => (
-                answerData.push({x: parseInt(item.day), y: parseInt(item.count)})
-            ))
+            answerStats.map(item => answerData.push({x: parseInt(item.day), y: parseInt(item.count)}));
             return (
                 <Container style={{marginTop: 30, marginBottom: 30}}>
                     <Row>
@@ -648,6 +669,7 @@ class ActivityStatistics extends React.Component {
                                 <Form.Group>
                                     <Form.Label>Select a year</Form.Label>
                                     <Form.Control as="select" custom onChange={(e) => this.onSelectYear(e)}>
+                                        <option>Choose...</option>
                                         <option value={2021}>2021</option>
                                         <option value={2020}>2020</option>
                                         <option value={2019}>2019</option>
@@ -656,6 +678,7 @@ class ActivityStatistics extends React.Component {
                                 <Form.Group controlId="exampleForm.SelectCustom">
                                     <Form.Label>and a month !</Form.Label>
                                     <Form.Control as="select" custom onChange={(e) => this.onSelectMonth(e)}>
+                                        <option>Choose...</option>
                                         <option value={1}>Ιανουάριος</option>
                                         <option value={2}>Φεβρουάριος</option>
                                         <option value={3}>Μάρτιος</option>
@@ -675,7 +698,8 @@ class ActivityStatistics extends React.Component {
                         <Col sm={5}>
                             <Card>
                                 <Card.Header>
-                                    Questions per day Graph !
+                                    Questions per day Graph ! <br/>
+                                    Month: {this.state.month}, Year: {this.state.year}
                                 </Card.Header>
                                 <Card.Body>
                                     <VictoryChart
@@ -691,15 +715,12 @@ class ActivityStatistics extends React.Component {
                                         <VictoryAxis dependentAxis crossAxis
                                                      width={400}
                                                      height={400}
-                                                     domain={[0, 10]}
                                                      label="Number of Questions"
                                                      style={{axisLabel: {fontSize: 20, padding: 30}}}
                                         />
-                                        <VictoryLine
-                                            style={{
-                                                data: {stroke: "#c43a31"},
-                                                parent: {border: "1px solid #ccc"}
-                                            }}
+                                        <VictoryBar
+                                            style={{ data: { fill: "#c43a31" } }}
+                                            barWidth={8}
                                             data={questionData}
                                         />
                                     </VictoryChart>
@@ -709,7 +730,8 @@ class ActivityStatistics extends React.Component {
                         <Col sm={5}>
                             <Card>
                                 <Card.Header>
-                                    Answers per day Graph !
+                                    Answers per day Graph ! <br/>
+                                    Month: {this.state.month}, Year: {this.state.year}
                                 </Card.Header>
                                 <Card.Body>
                                     <VictoryChart
@@ -725,15 +747,12 @@ class ActivityStatistics extends React.Component {
                                         <VictoryAxis dependentAxis crossAxis
                                                      width={400}
                                                      height={400}
-                                                     domain={[0, 10]}
                                                      label="Number of Answers"
                                                      style={{axisLabel: {fontSize: 20, padding: 30}}}
                                         />
-                                        <VictoryLine
-                                            style={{
-                                                data: {stroke: "#c43a31"},
-                                                parent: {border: "1px solid #ccc"}
-                                            }}
+                                        <VictoryBar
+                                            style={{ data: { fill: "#c43a31" } }}
+                                            barWidth={8}
                                             data={answerData}
                                         />
                                     </VictoryChart>
