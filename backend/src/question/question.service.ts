@@ -74,10 +74,18 @@ export class QuestionService {
 
     const questions = await this.questionModel.findAll({
       where: { userId },
-      include: { 
+      include: [{
         model: Answer,
         as: 'answers'
-       }
+      },{
+        model: Tag,
+        as: 'tags',
+        attributes: ['field'],
+      },{
+        model: User,
+        as: 'user',
+        attributes: ['username'],
+      }]
     })
     if (!questions) return [];
 
