@@ -526,38 +526,36 @@ class ActivityList extends React.Component {
     }
 
     componentDidMount() {
-        Promise.all([
-            fetch("http://localhost:8080/api/questions/per-user?userId=" + this.props.userId + "&limit=all")
-                .then(res => res.json())
-                .then(
-                    (result) => {
-                        this.setState({
-                            isLoaded1: true,
-                            questionItems: result
-                        });
-                    },
-                    (error) => {
-                        this.setState({
-                            isLoaded1: true,
-                            error
-                        });
-                    }),
-            fetch("http://localhost:8080/api/answers/per-user?userId=" + this.props.userId + "&limit=all")
-                .then(res => res.json())
-                .then(
-                    (result) => {
-                        this.setState({
-                            isLoaded2: true,
-                            answerItems: result
-                        });
-                    },
-                    (error) => {
-                        this.setState({
-                            isLoaded2: true,
-                            error
-                        });
-                    })
-        ])
+        fetch("http://localhost:8080/api/questions/per-user?userId=" + this.props.userId + "&limit=all")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        isLoaded1: true,
+                        questionItems: result
+                    });
+                },
+                (error) => {
+                    this.setState({
+                        isLoaded1: true,
+                        error
+                    });
+                })
+        fetch("http://localhost:8080/api/answers/per-user?userId=" + this.props.userId + "&limit=all")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        isLoaded2: true,
+                        answerItems: result
+                    });
+                },
+                (error) => {
+                    this.setState({
+                        isLoaded2: true,
+                        error
+                    });
+                })
     }
 
     render() {
@@ -576,7 +574,9 @@ class ActivityList extends React.Component {
                                     <Card.Body>
                                         <Card.Title><Link to='/Question' id={item.id} onClick={(e) => this.props.onClickQuestion(e)}>{item.title}</Link></Card.Title>
                                         <Card.Subtitle className="mb-2 text-muted">asked <TimeAgo date={item.createdAt}/> by {this.props.userName}</Card.Subtitle>
-                                        <Card.Link><Link name='#tag1' to='/QuestionsList' onClick={(e) => this.props.onClickTag(e)}>#tag1</Link></Card.Link>
+                                        {item.tags.map(tag =>
+                                            <Card.Link><Link to='/QuestionsList' name={tag.field} onClick={(e) => this.props.onClickTag(e)}>#{tag.field}</Link></Card.Link>
+                                        )}
                                     </Card.Body>
                                 </Card>
                             ))}
@@ -587,7 +587,6 @@ class ActivityList extends React.Component {
                                     <Card.Body>
                                         <Card.Title><Link to='/Question' id={item.questionId} onClick={(e) => this.props.onClickQuestion(e)}>{item.body}</Link></Card.Title>
                                         <Card.Subtitle className="mb-2 text-muted">answered <TimeAgo date={item.createdAt}/> by {this.props.userName}</Card.Subtitle>
-                                        <Card.Link><Link name='#tag1' to='/QuestionsList' onClick={(e) => this.props.onClickTag(e)}>#tag1</Link></Card.Link>
                                     </Card.Body>
                                 </Card>
                             ))}
