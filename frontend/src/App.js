@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import {
     Breadcrumb, BreadcrumbItem, Button, ButtonGroup, Card, CardDeck, Col, Container,
-    Form, FormControl, Jumbotron, Nav, Navbar, Row, Accordion, InputGroup, Alert, Tabs, Tab
+    Form, Jumbotron, Nav, Navbar, Row, Accordion, InputGroup, Alert, Tabs, Tab
 } from "react-bootstrap";
 import { MemoryRouter, Switch, Route, Link, Redirect } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
