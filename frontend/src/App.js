@@ -948,7 +948,7 @@ class CreateQuestion extends React.Component{
     }
 
     componentDidMount() {
-        fetch("http://localhost:8080/api/tags")
+        fetch("http://localhost:8080/api/stats/popular-tags")
             .then(res => res.json())
             .then(
                 (result) => {
@@ -966,7 +966,7 @@ class CreateQuestion extends React.Component{
     }
 
     submitQuestion() {
-        const requestOptions = {
+        let requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.props.access_token},
             body: JSON.stringify({title: this.props.newQuestionTitle, body: this.props.newQuestionBody})
@@ -977,10 +977,28 @@ class CreateQuestion extends React.Component{
                 (result) => {
                     if (result.message)
                         this.setState({error: result})
-                    else
+                    else {
                         this.setState({success: true})
+                        this.props.newQuestionTags['combined'].split(' ').forEach(item => {
+                            requestOptions = {
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify({"field": item.split('#')[1], "questionId": result.id})
+                            };
+                            fetch('http://localhost:8080/api/tags', requestOptions)
+                                .then(res => res.json())
+                                .then(
+                                    (result) => {
+                                        if (result.message)
+                                            this.setState({error: result, success: false})
+                                        else
+                                            this.setState({success: true})
+                                    })
+                        })
+                    }
                 }
             )
+
     }
 
     render() {
@@ -1007,41 +1025,24 @@ class CreateQuestion extends React.Component{
                                 <Form.Label>Question Text</Form.Label>
                                 <Form.Control as="textarea" name="newQuestionBody" rows={3} onChange={(e) => this.props.onChange(e)}/>
                                 <br/>
-                                <Form.Label>Tag</Form.Label>
-                                {
-                                    (this.props.createTag) ?
-                                        <Form.Control as="select" disabled >
-                                            <option value="0">Choose...</option>
-                                        </Form.Control>
-                                        :
-                                        <Form.Control as="select" name="newQuestionTag" onChange={(e) => this.props.onChange(e)}>
-                                            <option value="0">Choose...</option>
-                                            {tagItems.map((item, index) => (
-                                                <option value={index}>#{item.field}</option>
-                                            ))}
-                                        </Form.Control>
-                                }
+                                <Form.Label>Choose #tags</Form.Label>
+                                <Form.Control as="select" multiple onChange={(e) => this.props.onChangeTags(e)}>
+                                    <option>Choose multiple...</option>
+                                    {tagItems.map(item => (
+                                        <option value={item.field}>#{item.field}</option>
+                                    ))}
+                                </Form.Control>
                             </Form.Group>
-                            <Form.Group controlId="formHorizontalCheck">
-                                <Form.Check onClick={() => this.props.onCreateTagRadio()} label="or create your own #tag !"/>
-                            </Form.Group>
+                            Create #tags
                             <Form.Group>
-                                {
-                                    (this.props.createTag) ?
-                                        <InputGroup name="newQuestionTag" onChange={(e) => this.props.onChange(e)}>
-                                            <InputGroup.Prepend>
-                                                <InputGroup.Text>#</InputGroup.Text>
-                                            </InputGroup.Prepend>
-                                            <FormControl/>
-                                        </InputGroup>
-                                        :
-                                        <InputGroup>
-                                            <InputGroup.Prepend>
-                                                <InputGroup.Text>#</InputGroup.Text>
-                                            </InputGroup.Prepend>
-                                            <FormControl disabled/>
-                                        </InputGroup>
-                                }
+                                <InputGroup onChange={(e) => this.props.onChangeTags(e)}>
+                                    <InputGroup.Prepend>
+                                        <InputGroup.Text>#</InputGroup.Text>
+                                    </InputGroup.Prepend>
+                                    <Form.Control />
+                                </InputGroup>
+                                <br/>
+                                <Form.Control readOnly defaultValue={this.props.newQuestionTags['combined']} />
                                 <br/>
                                 <ButtonGroup>
                                     <Button variant="primary" type="button" onClick={() => this.submitQuestion()}>Submit</Button>
@@ -1176,11 +1177,10 @@ class App extends React.Component{
             tag: undefined,
             questionActive: undefined,
             history: [],
-            createTag: false,
             redirect: null,
             newQuestionTitle: undefined,
             newQuestionBody: undefined,
-            newQuestionTag: undefined,
+            newQuestionTags: {old: [], new: [], combined: []},
             newAnswerBody: undefined,
             year: undefined,
             month: undefined,
@@ -1196,6 +1196,26 @@ class App extends React.Component{
     }
 
     handleChange = (event) => this.setState({[event.target.name]: event.target.value });
+
+    handleChangeTags = (event) => {
+        let options = event.target.selectedOptions
+        let stateTags = this.state.newQuestionTags
+        if (options){
+            stateTags['old'] = []
+            for (let i = 0; i < options.length; i++)
+                stateTags['old'] += (' #' + options.item(i).value)
+            stateTags['combined'] = stateTags['new'] + stateTags['old']
+        }
+        else {
+            stateTags['new'] = []
+            let value = event.target.value
+                if (value)
+                    value.split(' ').map(item => stateTags['new'] += ' #' + item)
+            stateTags['combined'] = stateTags['old'] + stateTags['new']
+        }
+        stateTags['combined'] = stateTags['combined'].trim()
+        this.setState({newQuestionTags: stateTags})
+    }
 
     handleSignin = (access_token) => this.setState({isSigned : true, access_token: access_token, redirect: "/", history: []});
 
@@ -1240,8 +1260,6 @@ class App extends React.Component{
             this.setState({questionActive: id, history:history});
         }
     }
-
-    handleCreateTagRadio = () => this.setState({createTag: !this.state.createTag});
 
     handleCreateQuestionButton = () => {
         const history = this.state.history.slice();
@@ -1426,13 +1444,13 @@ class App extends React.Component{
                         </Route>
                         <Route path="/CreateQuestion">
                             <CreateQuestion
-                                createTag = {this.state.createTag}
                                 isSigned = {this.state.isSigned}
                                 newQuestionTitle = {this.state.newQuestionTitle}
                                 newQuestionBody = {this.state.newQuestionBody}
+                                newQuestionTags = {this.state.newQuestionTags}
                                 access_token = {this.state.access_token}
                                 onChange = {(e) => this.handleChange(e)}
-                                onCreateTagRadio = {() => this.handleCreateTagRadio()}
+                                onChangeTags = {(e) => this.handleChangeTags(e)}
                             />
                         </Route>
                         <Route path="/AnswerQuestion">
