@@ -96,7 +96,7 @@ class Tags extends React.Component{
             return (
                 <Container style={{marginTop: 30, marginBottom: 30}}>
                     <h2>Most popular Tags</h2><br/>
-                    <Container>
+                    <Container  >
                         <Accordion>
                             <Card style={{width: 400}}>
                                 <Card.Header>
@@ -304,14 +304,12 @@ class QuestionsList extends React.Component {
                                                                          width={400}
                                                                          height={400}
                                                                          domain={[0, 31]}
-                                                                         tickCount={15}
                                                                          label="day of the month"
                                                                          style={{axisLabel: {fontSize: 20, padding: 30}}}
                                                             />
                                                             <VictoryAxis dependentAxis crossAxis
                                                                          width={400}
                                                                          height={400}
-                                                                         minDomain={0}
                                                                          label="Number of Questions"
                                                                          style={{axisLabel: {fontSize: 20, padding: 30}}}
                                                             />
@@ -342,29 +340,27 @@ class QuestionsList extends React.Component {
                                                 )}
                                             </Card.Body>
                                             <Card.Footer>
-                                                <small className="text-muted">Last updated <TimeAgo
-                                                    date={item.updatedAt}/></small>
+                                                <small className="text-muted">Last updated <TimeAgo date={item.updatedAt}/></small>
                                             </Card.Footer>
                                         </Card>
                                         :
                                         <Container />
                                 )
                             ))
-                        :
-                        questionItems.map(item => (
-                            <Card key={item.id}>
-                                <Card.Body>
-                                    <Card.Title><Link to='/Question' id={item.id} onClick={(e) => this.props.onClickQuestion(e)}>{item.title}</Link></Card.Title>
-                                    <Card.Subtitle className="mb-2 text-muted">asked <TimeAgo date={item.createdAt}/> by {item.user.username}</Card.Subtitle>
-                                    {item.tags.map(tag =>
-                                        <Card.Link><Link name={tag.field} onClick={(e) => this.props.onClickTag(e)}>#{tag.field}</Link></Card.Link>
-                                    )}
-                                </Card.Body>
-                                <Card.Footer>
-                                    <small className="text-muted">Last updated <TimeAgo
-                                        date={item.updatedAt}/></small>
-                                </Card.Footer>
-                            </Card>
+                            :
+                            questionItems.map(item => (
+                                <Card key={item.id}>
+                                    <Card.Body>
+                                        <Card.Title><Link to='/Question' id={item.id} onClick={(e) => this.props.onClickQuestion(e)}>{item.title}</Link></Card.Title>
+                                        <Card.Subtitle className="mb-2 text-muted">asked <TimeAgo date={item.createdAt}/> by {item.user.username}</Card.Subtitle>
+                                        {item.tags.map(tag =>
+                                            <Card.Link><Link name={tag.field} onClick={(e) => this.props.onClickTag(e)}>#{tag.field}</Link></Card.Link>
+                                        )}
+                                    </Card.Body>
+                                    <Card.Footer>
+                                        <small className="text-muted">Last updated <TimeAgo date={item.updatedAt}/></small>
+                                    </Card.Footer>
+                                </Card>
                         ))}
                     </Container>
                 </Container>
@@ -575,7 +571,7 @@ class ActivityList extends React.Component {
                                         <Card.Title><Link to='/Question' id={item.id} onClick={(e) => this.props.onClickQuestion(e)}>{item.title}</Link></Card.Title>
                                         <Card.Subtitle className="mb-2 text-muted">asked <TimeAgo date={item.createdAt}/> by {this.props.userName}</Card.Subtitle>
                                         {item.tags.map(tag =>
-                                            <Card.Link><Link to='/QuestionsList' name={tag.field} onClick={(e) => this.props.onClickTag(e)}>#{tag.field}</Link></Card.Link>
+                                                <Card.Link><Link to='/QuestionsList' name={tag.field} onClick={(e) => this.props.onClickTag(e)}>#{tag.field}</Link></Card.Link>
                                         )}
                                     </Card.Body>
                                 </Card>
@@ -1032,9 +1028,7 @@ class CreateQuestion extends React.Component{
                                         <option value={item.field}>#{item.field}</option>
                                     ))}
                                 </Form.Control>
-                            </Form.Group>
-                            Create #tags
-                            <Form.Group>
+                                Create #tags
                                 <InputGroup onChange={(e) => this.props.onChangeTags(e)}>
                                     <InputGroup.Prepend>
                                         <InputGroup.Text>#</InputGroup.Text>
@@ -1139,7 +1133,6 @@ class AnswerQuestion extends React.Component{
                                     <Question
                                         questionActive={this.props.questionActive}
                                         onClickTag={(e) => this.props.onClickTag(e)}
-                                        onClickAnswerQuestion={() => this.props.onClickAnswerQuestion()}
                                     />
                                     <br/>
                                     <Form.Label>Your Answer</Form.Label>
@@ -1280,10 +1273,10 @@ class App extends React.Component{
                 <Navbar bg="dark" variant="dark" className="justify-content-between">
                     <LinkContainer to="/" ><Button onClick={()=> this.handleHomeButton()} variant="outline-secondary">Home</Button></LinkContainer>
                     <Nav>
-                        <LinkContainer id="sign_up_btn" to="/sign_up">
+                        <LinkContainer to="/sign_up">
                             <Button variant="outline-secondary">Signup !</Button>
                         </LinkContainer>
-                        <LinkContainer id="sign_in_btn" to="/sign_in">
+                        <LinkContainer to="/sign_in">
                             <Button variant="outline-secondary">Signin !</Button>
                         </LinkContainer>
                     </Nav>
@@ -1293,7 +1286,7 @@ class App extends React.Component{
                     <LinkContainer to="/" ><Button onClick={()=> this.handleHomeButton()} variant="outline-secondary" >Home</Button></LinkContainer>
                     <Nav>
                         <Navbar.Text>Signed in as: <LinkContainer to="/myHome" onClick={()=> this.handleMyHomeLink()}><Link>{this.state.username}</Link></LinkContainer></Navbar.Text>
-                        <LinkContainer id="sign_out_btn" to="/">
+                        <LinkContainer to="/">
                             <Button variant="outline-secondary" name="isSigned" onClick={() => this.handleChange()}>Sign out</Button>
                         </LinkContainer>
                     </Nav>
@@ -1324,7 +1317,7 @@ class App extends React.Component{
                 <Breadcrumb>
                     <Breadcrumb.Item></Breadcrumb.Item>
                     <LinkContainer to="/QuestionsList" onClick={() => this.handleQuestionsListButton()}><Breadcrumb.Item>Questions</Breadcrumb.Item></LinkContainer>
-                    <BreadcrumbItem active>{history[1]}</BreadcrumbItem>
+                    <Breadcrumb.Item active>{history[1]}</Breadcrumb.Item>
                 </Breadcrumb>
             )
         }
@@ -1333,7 +1326,7 @@ class App extends React.Component{
                 <Breadcrumb>
                     <Breadcrumb.Item></Breadcrumb.Item>
                     <LinkContainer to="/Tags" onClick={() => this.handleTagsButton()}><Breadcrumb.Item>Tags</Breadcrumb.Item></LinkContainer>
-                    <BreadcrumbItem active>{history[1]}</BreadcrumbItem>
+                    <Breadcrumb.Item active>{history[1]}</Breadcrumb.Item>
                 </Breadcrumb>
             )
         }
@@ -1342,8 +1335,8 @@ class App extends React.Component{
                 <Breadcrumb>
                     <Breadcrumb.Item></Breadcrumb.Item>
                     <LinkContainer to="/Tags" onClick={() => this.handleTagsButton()}><Breadcrumb.Item>Tags</Breadcrumb.Item></LinkContainer>
-                    <LinkContainer to="/QuestionsList" onClick={(e) => this.handleTagButton(e)}><BreadcrumbItem>{history[1]}</BreadcrumbItem></LinkContainer>
-                    <BreadcrumbItem active>{history[2]}</BreadcrumbItem>
+                    <LinkContainer to="/QuestionsList" onClick={(e) => this.handleTagButton(e)}><Breadcrumb.Item>{history[1]}</Breadcrumb.Item></LinkContainer>
+                    <Breadcrumb.Item active>{history[2]}</Breadcrumb.Item>
                 </Breadcrumb>
             )
         }
@@ -1352,7 +1345,7 @@ class App extends React.Component{
                 <Breadcrumb>
                     <Breadcrumb.Item></Breadcrumb.Item>
                     <LinkContainer to="/AnswerQuestion" onClick={() => this.handleAnswerQuestionButton()}><Breadcrumb.Item>Answer Question</Breadcrumb.Item></LinkContainer>
-                    <BreadcrumbItem active>{history[1]}</BreadcrumbItem>
+                    <Breadcrumb.Item active>{history[1]}</Breadcrumb.Item>
                 </Breadcrumb>
             )
         }
@@ -1361,7 +1354,7 @@ class App extends React.Component{
                 <Breadcrumb>
                     <Breadcrumb.Item></Breadcrumb.Item>
                     <LinkContainer to="/myHome" onClick={() => this.handleMyHomeLink()}><Breadcrumb.Item>My Home</Breadcrumb.Item></LinkContainer>
-                    <BreadcrumbItem active>{history[1]}</BreadcrumbItem>
+                    <Breadcrumb.Item active>{history[1]}</Breadcrumb.Item>
                 </Breadcrumb>
             )
         }
@@ -1439,7 +1432,6 @@ class App extends React.Component{
                             <Question
                                 questionActive = {this.state.questionActive}
                                 onClickTag={(event) => this.handleTagButton(event)}
-                                onClickAnswerQuestion={() => this.handleAnswerQuestionButton()}
                             />
                         </Route>
                         <Route path="/CreateQuestion">
