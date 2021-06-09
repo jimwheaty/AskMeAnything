@@ -6,6 +6,6 @@
   "scripts": {
     "prebuild": "cd ./backend && npm install && cd ../frontend && npm install",
     "build": "cd ./backend && npm build && cd ../frontend && npm build",
-    "postbuild": "cd ./backend && npm start:prod && cd ../frontend && npm start"
+    "postbuild": "cd ./backend && npm run start:prod && cd ../frontend && npm run start"
   }
 }
