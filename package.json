@@ -4,7 +4,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "prebuild": "cd ./backend && npm install && rimraf dist && cd ../frontend && npm install",
+    "prebuild": "cd ./backend && npm install && cd ../frontend && npm install",
     "build": "cd ./backend && nest build && cd ../frontend && react-scripts build",
     "start": "cd ./backend && nest start && cd ../frontend && react-scripts start"
   }
