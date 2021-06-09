@@ -4,10 +4,20 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "prebuild": "rimraf dist",
+    "build": "nest build ./backend && react-scripts build ./frontend",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "start": "nest start ./backend && react-scripts start ./frontend",
+    "test": "jest ./backend && react-scripts test ./frontend",
+    "eject": "react-scripts eject ./frontend",
+    "start:dev": "nest start --watch ./backend",
+    "start:debug": "nest start --debug --watch ./backend",
+    "start:prod": "node ./backend/dist/main",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "test:watch": "jest --watch ./backend",
+    "test:cov": "jest --coverage ./backend",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand ./backend",
+    "test:e2e": "jest --config ./backend/test/jest-e2e.json"
   },
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.10",
