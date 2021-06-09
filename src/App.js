@@ -71,7 +71,6 @@ class Tags extends React.Component{
             .then(res => res.json())
             .then(
                 (result) => {
-                    alert(result.headers)
                     this.setState({
                         isLoaded: true,
                         tagItems: result
