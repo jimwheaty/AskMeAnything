@@ -71,6 +71,7 @@ class Tags extends React.Component{
             .then(res => res.json())
             .then(
                 (result) => {
+                    alert(result.headers)
                     this.setState({
                         isLoaded: true,
                         tagItems: result
@@ -778,7 +779,7 @@ class Signup extends React.Component{
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({username: this.props.username, password: this.props.password, email: this.props.email})
         };
-        fetch('http://localhost:8080/api/users', requestOptions)
+        fetch(backend_url + '/api/users', requestOptions)
             .then(res => res.json())
             .then(
                 (result) => {
@@ -865,7 +866,7 @@ class Signin extends React.Component {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({username: this.props.username, password: this.props.password})
         };
-        fetch('http://localhost:8080/api/auth/login', requestOptions)
+        fetch(backend_url + '/api/auth/login', requestOptions)
             .then(res => res.json())
             .then(
                 (result) => {
@@ -969,7 +970,7 @@ class CreateQuestion extends React.Component{
             headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.props.access_token},
             body: JSON.stringify({title: this.props.newQuestionTitle, body: this.props.newQuestionBody})
         };
-        fetch('http://localhost:8080/api/questions', requestOptions)
+        fetch(backend_url + '/api/questions', requestOptions)
             .then(res => res.json())
             .then(
                 (result) => {
@@ -983,7 +984,7 @@ class CreateQuestion extends React.Component{
                                 headers: {'Content-Type': 'application/json'},
                                 body: JSON.stringify({"field": item.split('#')[1], "questionId": result.id})
                             };
-                            fetch('http://localhost:8080/api/tags', requestOptions)
+                            fetch(backend_url + '/api/tags', requestOptions)
                                 .then(res => res.json())
                                 .then(
                                     (result) => {
@@ -1093,7 +1094,7 @@ class AnswerQuestion extends React.Component{
             headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.props.access_token},
             body: JSON.stringify({body: this.props.newAnswerBody, questionId: this.props.questionActive})
         };
-        fetch('http://localhost:8080/api/answers', requestOptions)
+        fetch(backend_url + "/api/answers", requestOptions)
             .then(res => res.json())
             .then(
                 (result) => {
