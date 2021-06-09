@@ -67,7 +67,6 @@ class Tags extends React.Component{
     }
 
     componentDidMount() {
-        alert(backend_url)
         fetch(backend_url + "/api/stats/popular-tags")
             .then(res => res.json())
             .then(
