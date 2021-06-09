@@ -5,7 +5,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prebuild": "cd backend && rimraf dist",
-    "build": "nest build && cd ../frontend && react-scripts build",
+    "build": "cd ./backend && nest build && cd ../frontend && react-scripts build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start ./backend && react-scripts start ./frontend",
     "test": "jest ./backend && react-scripts test ./frontend",
