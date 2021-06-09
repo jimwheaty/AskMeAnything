@@ -4,8 +4,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "prebuild": "rimraf ./backend/dist",
-    "build": "nest build --path ./backend && react-scripts build ./frontend",
+    "prebuild": "cd backend && rimraf dist",
+    "build": "nest build && cd ../frontend && react-scripts build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start ./backend && react-scripts start ./frontend",
     "test": "jest ./backend && react-scripts test ./frontend",
