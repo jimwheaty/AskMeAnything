@@ -11,7 +11,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   const PORT = 8080;
-  await app.listen(PORT);
+  await app.listen(process.env.PORT || 8080);
   console.log(`App listening on port ${PORT}. Go to http://localhost:${PORT}`);
 }
 bootstrap();

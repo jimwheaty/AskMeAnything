@@ -89,7 +89,7 @@ export class QuestionService {
     })
     if (!questions) return [];
 
-    const sortedQuestions = [...questions].sort((a,b) => a.createdAt - b.createdAt);
+    const sortedQuestions = [...questions].sort((a,b) => b.createdAt - a.createdAt);
 
     if (limit === 'all') return sortedQuestions; 
     else return sortedQuestions.slice(0,parseInt(limit));

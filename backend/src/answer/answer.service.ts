@@ -41,7 +41,7 @@ export class AnswerService {
     })
     if (!answers) return [];
 
-    const sortedAnswers = [...answers].sort((a,b) => a.createdAt - b.createdAt); 
+    const sortedAnswers = [...answers].sort((a,b) => b.createdAt - a.createdAt); 
 
     return (limit === 'all')? sortedAnswers: sortedAnswers.slice(0,parseInt(limit));
   }
