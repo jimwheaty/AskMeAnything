@@ -13,7 +13,9 @@
     "react-router-bootstrap": "^0.25.0",
     "react-scripts": "4.0.3",
     "victory": "^35.5.1",
-    "web-vitals": "^1.1.1"
+    "web-vitals": "^1.1.1",
+    "react-router-dom": "^5.2.0",
+    "react-timeago": "^6.1.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -38,9 +40,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "react-router-dom": "^5.2.0",
-    "react-timeago": "^6.1.1"
   }
 }
