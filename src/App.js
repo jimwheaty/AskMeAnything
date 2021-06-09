@@ -9,6 +9,8 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { VictoryChart, VictoryAxis, VictoryTheme, VictoryPie, VictoryBar } from 'victory'
 import TimeAgo from 'react-timeago'
 
+let backend_url = "https://askmeanything2021server.herokuapp.com"
+
 function Home (props) {
     return(
         <Container style={{marginTop:30, marginBottom:30}}>
@@ -65,7 +67,7 @@ class Tags extends React.Component{
     }
 
     componentDidMount() {
-        fetch("http://localhost:8080/api/stats/popular-tags")
+        fetch(backend_url + "/api/stats/popular-tags")
             .then(res => res.json())
             .then(
                 (result) => {
@@ -150,7 +152,7 @@ class QuestionsList extends React.Component {
     }
 
     fetchStats(year, month) {
-        fetch("http://localhost:8080/api/stats/questions-by-date?year=" + year + "&month=" + month)
+        fetch(backend_url + "/api/stats/questions-by-date?year=" + year + "&month=" + month)
             .then(res => res.json())
             .then(
                 (result) => {
@@ -176,7 +178,7 @@ class QuestionsList extends React.Component {
     }
 
     componentDidMount() {
-        fetch("http://localhost:8080/api/questions")
+        fetch(backend_url + "/api/questions")
             .then(res => res.json())
             .then(
                 (result) => {
@@ -381,7 +383,7 @@ class Question extends React.Component {
     }
 
     fetchQuestions() {
-        fetch("http://localhost:8080/api/questions/" + this.props.questionActive)
+        fetch(backend_url + "/api/questions/" + this.props.questionActive)
             .then(res => res.json())
             .then(
                 (result) => {
@@ -391,7 +393,7 @@ class Question extends React.Component {
                     });
                     const { questionItem } = this.state;
                     return questionItem.answers.map(answer => (
-                        fetch("http://localhost:8080/api/users/" + answer.userId)
+                        fetch(backend_url + "/api/users/" + answer.userId)
                             .then(res => res.json())
                             .then(
                                 (result) => {
@@ -522,7 +524,7 @@ class ActivityList extends React.Component {
     }
 
     componentDidMount() {
-        fetch("http://localhost:8080/api/questions/per-user?userId=" + this.props.userId + "&limit=all")
+        fetch(backend_url + "/api/questions/per-user?userId=" + this.props.userId + "&limit=all")
             .then(res => res.json())
             .then(
                 (result) => {
@@ -537,7 +539,7 @@ class ActivityList extends React.Component {
                         error
                     });
                 })
-        fetch("http://localhost:8080/api/answers/per-user?userId=" + this.props.userId + "&limit=all")
+        fetch(backend_url + "/api/answers/per-user?userId=" + this.props.userId + "&limit=all")
             .then(res => res.json())
             .then(
                 (result) => {
@@ -608,7 +610,7 @@ class ActivityStatistics extends React.Component {
     }
 
     fetchData(year, month) {
-        fetch("http://localhost:8080/api/stats/questions-by-date?userId=" + this.props.userId + "&year=" + year + "&month=" + month)
+        fetch(backend_url + "/api/stats/questions-by-date?userId=" + this.props.userId + "&year=" + year + "&month=" + month)
             .then(res => res.json())
             .then(
                 (result) => {
@@ -618,7 +620,7 @@ class ActivityStatistics extends React.Component {
                     this.setState({error, isLoaded: true})
                 }
             )
-        fetch("http://localhost:8080/api/stats/answers-by-date?userId=" + this.props.userId + "&year=" + year + "&month=" + month)
+        fetch(backend_url + "/api/stats/answers-by-date?userId=" + this.props.userId + "&year=" + year + "&month=" + month)
             .then(res => res.json())
             .then(
                 (result) => {
@@ -871,7 +873,7 @@ class Signin extends React.Component {
                         this.setState({error : result.message})
                     else {
                         this.props.onClick(result.access_token)
-                        fetch("http://localhost:8080/api/users")
+                        fetch(backend_url + "/api/users")
                             .then(res => res.json())
                             .then(
                                 (result) => {
@@ -944,7 +946,7 @@ class CreateQuestion extends React.Component{
     }
 
     componentDidMount() {
-        fetch("http://localhost:8080/api/stats/popular-tags")
+        fetch(backend_url + "/api/stats/popular-tags")
             .then(res => res.json())
             .then(
                 (result) => {
@@ -1068,7 +1070,7 @@ class AnswerQuestion extends React.Component{
     }
 
     componentDidMount() {
-        fetch("http://localhost:8080/api/questions")
+        fetch(backend_url + "/api/questions")
             .then(res => res.json())
             .then(
                 (result) => {
