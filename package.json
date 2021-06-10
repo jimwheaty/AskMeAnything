@@ -20,7 +20,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "start:prod": "node app.js",
+    "start:prod": "node app",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
