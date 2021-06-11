@@ -101,7 +101,7 @@ class Tags extends React.Component{
                     <Container  >
                         <Accordion>
                             <Row><Col sm={5}>
-                                <Card style={{maxWidth: 400}}>
+                                <Card style={{maxWidth: 450}}>
                                     <Card.Header>
                                         <Accordion.Toggle as={Button} variant="link" eventKey="0">
                                             Graph !
