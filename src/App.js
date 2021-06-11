@@ -100,26 +100,28 @@ class Tags extends React.Component{
                     <h2>Most popular Tags</h2><br/>
                     <Container  >
                         <Accordion>
-                            <Card style={{width: 400}}>
-                                <Card.Header>
-                                    <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                                        Graph !
-                                    </Accordion.Toggle>
-                                </Card.Header>
-                                <Accordion.Collapse eventKey="0">
-                                    <Card.Body>
-                                        <VictoryPie
-                                            data={data}
-                                            labels={({datum}) => `${datum.x}: ${datum.y}`}
-                                            labelPlacement={({index}) => index
-                                                ? "parallel"
-                                                : "vertical"
-                                            }
-                                            padding={100}
-                                        />
-                                    </Card.Body>
-                                </Accordion.Collapse>
-                            </Card>
+                            <Row><Col sm={12}>
+                                <Card style={{width: 400}}>
+                                    <Card.Header>
+                                        <Accordion.Toggle as={Button} variant="link" eventKey="0">
+                                            Graph !
+                                        </Accordion.Toggle>
+                                    </Card.Header>
+                                    <Accordion.Collapse eventKey="0">
+                                        <Card.Body>
+                                            <VictoryPie
+                                                data={data}
+                                                labels={({datum}) => `${datum.x}: ${datum.y}`}
+                                                labelPlacement={({index}) => index
+                                                    ? "parallel"
+                                                    : "vertical"
+                                                }
+                                                padding={100}
+                                            />
+                                        </Card.Body>
+                                    </Accordion.Collapse>
+                                </Card>
+                            </Col></Row>
                         </Accordion>
                     </Container> <br/>
                     <CardDeck>
