@@ -133,12 +133,16 @@ class App extends React.Component{
                 <Navbar bg="dark" variant="dark" className="justify-content-between">
                     <LinkContainer to="/" ><Button onClick={()=> this.handleHomeButton()} variant="outline-secondary">Home</Button></LinkContainer>
                     <Nav>
-                        <LinkContainer to="/sign_up">
-                            <Button variant="outline-secondary">Signup !</Button>
-                        </LinkContainer>
-                        <LinkContainer to="/sign_in">
-                            <Button variant="outline-secondary">Signin !</Button>
-                        </LinkContainer>
+                        <Nav.Item style={{paddingRight:10}}>
+                            <LinkContainer to="/sign_up">
+                                <Button variant="outline-secondary">Signup !</Button>
+                            </LinkContainer>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <LinkContainer to="/sign_in">
+                                <Button variant="outline-secondary">Signin !</Button>
+                            </LinkContainer>
+                        </Nav.Item>
                     </Nav>
                 </Navbar>
                 :
