@@ -149,7 +149,7 @@ class App extends React.Component{
                 <Navbar bg="dark" expand="lg" variant="dark" className="justify-content-between">
                     <LinkContainer to="/" ><Button onClick={()=> this.handleHomeButton()} variant="outline-secondary" >Home</Button></LinkContainer>
                     <Nav>
-                        <Navbar.Text>Signed in as: <LinkContainer to="/myHome" onClick={()=> this.handleMyHomeLink()}><Link>{this.state.username}</Link></LinkContainer></Navbar.Text>
+                        <Navbar.Text style={{paddingRight:10}}>Signed in as: <LinkContainer to="/myHome" onClick={()=> this.handleMyHomeLink()}><Link>{this.state.username}</Link></LinkContainer></Navbar.Text>
                         <LinkContainer to="/">
                             <Button variant="outline-secondary" name="isSigned" onClick={() => this.handleChange()}>Sign out</Button>
                         </LinkContainer>
