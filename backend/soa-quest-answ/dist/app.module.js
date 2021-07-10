@@ -14,7 +14,6 @@ const question_module_1 = require("./question/question.module");
 const users_module_1 = require("./users/users.module");
 const tags_module_1 = require("./tags/tags.module");
 const auth_module_1 = require("./auth/auth.module");
-const stats_module_1 = require("./stats/stats.module");
 const db = require('../db.config.js');
 const sequelizeModule = sequelize_1.SequelizeModule.forRoot({
     database: './database.db',
@@ -37,7 +36,6 @@ AppModule = __decorate([
             answer_module_1.AnswerModule,
             users_module_1.UsersModule,
             tags_module_1.TagsModule,
-            stats_module_1.StatsModule
         ],
     })
 ], AppModule);

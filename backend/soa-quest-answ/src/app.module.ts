@@ -42,7 +42,7 @@ const sequelizeModule = SequelizeModule.forRoot({
     AnswerModule, 
     UsersModule, 
     TagsModule,
-    StatsModule
+    // StatsModule
   ],
 })
 export class AppModule {}
