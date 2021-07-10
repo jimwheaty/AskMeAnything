@@ -1,8 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
-import { Breadcrumb, BreadcrumbItem, Button, Col, Nav, Navbar } from "react-bootstrap";
-import { MemoryRouter, Switch, Route, Link } from 'react-router-dom';
-import { LinkContainer } from 'react-router-bootstrap';
+import {Breadcrumb, BreadcrumbItem, Button, Col, Nav, Navbar} from "react-bootstrap";
+import {MemoryRouter, Switch, Route, Link} from 'react-router-dom';
+import {LinkContainer} from 'react-router-bootstrap';
 import {Home} from "./Home"
 import {Tags} from "./Tags"
 import {QuestionsList} from "./QuestionsList";
