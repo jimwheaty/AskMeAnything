@@ -1,15 +1,22 @@
 import { NestFactory } from '@nestjs/core';
+import { ClientOptions, Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
 
-  
-  app.enableCors();
-  app.setGlobalPrefix('api');
+  const connectionOptions: ClientOptions = {
+    transport: Transport.TCP,
+    options: {
+      host: '127.0.0.1',
+      port: 8877,
+    }
+  };
 
-  const PORT = 8080;
-  await app.listen(process.env.PORT || 8080);
-  console.log(`App listening on port ${PORT}. Go to http://localhost:${PORT}`);
+  const app = await NestFactory.createMicroservice(AppModule, connectionOptions);
+
+
+  await app.listen(() => {
+    console.log(`Microservice is listening`);
+  });
 }
 bootstrap();
