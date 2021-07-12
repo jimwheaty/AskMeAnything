@@ -1,4 +1,4 @@
-import { Controller, Param, Post, Req, Request, UseGuards } from "@nestjs/common";
+import { Body, Controller, Param, Post, Req, Request, UseGuards } from "@nestjs/common";
 import { ClientOptions, ClientProxy, ClientProxyFactory, Transport } from "@nestjs/microservices";
 import { AuthGuard } from "@nestjs/passport";
 
@@ -19,9 +19,8 @@ export class AuthController {
       this.authClient = ClientProxyFactory.create(connectionOptions);
     }
 
-    // @UseGuards(AuthGuard('local'))
     @Post('login')
-    login(@Req() req) {
-        return this.authClient.send<any,any>('login', req.user);
+    login(@Body() payload) {
+      return this.authClient.send<any,any>('login', payload);
     }
 }

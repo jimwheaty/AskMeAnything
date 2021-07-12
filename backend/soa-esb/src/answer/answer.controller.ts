@@ -21,13 +21,13 @@ export class AnswerController {
     this.answerClient = ClientProxyFactory.create(connectionOptions);
   }
 
-  // @UseGuards(AuthGuard('jwt'))
-  // @Post()
-  // create(@Body() newAnswer: Answer, @Request() req) {
-  //   newAnswer.userId = req.user.id;
-  //   const payload = { newAnswer };
-  //   return this.answerClient.send<any,any>('create', payload);
-  // }
+  @UseGuards(AuthGuard('jwt'))
+  @Post()
+  create(@Body() newAnswer: Answer, @Request() req) {
+    newAnswer.userId = req.user.id;
+    const payload = { newAnswer };
+    return this.answerClient.send<any,any>('create', payload);
+  }
 
   @Get()
   findAll() {

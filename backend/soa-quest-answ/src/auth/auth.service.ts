@@ -16,7 +16,7 @@ export class AuthService {
         const user = await this.userService.findByUsername(username);
         const { password, ...result } = user;
 
-        return (password === pass)? result: new UnauthorizedException('invalid username or password');
+        return (password === pass)? result: null;
     }
 
     async login(username: string, password: string) {
