@@ -8,8 +8,9 @@ export class AuthController {
 
     constructor(private authService: AuthService) {}
 
-    @MessagePattern('login')
-    async login(@Payload('username') username, @Payload('password') password) {
-        return this.authService.login(username, password);
+    @UseGuards(AuthGuard('local'))
+    @Post('login')
+    async login(@Request() req ) {
+        return this.authService.login(req.user);
     }
 }

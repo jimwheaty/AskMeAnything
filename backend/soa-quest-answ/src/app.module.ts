@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { TagsModule } from './tags/tags.module';
 import { AuthModule } from './auth/auth.module';
 import { StatsModule } from './stats/stats.module';
+
 const db = require('../db.config.js');
 
 // mysql 
@@ -37,7 +38,7 @@ const sequelizeModule = SequelizeModule.forRoot({
 @Module({
   imports: [
     sequelizeModule, 
-    AuthModule,
+    // AuthModule,
     QuestionModule, 
     AnswerModule, 
     UsersModule, 

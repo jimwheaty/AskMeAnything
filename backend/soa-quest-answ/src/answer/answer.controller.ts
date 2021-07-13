@@ -2,10 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Re
 import { AnswerService } from './answer.service';
 import { Answer } from './answer.model';
 import { AuthGuard } from '@nestjs/passport';
-import { MessagePattern, Payload } from '@nestjs/microservices';
 
 
-@Controller()
+@Controller('answers')
 export class AnswerController {
   constructor(private readonly answerService: AnswerService) {}
 
@@ -16,33 +15,33 @@ export class AnswerController {
   //   return this.answerService.create(newAnswer);
   // }
 
-  @MessagePattern('findAll')
+  @Get()
   findAll() {
     return this.answerService.findAll();
   }
 
-  @MessagePattern('findPerUser')
-  findPerUser(@Payload('userId') userId: number, @Payload('limit') limit: string) {
+  @Get('per-user')
+  findPerUser(@Query('userId') userId: number, @Query('limit') limit: string) {
     return this.answerService.findPerUser(userId, limit);
   }
 
-  @MessagePattern('findPerQuestion')
-  findPerQuestion(@Payload('questionId') questionId: number) {
+  @Get('per-question')
+  findPerQuestion(@Query('questionId') questionId: number) {
     return this.answerService.findPerQuestion(questionId);
   }
 
-  @MessagePattern('findOne')
-  findOne(@Payload('id') id: number) {
+  @Get(':id')
+  findOne(@Param('id') id: number) {
     return this.answerService.findOne(id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: number, @Body() updateAnswer: Answer) {
-  //   return this.answerService.update(id, updateAnswer);
-  // }
+  @Patch(':id')
+  update(@Param('id') id: number, @Body() updateAnswer: Answer) {
+    return this.answerService.update(id, updateAnswer);
+  }
 
-  @MessagePattern('remove')
-  remove(@Payload('id') id: number) {
+  @Delete(':id')
+  remove(@Param('id') id: number) {
     return this.answerService.remove(id);
   }
 }

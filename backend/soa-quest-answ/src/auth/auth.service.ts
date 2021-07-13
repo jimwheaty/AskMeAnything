@@ -19,9 +19,7 @@ export class AuthService {
         return (password === pass)? result: null;
     }
 
-    async login(username: string, password: string) {
-        const user = await this.validateUser(username, password);
-
+    async login(user: any) {
         const payload = { 
             username: user.username, 
             sub: user.id 

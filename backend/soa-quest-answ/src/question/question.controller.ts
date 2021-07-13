@@ -7,12 +7,12 @@ import { AuthGuard } from '@nestjs/passport';
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
-  @UseGuards(AuthGuard('jwt'))
-  @Post()
-  create(@Body() newQuestion: Question, @Req() req) {
-    newQuestion.userId = req.user.id;
-    return this.questionService.create(newQuestion);
-  }
+  // @UseGuards(AuthGuard('jwt'))
+  // @Post()
+  // create(@Body() newQuestion: Question, @Req() req) {
+  //   newQuestion.userId = req.user.id;
+  //   return this.questionService.create(newQuestion);
+  // }
 
   @Get()
   findAll() {
