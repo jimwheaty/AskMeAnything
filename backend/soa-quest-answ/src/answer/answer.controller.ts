@@ -16,7 +16,6 @@ export class AnswerController {
   @Post()
   async create(@Body() newAnswer: Answer, @Req() req) {
     const accessToken = req.headers['authorization']?.split(' ')[1];
-    // const userId = await this.answerService.getUserFromJWT(accessToken).pipe().toPromise();
     const userId = this.jwtService.decode(accessToken).sub;
     newAnswer.userId = userId;
     return await this.answerService.create(newAnswer);

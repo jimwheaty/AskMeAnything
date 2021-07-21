@@ -1,18 +1,24 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Req } from '@nestjs/common';
 import { QuestionService } from './question.service';
 import { Question } from './question.model';
-import { AuthGuard } from '@nestjs/passport';
+import { ClientAuthGuard } from 'src/answer/auth.guard';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('questions')
 export class QuestionController {
-  constructor(private readonly questionService: QuestionService) {}
+  constructor(
+    private readonly questionService: QuestionService,
+    private readonly jwtService: JwtService
+    ) {}
 
-  // @UseGuards(AuthGuard('jwt'))
-  // @Post()
-  // create(@Body() newQuestion: Question, @Req() req) {
-  //   newQuestion.userId = req.user.id;
-  //   return this.questionService.create(newQuestion);
-  // }
+  @UseGuards(ClientAuthGuard)
+  @Post()
+  create(@Body() newQuestion: Question, @Req() req) {
+    const accessToken = req.headers['authorization']?.split(' ')[1];
+    const userId = this.jwtService.decode(accessToken).sub;
+    newQuestion.userId = userId;
+    return this.questionService.create(newQuestion);
+  }
 
   @Get()
   findAll() {
