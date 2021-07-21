@@ -1,19 +1,26 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request, ExecutionContext, Req } from '@nestjs/common';
 import { AnswerService } from './answer.service';
 import { Answer } from './answer.model';
-import { AuthGuard } from '@nestjs/passport';
+import { ClientAuthGuard } from './auth.guard';
+import { JwtService } from '@nestjs/jwt';
 
 
 @Controller('answers')
 export class AnswerController {
-  constructor(private readonly answerService: AnswerService) {}
+  constructor(
+    private readonly answerService: AnswerService,
+    private readonly jwtService: JwtService 
+    ) {}
 
-  // @UseGuards(AuthGuard('jwt'))
-  // @Post()
-  // create(@Body() newAnswer: Answer, @Request() req) {
-  //   newAnswer.userId = req.user.id;
-  //   return this.answerService.create(newAnswer);
-  // }
+  @UseGuards(ClientAuthGuard)
+  @Post()
+  async create(@Body() newAnswer: Answer, @Req() req) {
+    const accessToken = req.headers['authorization']?.split(' ')[1];
+    // const userId = await this.answerService.getUserFromJWT(accessToken).pipe().toPromise();
+    const userId = this.jwtService.decode(accessToken).sub;
+    newAnswer.userId = userId;
+    return await this.answerService.create(newAnswer);
+  }
 
   @Get()
   findAll() {

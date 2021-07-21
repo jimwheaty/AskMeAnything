@@ -25,4 +25,9 @@ export class AuthController {
       return false;
     }
   }
+
+  @MessagePattern({role: 'auth', cmd: 'getUserFromJWT'})
+  async getUserFromJWT(jwt) {
+    return this.authService.getUserFromJWT(jwt);
+  }
 }

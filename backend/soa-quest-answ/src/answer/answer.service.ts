@@ -1,5 +1,7 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/sequelize';
+import { threadId } from 'node:worker_threads';
 import { Question } from 'src/question/question.model';
 import { Answer } from './answer.model';
 
@@ -7,6 +9,10 @@ import { Answer } from './answer.model';
 export class AnswerService {
 
   constructor(
+
+    @Inject('AUTH_CLIENT')
+    private readonly authClient: ClientProxy,
+
     @InjectModel(Answer)
     private answerModel: typeof Answer,
 
@@ -14,6 +20,9 @@ export class AnswerService {
     private questionModel: typeof Question
   ) {}
 
+  getUserFromJWT(jwt: string) {
+    return this.authClient.send({role: 'auth', cmd: 'getUserFromJWT'}, jwt)
+  }
   
 
   create(newAnswer: Answer): Promise<Answer> {
