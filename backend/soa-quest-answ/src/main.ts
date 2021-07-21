@@ -4,9 +4,10 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
 
+
   const app = await NestFactory.create(AppModule);
 
-  app.connectMicroservice({
+  const authMicroservice = app.connectMicroservice({
     transport: Transport.REDIS,
     options: {
       url: 'redis://localhost:6379'
@@ -24,8 +25,8 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.enableCors();
 
-  await app.startAllMicroservicesAsync();
+  app.startAllMicroservices();
   await app.listen(8080);
-  console.log(`Q&A Management Service is listening!`);
+  console.log(`Q&A Management Service is up!`);
 }
 bootstrap();

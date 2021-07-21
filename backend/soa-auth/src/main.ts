@@ -1,17 +1,18 @@
 import { NestFactory } from '@nestjs/core';
-import { Transport } from '@nestjs/microservices';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  
-  const app = await NestFactory.create(AppModule);
 
-   app.connectMicroservice({
-    transport: Transport.REDIS,
-    options: {
-      url: 'redis://localhost:6379'
-    }
-  });
+  
+  const app = await NestFactory.create(AppModule)
+
+  //  app.connectMicroservice({
+  //   transport: Transport.REDIS,
+  //   options: {
+  //     url: 'redis://localhost:6379'
+  //   }
+  // });
 
   // app.connectMicroservice({
   //   transport: Transport.TCP,
@@ -24,8 +25,9 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.enableCors();
 
-  await app.startAllMicroservicesAsync();
-  await app.listen(3000);
-  console.log('Auth Service is running!');
+  // await app.startAllMicroservicesAsync();
+  await app.listen(3000, () => {
+    console.log('Auth Service is running!');
+  });
 }
 bootstrap();
