@@ -3,6 +3,7 @@ import { AnswerService } from './answer.service';
 import { Answer } from './answer.model';
 import { ClientAuthGuard } from './auth.guard';
 import { JwtService } from '@nestjs/jwt';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
 
 @Controller('answers')
@@ -19,6 +20,11 @@ export class AnswerController {
     const userId = this.jwtService.decode(accessToken).sub;
     newAnswer.userId = userId;
     return await this.answerService.create(newAnswer);
+  }
+
+  @MessagePattern({ role: 'stats', cmd: 'answers' })
+  getAnswersByDate(@Payload('userId') userId, @Payload('year') year, @Payload('month') month) {
+    return this.answerService.getAnswersByDate(userId, year, month);
   }
 
   @Get()

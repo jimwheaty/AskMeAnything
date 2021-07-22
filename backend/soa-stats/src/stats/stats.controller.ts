@@ -5,7 +5,7 @@ import { StatsService } from './stats.service';
 export class StatsController {
   constructor(private readonly statsService: StatsService) {}
 
-  @Get('/popular-tags')
+  @Get('popular-tags')
   getPopularTags(@Query('limit') limit: string) {
     return this.statsService.getPopularTags(limit);
   }

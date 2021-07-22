@@ -1,10 +1,16 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { Tag } from './tags.model';
 import { TagsService } from './tags.service';
 
 @Controller('tags')
 export class TagsController {
   constructor(private readonly tagsService: TagsService) {}
+
+  @MessagePattern({ role: 'stats', cmd: 'tags' })
+  getPopularTags(@Payload('limit') limit) {
+    return this.tagsService.getPopularTags(limit);
+  }
 
   @Post()
   create(@Body() newTag: Tag) {

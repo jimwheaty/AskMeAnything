@@ -1,7 +1,6 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/sequelize';
-import { threadId } from 'node:worker_threads';
+import { Sequelize } from 'sequelize';
 import { Question } from 'src/question/question.model';
 import { Answer } from './answer.model';
 
@@ -10,9 +9,6 @@ export class AnswerService {
 
   constructor(
 
-    @Inject('AUTH_CLIENT')
-    private readonly authClient: ClientProxy,
-
     @InjectModel(Answer)
     private answerModel: typeof Answer,
 
@@ -20,10 +16,6 @@ export class AnswerService {
     private questionModel: typeof Question
   ) {}
 
-  getUserFromJWT(jwt: string) {
-    return this.authClient.send({role: 'auth', cmd: 'getUserFromJWT'}, jwt)
-  }
-  
 
   create(newAnswer: Answer): Promise<Answer> {
     if (!newAnswer.body) {
@@ -99,4 +91,53 @@ export class AnswerService {
     const answer = await this.findOne(id);
     await answer.destroy();
   }
+
+
+async getAnswersByDate(userId: string, year: string, month: string)  {
+    if (!userId) userId = 'all';
+    if (!year) throw new BadRequestException('missing year parameter');
+    if (!month) throw new BadRequestException('missing month parameter');
+
+    if (userId === 'all') {
+        let answers = await this.answerModel.findAll({
+            attributes: [
+                [Sequelize.literal(`DATE("createdAt")`), 'date'],
+                [Sequelize.literal(`strftime('%Y',"createdAt")`), 'year'],
+                [Sequelize.literal(`strftime('%m',"createdAt")`), 'month'],
+                [Sequelize.literal(`strftime('%d',"createdAt")`), 'day'],
+                [Sequelize.literal(`COUNT(*)`), 'count']
+            ],
+            group: 'date',
+            where: { 
+                '$year$': year,
+                '$month$': month
+            }
+        });   
+        if (!answers) return [];
+        return answers;
+
+    } else {
+        const answers = await this.answerModel.findAll({
+            attributes: [
+                [Sequelize.literal(`DATE("createdAt")`), 'date'],
+                [Sequelize.literal(`strftime('%Y',"createdAt")`), 'year'],
+                [Sequelize.literal(`strftime('%m',"createdAt")`), 'month'],
+                [Sequelize.literal(`strftime('%d',"createdAt")`), 'day'],
+                [Sequelize.literal(`COUNT(*)`), 'count']
+            ],
+            group: 'date',
+            where: { 
+                userId,
+                '$year$': year,
+                '$month$': month
+            }
+        });         
+        if (!answers) return [];
+        return answers;
+
+    }
+}
+
+
+
 }
