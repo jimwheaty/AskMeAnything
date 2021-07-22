@@ -1,6 +1,6 @@
 import React from "react";
 import {Alert, Button, ButtonGroup, Col, Container, Form, InputGroup, Row} from "react-bootstrap";
-import {backend_url} from "./App";
+import {backend_url, stats_url} from "./App";
 
 export class CreateQuestion extends React.Component{
     constructor(props) {
@@ -14,7 +14,7 @@ export class CreateQuestion extends React.Component{
     }
 
     componentDidMount() {
-        fetch(backend_url + "/api/stats/popular-tags")
+        fetch(stats_url + "/api/stats/popular-tags")
             .then(res => res.json())
             .then(
                 (result) => {

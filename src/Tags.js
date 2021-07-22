@@ -2,7 +2,7 @@ import React from "react";
 import {Accordion, Button, Card, CardDeck, Col, Container, Row} from "react-bootstrap";
 import {VictoryPie} from "victory";
 import {LinkContainer} from "react-router-bootstrap";
-import {backend_url} from "./App";
+import {stats_url} from "./App";
 
 export class Tags extends React.Component{
     constructor(props) {
@@ -15,7 +15,7 @@ export class Tags extends React.Component{
     }
 
     componentDidMount() {
-        fetch(backend_url + "/api/stats/popular-tags")
+        fetch(stats_url + "/api/stats/popular-tags")
             .then(res => res.json())
             .then(
                 (result) => {

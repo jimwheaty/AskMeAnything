@@ -3,7 +3,7 @@ import {Accordion, Button, Card, Col, Container, Form, Row} from "react-bootstra
 import {VictoryAxis, VictoryBar, VictoryChart, VictoryTheme} from "victory";
 import {Link} from "react-router-dom";
 import TimeAgo from "react-timeago";
-import {backend_url} from "./App";
+import {backend_url, stats_url} from "./App";
 
 export class QuestionsList extends React.Component {
     constructor(props) {
@@ -19,7 +19,7 @@ export class QuestionsList extends React.Component {
     }
 
     fetchStats(year, month) {
-        fetch(backend_url + "/api/stats/questions-by-date?year=" + year + "&month=" + month)
+        fetch(stats_url + "/api/stats/questions-by-date?year=" + year + "&month=" + month)
             .then(res => res.json())
             .then(
                 (result) => {

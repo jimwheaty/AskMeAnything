@@ -2,7 +2,7 @@ import React from "react";
 import {Redirect} from "react-router-dom";
 import {Alert, Button, ButtonGroup, Col, Container, Form, Row} from "react-bootstrap";
 import {LinkContainer} from "react-router-bootstrap";
-import {backend_url} from "./App";
+import {auth_url, backend_url} from "./App";
 
 export class Signin extends React.Component {
     constructor(props) {
@@ -18,7 +18,7 @@ export class Signin extends React.Component {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({username: this.props.username, password: this.props.password})
         };
-        fetch(backend_url + '/api/auth/login', requestOptions)
+        fetch(auth_url + '/api/auth/login', requestOptions)
             .then(res => res.json())
             .then(
                 (result) => {
