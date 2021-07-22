@@ -10,8 +10,7 @@ async function bootstrap() {
   const authMicroservice = app.connectMicroservice({
     transport: Transport.REDIS,
     options: {
-      // url: 'redis://localhost:6379'
-      port: 6379
+      url: 'redis://localhost:6379'
     }
   });
 
