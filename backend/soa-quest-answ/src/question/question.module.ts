@@ -14,7 +14,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       name: 'AUTH_CLIENT',
       transport: Transport.REDIS,
       options: {
-        url: 'redis://localhost:6379'
+        url: 'rediss://default:ej4guzrqldi52xrs@redis-35c975f8-elkritsotakis-26da.aivencloud.com:24185'
       }
     }]),
     JwtModule.register({
