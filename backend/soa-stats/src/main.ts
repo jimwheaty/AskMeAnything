@@ -8,7 +8,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.enableCors();
 
-  await app.listen(8060);
+  await app.listen(process.env.PORT || 8060);
   console.log(`Stats Service is up!`);
 }
 bootstrap();

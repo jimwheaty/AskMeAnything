@@ -8,7 +8,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.enableCors();
 
-  await app.listen(8070, () => {
+  await app.listen(process.env.PORT || 8070, () => {
     console.log('Auth Service is running!');
   });
 }
