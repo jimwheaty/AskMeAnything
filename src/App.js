@@ -15,7 +15,7 @@ import {Signin} from "./Signin";
 import {CreateQuestion} from "./CreateQuestion";
 import {AnswerQuestion} from "./AnswerQuestion";
 
-export let backend_url = "https://askmeanything2021server.herokuapp.com"
+export let backend_url = "https://askmeanything2021monolith.herokuapp.com"
 
 class App extends React.Component{
     constructor(props) {
