@@ -5,7 +5,6 @@ import { AuthService } from "./auth.service";
 import { LocalStrategy } from "./local.strategy";
 import { AuthController } from "./auth.controller";
 import constants from "./constants";
-import { JwtStrategy } from "./jwt.strategy";
 
 @Module({
   imports: [
@@ -16,14 +15,6 @@ import { JwtStrategy } from "./jwt.strategy";
         url: 'redis://localhost:6379'
       }
     }]),
-    // ClientsModule.register([{
-    //   name: 'USER_CLIENT',
-    //   transport: Transport.TCP,
-    //   options: {
-    //     host: '127.0.0.1',
-    //     port: 8080,
-    //   }
-    // }]),
     JwtModule.register({
       secret: constants.jwtSecret,
       signOptions: { expiresIn: '600s' }
