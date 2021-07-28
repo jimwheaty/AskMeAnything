@@ -15,9 +15,9 @@ import {Signin} from "./Signin";
 import {CreateQuestion} from "./CreateQuestion";
 import {AnswerQuestion} from "./AnswerQuestion";
 
-export let backend_url = "https://localhost:8080"
-export let auth_url = "https://localhost:8070"
-export let stats_url = "https://localhost:8060"
+export let backend_url = "http://localhost:8080"
+export let auth_url = "http://localhost:8070"
+export let stats_url = "http://localhost:8060"
 
 class App extends React.Component{
     constructor(props) {
