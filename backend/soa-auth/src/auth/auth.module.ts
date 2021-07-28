@@ -13,7 +13,7 @@ import { JwtStrategy } from "./jwt.strategy";
       name: 'USER_CLIENT',
       transport: Transport.REDIS,
       options: {
-        url: 'reredis://localhost:6379'
+        url: 'redis://localhost:6379'
       }
     }]),
     // ClientsModule.register([{

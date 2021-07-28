@@ -12,7 +12,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       name: 'AUTH_CLIENT',
       transport: Transport.REDIS,
       options: {
-        url: 'reredis://localhost:6379'
+        url: 'redis://localhost:6379'
       }
     }]),
     // ClientsModule.register([{

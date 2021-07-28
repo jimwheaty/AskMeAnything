@@ -14,7 +14,7 @@ import { JwtModule } from '@nestjs/jwt';
       name: 'AUTH_CLIENT',
       transport: Transport.REDIS,
       options: {
-        url: 'reredis://localhost:6379'
+        url: 'redis://localhost:6379'
       }
     }]),
     JwtModule.register({
