@@ -15,13 +15,7 @@ import {Signin} from "./Signin";
 import {CreateQuestion} from "./CreateQuestion";
 import {AnswerQuestion} from "./AnswerQuestion";
 
-<<<<<<< HEAD
-export let backend_url = "https://localhost:8080"
-export let auth_url = "https://localhost:8070"
-export let stats_url = "https://localhost:8060"
-=======
 export let backend_url = "https://askmeanything2021server.herokuapp.com"
->>>>>>> parent of ff2933f (changing url for soa in heroku)
 
 class App extends React.Component{
     constructor(props) {
