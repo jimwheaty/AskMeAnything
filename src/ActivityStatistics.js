@@ -1,7 +1,7 @@
 import React from "react";
 import {Card, Col, Container, Form, Row} from "react-bootstrap";
 import {VictoryAxis, VictoryBar, VictoryChart, VictoryTheme} from "victory";
-import {stats_url} from "./App";
+import {backend_url} from "./App";
 
 export class ActivityStatistics extends React.Component {
     constructor(props) {
@@ -17,7 +17,7 @@ export class ActivityStatistics extends React.Component {
     }
 
     fetchData(year, month) {
-        fetch(stats_url + "/api/stats/questions-by-date?userId=" + this.props.userId + "&year=" + year + "&month=" + month)
+        fetch(backend_url + "/api/stats/questions-by-date?userId=" + this.props.userId + "&year=" + year + "&month=" + month)
             .then(res => res.json())
             .then(
                 (result) => {
@@ -27,7 +27,7 @@ export class ActivityStatistics extends React.Component {
                     this.setState({error, isLoaded: true})
                 }
             )
-        fetch(stats_url + "/api/stats/answers-by-date?userId=" + this.props.userId + "&year=" + year + "&month=" + month)
+        fetch(backend_url + "/api/stats/answers-by-date?userId=" + this.props.userId + "&year=" + year + "&month=" + month)
             .then(res => res.json())
             .then(
                 (result) => {
