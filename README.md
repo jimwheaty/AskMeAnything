@@ -34,7 +34,7 @@ npm run start:dev
 
 The backend is set up. Now let's deploy our frontend: 
 ```sh
-cd frontend/soa-stats &&
+cd frontend &&
 npm install &&
 npm run start
 ```
