@@ -5,10 +5,10 @@ First, we need to deploy the redis server that will host our message broking ser
 ```sh
 sudo apt-get install redis-server
 ```
-Then, let the redis server as a daemon in the background:
+Then, lets open the redis server in localhost
 
 ```sh
-redis-server --daemonize yes
+redis-server
 ```
 
 Let's the 3 separate apps soa-auth, soa-quest-answ, soa-stats on 3 different terminals:
