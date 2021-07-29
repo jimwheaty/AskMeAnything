@@ -1,8 +1,18 @@
 # AskMeAnything
-A Questions - Answers app that is offered as a Service (SaaS) for our 2021 SaaS course at NTUA.
+A Questions - Answers app that is offered as a Service (SaaS) for our 2021 SaaS course at NTUA. For learning purposes, the app is implemented using 2 different architectural patterns: MVC and SOA. MVC app is deployed on https://askmeanything2021view.herokuapp.com 
 
+Dummy user to experiment with:
+username: jackie
+password: el_presidente
+
+## Stack
+Backend: TypeScript, Nest.js, Express, Sequelize ORM
+Frontend: React.js, Bootstrap
+
+
+## Branches
 ### main
-An informative, non-functional branch.
+An informative, non-functional branch. Contains the documentation of the project, mainly UML diagrams: ERD, deployment, component. 
 
 ### soa-localhost
 A SOA-version of the app deployed locally. It contains the frontend and backend code.
