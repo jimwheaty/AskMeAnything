@@ -4,9 +4,9 @@
 First, we need to deploy the redis server that will host our message broking service between our services, to do that in a linux environment we type: 
 ```sh
 sudo apt-get install redis-server
-
 ```
 Then, let the redis server as a daemon in the background:
+
 ```sh
 redis-server --daemonize yes
 ```
@@ -15,24 +15,28 @@ Let's the 3 separate apps soa-auth, soa-quest-answ, soa-stats on 3 different ter
 ```sh
 cd backend/soa-auth &&
 npm install &&
-npm run start
+npm run start:dev
 ```
+
 Open a new terminal and type:
 ```sh
 cd backend/soa-quest-answ &&
 npm install &&
-npm run start
+npm run start:dev
 ```
+
 Again, open a new terminal and type:
 ```sh
 cd backend/soa-stats &&
 npm install &&
-npm run start
+npm run start:dev
 ```
+
 The backend is set up. Now let's deploy our frontend: 
 ```sh
 cd frontend/soa-stats &&
 npm install &&
-npm run start:dev
+npm run start
 ```
+
 Our app is successfully deployed! Frontend listening on http://localhost:3200
